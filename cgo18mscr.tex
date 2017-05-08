@@ -57,9 +57,13 @@ Code Generation and Optimization}{2018}{}
 %\acmPrice{15.00}
 
 
+\newcommand{\itercomp}{{iterative compilation}}
+\newcommand{\Itercomp}{{Iterative compilation}}
+\newcommand{\IterComp}{{Iterative Compilation}}
+
 \begin{document}
 %\title{A work-based metric for efficiently applying online iterative optimisation}
-\title{Online Iterative Optimisation\\Guided by Low Overhead Profiling}
+\title{Online {\IterComp}\\Guided by Low Overhead Profiling}
 %\titlenote{Produces the permission block, and
 %  copyright information}
 %\subtitle{Extended Abstract}
@@ -142,15 +146,15 @@ Code Generation and Optimization}{2018}{}
 \begin{abstract}
 Efficiently selecting the best combination of compiler optimisations for a program
 remains an open problem due to their complex interaction and the large optimisation search space.
-Iterative optimisation techniques, which consist of iterating
+{\Itercomp} techniques, which consist of iterating
 over this large space searching for the best optimisation,
 has the ability to adapt to new platforms, programs and workload while still
 having a systematic and simple optimisation process.
 Although some recent work have studied the impact of using multiple
-input datasets for performing iterative optimisation, applying this
+input datasets for performing \itercomp, applying this
 technique in an online scenario still poses some challenges.
 
-In this paper, our main goal is to enable iterative optimisation in
+In this paper, our main goal is to enable \itercomp in
 online scenarios with the restriction of executing distinct inputs
 only once.
 In order to address this challenge,
@@ -185,7 +189,7 @@ being able to trade-off between accuracy and overhead in a controlled manner.
 %\ccsdesc[500]{Software and its engineering~Retargetable compilers}
 
 
-\keywords{Iterative Optimisation, Profiling, Relaxed Instrumentation}
+\keywords{{\IterComp}, Profiling, Relaxed Instrumentation}
 
 \maketitle
 
@@ -220,22 +224,22 @@ However, these default pre-arranged set of optimisations do not include all poss
 and they are always applied in the same pre-defined fixed order, without regard the code being optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
 %in hopes that a programmer will know which combination of optimisations will benefit their code~\cite{pan06,cavazos07,zhou12,kulkarni12}.
 
-A well known compilation technique that addresses this challenge is iterative
-optimisation.
-Iterative optimisation has the ability to adapt to new
+A well known compilation technique that
+addresses this challenge is {\itercomp}.
+{\Itercomp} has the ability to adapt to new
 platforms, program and workload while still
 having a systematic and simple optimisation process.
-Iterative optimisations repeatedly evaluate a large number
+{\Itercomp} repeatedly evaluates a large number
 of compiler optimisations until the best combination is
 found for a particular program~\cite{fursin07,chen10}.
-The main challange concerning iterative optimisation is the need for quickly
+The main challenge concerning {\itercomp} is the need for quickly
 exploring such a large optimisation space~\cite{fursin07,cavazos07,zhou12}.
 
 Until recently, most of existing work  had been focusing
 on finding the best optimisation through repeated runs using a single input.
-Although they demonstrate the potential of iterative optimisation,
+Although they demonstrate the potential of {\itercomp},
 in real scenarios the user rarely executes the same input dataset multiple times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
-Applying iterative optimisation in light of a single input may not result in good performance when executing the optimised code with different inputs.
+Applying {\itercomp} in light of a single input may not result in good performance when executing the optimised code with different inputs.
 
 Most of real world applications are complex enough 
 so that a single input case does not capture the whole
@@ -244,11 +248,11 @@ Because programs can exhibit behaviours that differ greatly depending on the inp
 %This is something that is well known when writing test
 %cases for correctness.
 %We can extend the same argument when optimising the code for performance.
-using a single input for iterative optimisation can produce poor performance when executed with different inputs.
+using a single input for {\itercomp} can produce poor performance when executed with different inputs.
 
 Recent work have been studying
 the impact of using multiple input datasets
-for performing iterative optimisation.
+for performing {\itercomp}.
 This previous work suggests that optimising based on a representative range of input datasets
 allows for selecting a robust compiler optimisation 
 that produces good performance in real scenarios where
@@ -256,7 +260,7 @@ the input is expected to change constantly~\cite{haneda06,fursin07,chen10,chen12
 Their results show that a limited number of input datasets may be sufficient to
 obtain a well optimised program for a wider range of different inputs~\cite{haneda06,fursin07,chen10,chen12a}.
 
-Finding such a robust combination of compiler optimisations by means of iterative optimisation across a large range of inputs
+Finding such a robust combination of compiler optimisations by means of {\itercomp} across a large range of inputs
 may be very time consuming.
 In order to speed up this process we intend to reduce the number of actual executions during the exploration
 of the optimisation space without much degradation of the final selected optimisation.
@@ -264,11 +268,11 @@ of the optimisation space without much degradation of the final selected optimis
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{figs/diagram}
-    \caption{Overview of the execution engine for applying iterative optimisation.}
+    \caption{Overview of the execution engine for applying {\itercomp}.}
     \label{fig:diagram}
 \end{figure}
 
-In this paper, our main goal is to enable iterative optimisation in
+In this paper, our main goal is to enable {\itercomp} in
 \textit{online} scenarios with the restriction of executing distinct inputs
 only once, while targeting optimal performance across different inputs.
 This online aspect is usually found in mobile and data centre
@@ -292,66 +296,20 @@ effect of the optimisations.
 
 Our main contributions are the following:
 \begin{itemize}
-\item The use of a work-based metric in order to enable online iterative
-optimisation by comparing different combination of compiler optimisations even
-when executed with distinct inputs.
+\item The use of a work-based performance metric in order to enable
+\textit{online} {\itercomp} by comparing different combination of
+compiler optimisations even when executed with distinct inputs.
 \item We propose a relaxed instrumentation for low overhead profiling, with a controlled
 trade-off between accuracy and overhead.
 \end{itemize}
 
-\section{Related Work}
-
-Chen~\etal~\cite{chen10,chen12a} evaluate the effectiveness of iterative
-compilations across a large number of input test cases.
-Their main motivation is to answer the question:
-\textit{How data input dependent is iterative optimisation?}
-Their results show that it is possible to find a combination of compiler optimisations
-that achieves at least 86\% of the maximum speedup across all input test cases.
-These optimal combinations are program-specific and yield average
-speedups up to 3.75$\times$ over the highest optimisation level of compilers.
-
-When optimising a program, the main method for iterative optimisation used by Chen~\etal~\cite{chen10,chen12a}
-evaluates each combination of compiler optimisations across all the available inputs, i.e.,
-if $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimisations,
-they perform a total of $O(NM)$ runs of the program being optimised.
-Furthermore, they use a pre-defined set of only 300 different combinations of compiler optimisations,
-which represents a very small sample of the optimisation search space for most modern compilers, e.g.
-LLVM has 56 distinct optimisation passes and GCC has about 47 high-level (SSA form) optimisation passes and
-about 25 low-level (RTL) optimisation passes, which in both cases result in much more than $2^{50}$ distinct
-combinations of compiler optimisations, without considering repetition.
-
-Recent work~\cite{chen12b,fang15} have applied the same idea of performing
-input-dependent iterative optimisation to distributed applications on data centres.
-In summary, each worker receives a subset of the input dataset, called the evaluation dataset,
-to perform an \textit{online} iterative optimisation of the code being executed.
-Each worker performs the same the method for iterative optimisation used by Chen~\etal~\cite{chen10,chen12a},
-i.e., they evaluate each combination of compiler optimisations across all the evaluation dataset.
-However, because the optimisation is performed online, they usually consider a small evaluation dataset
-and a small number of compiler optimisations.
-
-Fursin~\etal~\cite{fursin07} addressed the problem of comparing the effect of two optimisations
-on two distinct inputs. For that purpose, they proposed to use instruction per cycle (IPC) as the metric for performing such comparison.
-Their result show that using IPC seems promising as a robust metric for iterative optimisation
-across large input datasets.
-However, 
-some specific optimisation techniques may affect the use of IPC as a robust metric, and specially
-IPC has been shown to provide poor performance estimation for multi-threaded programs~\cite{alameldeen06,eyerman08}.
-In particular, IPC can give a skewed performance measure if threads spend time in \textit{spin-lock loops}
-or other synchronisation mechanisms. 
-Some existing work on performance assessment suggest that
-total execution time should be used for measuring performance of multi-threaded programs~\cite{alameldeen06,eyerman08}.
-Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used
-if the unit of work is representative enough.
-Work-related metrics have already been largely used for measuring performance of throughput-oriented applications,
-for other applications, however, choosing an appropriate unit of work can be more challanging~\cite{alameldeen06}.
-
 \section{Work-based Metric} \label{sec:metric}
 
-A possible candidate for a work-based metric, borrowing from Physics,
-is using the concept of \textit{average power}, i.e. the amount of
+In this section we define the work-based performance metric used in this paper.
+We define the performance metric as the ratio between the amount of
 \textit{work}, $\Delta W$, performed during a period of time, $\Delta t$.
 \[
-   P_{avg} = \frac{\Delta W}{\Delta t}
+   P = \frac{\Delta W}{\Delta t}
 \]
 
 %The hypothesis is that, given two optimisations $o_1$ and $o_2$,
@@ -362,50 +320,19 @@ is using the concept of \textit{average power}, i.e. the amount of
 By measuring the amount of \textit{work} done per unit of time we reduce
 the impact of input-dependent aspects and focus instead on the efficiency
 of the optimised program.
-For this metric, the main challange is to precisely define what
+For this metric, the main challenge is to precisely define what
 represents \textit{work}.
 
 %For that purpose, we intend to use profiling
 %techniques to measure the input size and amount of computation
 %performed on the execution path triggered by the input~\cite{ball94,ball96,zaparanuks12,coppa14}.
 
-%In addition to being useful for speeding up iterative optimisation across a large
+%In addition to being useful for speeding up {\itercomp} across a large
 %number of different inputs, this metric based on comparing work-based efficiencies could
-%potentially be used for applying iterative optimisation \textit{online}. 
+%potentially be used for applying {\itercomp} \textit{online}. 
 %However, the overhead for estimating the amount of \textit{work} must be low
 %enough for the performance gains to be beneficial.
 
-Previous work have proposed profiling-based mechanism to estimate
-input sizes~\cite{zaparanuks12,coppa14}.
-Coppa~\etal~\cite{coppa14} in particular propose the concept of
-\textit{read memory size} for automatically estimating the size of the input
-passed to a routine, where \textit{read memory size} represents the number of
-distinct memory cells first accessed by a read operation.
-In other words, the \textit{read memory size} metric measures the size of the 
-useful portion of the input's memory footprint.
-However, because we are interested in the amount of computational work performed
-in respect of a given input, the memory footprint of the input may not always
-have a direct correspondence to  the amount of computational work.
-
-Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the
-measure for performance for empirically describing the asymptotic behaviour
-of programs, which is known as empirical computational complexity.
-Block frequency is a relative metric that represents the number of times a
-basic block executes~\cite{ball94,ball96}. 
-They argue in favour of block frequency due to its portability, repeatability
-and exactness, since it does not suffer from timer resolution problems or
-non-deterministic noises.
-Block frequency also has the advantage of being efficiently profiled by means
-of automatic code instrumentation~\cite{knuth73,ball94}.
-
-However, in the context of comparing different optimisations,
-although block frequency would be able to capture aspects of optimisations
-that simplify the control-flow graph (CFG), measuring work at the basic block
-resolution would not capture effects of optimisations at the instruction level.
-Because of that, we extend the idea of using basic block frequency to measure
-computational work by also considering the computational cost of each
-basic block. The computational cost of a basic block is given by weighing
-the instructions that it contains.
 
 We model the computational work $\Delta W$ as a linear equation based on
 block frequency information and a cost-model of the instruction set.
@@ -452,28 +379,32 @@ $f(B)$ is a dynamic value known only at run-time.
 %mape 75.2924320971
 %corr (0.99946441743545622, 0.0)
 
+Similarly to previous work~\cite{giusto01,powell09,brandolese11},
+we derive the cost model for the instruction set by modeling the
+problem as a multi-variable linear regression, where the
+\textit{regression coefficients} are the costs of the instructions
+and the \textit{regressors} (or \textit{explanatory variables})
+are computed as $\sum_B N_B(i)f(B)$ for each instruction $i$.
+
 \section{Instrumentation}
 
 In this section we describe how the computation of the work-metric can be
 performed during runtime by means of instrumenting the code.
-%with the necessary computation for the work metric, $\Delta W$, as described in Section~\ref{sec:metric}.
+In particular, we adapt the optimal algorithm proposed originally 
+for profiling block frequency~\cite{knuth73,ball94}.
+Afterwards, we propose a relaxed instrumentation that focus on
+further reducing the overhead by considering the trade-off between
+profiling accuracy and instrumentation overhead.
+
 Because we define work as a linear equation on the block frequency counters,
 it is possible to embed its computation into the execution of the program.
 A naive instrumentation would consists basically of having a global counter
 that starts with the interception value, $\varepsilon$, and each basic block
 increments its own cost into the global counter. Although this instrumentation
 is easily implemented, it inserts a large amount of overhead into the program.
-
-In 1973, Donald Knuth~\cite{knuth73} provided an optimal algorithm for
-profiling block frequency, inserting fewer probes than the previously described
-naive instrumentation that was commonly used in practice~\cite{knuth71}.
-Forman~\cite{forman81} proposed further overhead reductions by placing the
-probes in basic blocks that are less likely to be executed based on static
-heuristics.
-Ball and Larus~\cite{ball94} offered a detailed discussion comparing
-two approaches for optimally profiling block frequency, namely,
-placing probes on the vertices or the edges of the control-flow graph (CFG).
-They show that the edge-based approach produces optimal placement of probes.
+However, it is possible to insert fewer probes by carefully placing the probes
+in a way that is possible to reconstruct
+the complete profiling information~\cite{knuth73,ball94}.
 
 Ball and Larus~\cite{ball94} show that a set of edges represents the minimum
 number of probes for profiling block frequency if and only if the complementary
@@ -761,7 +692,7 @@ In this section we discuss our experimental evaluation.
 First we describe the benchmarks with datasets used in the experiments.
 Afterwards, we discuss our results concerning the instrumentations for profiling
 our work metric.
-Finally we present the results of the online iterative optimisation.
+Finally we present the results of the online {\itercomp}.
 
 We implemented the instrumentations in LLVM 4.0.
 The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz
@@ -769,10 +700,10 @@ Skylake~CPU with 16~GiB RAM.
 
 \subsection{Benchmarks}
 
-%Iterative optimisations is essentially based on repeatedly trying
+%{\Itercomp} is essentially based on repeatedly trying
 %out a large number of compiler optimisations until the best
 %combination of compiler optimisations is found for a particular program.
-%Our main goal is to speed up iterative optimisation while targeting
+%Our main goal is to speed up {\itercomp} while targeting
 %optimal performance across large input datasets.
 
 For the experimental evaluation we have used a subset of the \textit{KDataSets} benchmark suit,
@@ -867,9 +798,9 @@ measured in the loop.
 %be used for assessing the quality of the proposed metric.
 
 %\vspace{1ex}
-%\noindent \textbf{Iterative optimisation over a single input}
+%\noindent \textbf{{\Itercomp} over a single input}
 
-%Most of the existing iterative optimisation studies find the
+%Most of the existing {\itercomp} studies find the
 %best optimisation though repeated runs on the same input.
 %Although this approach will usually lead to sub-optimal performance
 %across large input datasets, it provides a good baseline when considering
@@ -886,9 +817,9 @@ measured in the loop.
 %consider the average case of their performance across the whole input dataset.
 
 %\vspace{1ex}
-%\noindent \textbf{Iterative optimisation across large input datasets}
+%\noindent \textbf{{\Itercomp} across large input datasets}
 
-%Recent work on iterative optimisation have been targeting optimisation
+%Recent work on {\itercomp} have been targeting optimisation
 %across multiple inputs~\cite{fursin07,chen10,chen12a}.
 %If $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimisations,
 %they perform a total of $O(NM)$ runs of the program being optimised.
@@ -901,9 +832,9 @@ measured in the loop.
 %with minimised variance.
 
 %\vspace{1ex}
-%\noindent \textbf{Iterative optimisation based on the IPC metric}
+%\noindent \textbf{{\Itercomp} based on the IPC metric}
 
-%While the previous two baselines addresses two opposite aspects of iterative optimisation,
+%While the previous two baselines addresses two opposite aspects of {\itercomp},
 %namely, compile-time efficiency and performance of the generated code,
 %we also intend to compare against IPC as the competing baseline.
 %The main reason for comparing against IPC is because it has been proposed as a metric
@@ -911,7 +842,7 @@ measured in the loop.
 %If $M$ is the total number of combinations of compiler optimisations,
 %this approach requires $O(M)$ runs of the program being optimised.
 
-\subsection{Evaluation of the Online Iterative Optimisation}
+\subsection{Evaluation of the Online {\IterComp}}
 
 \begin{itemize}
 \item Oracle-RM executes the program twice, for each input, and then measuring
@@ -921,7 +852,7 @@ selecting the best optimisation.
 executing the program twice, once for estimating the amount of work and the
 second for measuring its execution time.
 This version uses the work-based metric, $\frac{\Delta W}{\Delta t}$, during
-the iterative optimisation search.
+the {\itercomp} search.
 \end{itemize}
 
 
@@ -929,14 +860,14 @@ the iterative optimisation search.
 \begin{figure*}[htb]
     \centering
     \includegraphics[width=\textwidth]{figs/speedups.pdf}
-    \caption{Speedups observed with the online iterative optimisation.}
+    \caption{Speedups observed with the online {\itercomp}.}
     \label{fig:speedups}
 \end{figure*}
 
 %\begin{figure*}[htb]
 %    \centering
 %    \includegraphics[width=\textwidth]{figs/profiled-speedups.pdf}
-%    \caption{Speedups observed with the online iterative optimisation if we
+%    \caption{Speedups observed with the online {\itercomp} if we
 %             consider the instrumentation overhead.}
 %    \label{fig:profiled-speedups}
 %\end{figure*}
@@ -944,7 +875,7 @@ the iterative optimisation search.
 %\subsubsection{Contribution of individual optimisation passes}
 %
 %Figure~\ref{fig:flagsfreq} shows an aggregated view of the final combination
-%of compiler optimisations that were selected by iterative optimisation search.
+%of compiler optimisations that were selected by {\itercomp} search.
 %The figure presents the individual optimisation passes with at least 1\% of
 %frequency in the selected combination of compiler optimisations that improved
 %the performance over {\texttt{-O3}}.
@@ -953,10 +884,108 @@ the iterative optimisation search.
 %    \centering
 %    \includegraphics[width=\textwidth]{figs/flagsfreq.pdf}
 %    \caption{Frequency of individual optimisation passes on the final selected 
-%             compiler optimisations of the iterative optimisation search over
+%             compiler optimisations of the {\itercomp} search over
 %             all benchmarks.}
 %    \label{fig:flagsfreq}
 %\end{figure*}
+
+
+\section{Related Work}
+
+\subsection{{\IterComp}}
+
+Chen~\etal~\cite{chen10,chen12a} evaluate the effectiveness of iterative
+compilations across a large number of input test cases.
+Their main motivation is to answer the question:
+\textit{How data input dependent is {\itercomp}?}
+Their results show that it is possible to find a combination of compiler optimisations
+that achieves at least 86\% of the maximum speedup across all input test cases.
+These optimal combinations are program-specific and yield average
+speedups up to 3.75$\times$ over the highest optimisation level of compilers.
+
+When optimising a program, the main method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a}
+evaluates each combination of compiler optimisations across all the available inputs, i.e.,
+if $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimisations,
+they perform a total of $O(NM)$ runs of the program being optimised.
+Furthermore, they use a pre-defined set of only 300 different combinations of compiler optimisations,
+which represents a very small sample of the optimisation search space for most modern compilers, e.g.
+LLVM has 56 distinct optimisation passes and GCC has about 47 high-level (SSA form) optimisation passes and
+about 25 low-level (RTL) optimisation passes, which in both cases result in much more than $2^{50}$ distinct
+combinations of compiler optimisations, without considering repetition.
+
+Recent work~\cite{chen12b,fang15} have applied the same idea of performing
+input-dependent {\itercomp} to distributed applications on data centres.
+In summary, each worker receives a subset of the input dataset, called the evaluation dataset,
+to perform an \textit{online} {\itercomp} of the code being executed.
+Each worker performs the same the method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a},
+i.e., they evaluate each combination of compiler optimisations across all the evaluation dataset.
+However, because the optimisation is performed online, they usually consider a small evaluation dataset
+and a small number of compiler optimisations.
+
+Fursin~\etal~\cite{fursin07} addressed the problem of comparing the effect of two optimisations
+on two distinct inputs. For that purpose, they proposed to use instruction per cycle (IPC) as the metric for performing such comparison.
+Their result show that using IPC seems promising as a robust metric for {\itercomp}
+across large input datasets.
+However, 
+some specific optimisation techniques may affect the use of IPC as a robust metric, and specially
+IPC has been shown to provide poor performance estimation for multi-threaded programs~\cite{alameldeen06,eyerman08}.
+In particular, IPC can give a skewed performance measure if threads spend time in \textit{spin-lock loops}
+or other synchronisation mechanisms. 
+Some existing work on performance assessment suggest that
+total execution time should be used for measuring performance of multi-threaded programs~\cite{alameldeen06,eyerman08}.
+Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used
+if the unit of work is representative enough.
+Work-related metrics have already been largely used for measuring performance of throughput-oriented applications,
+for other applications, however, choosing an appropriate unit of work can be more challanging~\cite{alameldeen06}.
+
+\subsection{Work and Input Size Metrics}
+
+Previous work have proposed profiling-based mechanism to estimate
+input sizes~\cite{zaparanuks12,coppa14}.
+Coppa~\etal~\cite{coppa14} in particular propose the concept of
+\textit{read memory size} for automatically estimating the size of the input
+passed to a routine, where \textit{read memory size} represents the number of
+distinct memory cells first accessed by a read operation.
+In other words, the \textit{read memory size} metric measures the size of the 
+useful portion of the input's memory footprint.
+However, because we are interested in the amount of computational work performed
+in respect of a given input, the memory footprint of the input may not always
+have a direct correspondence to  the amount of computational work.
+
+Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the
+measure for performance for empirically describing the asymptotic behaviour
+of programs, which is known as empirical computational complexity.
+Block frequency is a relative metric that represents the number of times a
+basic block executes~\cite{ball94,ball96}. 
+They argue in favour of block frequency due to its portability, repeatability
+and exactness, since it does not suffer from timer resolution problems or
+non-deterministic noises.
+Block frequency also has the advantage of being efficiently profiled by means
+of automatic code instrumentation~\cite{knuth73,ball94}.
+
+However, in the context of comparing different optimisations,
+although block frequency would be able to capture aspects of optimisations
+that simplify the control-flow graph (CFG), measuring work at the basic block
+resolution would not capture effects of optimisations at the instruction level.
+Because of that, we extend the idea of using basic block frequency to measure
+computational work by also considering the computational cost of each
+basic block. The computational cost of a basic block is given by weighing
+the instructions that it contains.
+
+\subsection{Optimal Instrumentation}
+
+
+In 1973, Donald Knuth~\cite{knuth73} provided an optimal algorithm for
+profiling block frequency, inserting fewer probes than the previously described
+naive instrumentation that was commonly used in practice~\cite{knuth71}.
+Forman~\cite{forman81} proposed further overhead reductions by placing the
+probes in basic blocks that are less likely to be executed based on static
+heuristics.
+
+Ball and Larus~\cite{ball94} offered a detailed discussion comparing
+two approaches for optimally profiling block frequency, namely,
+placing probes on the vertices or the edges of the control-flow graph (CFG).
+They show that the edge-based approach produces optimal placement of probes.
 
 \section{Conclusion and Future Work}
 
