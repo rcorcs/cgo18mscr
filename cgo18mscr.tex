@@ -1,4 +1,5 @@
-\documentclass[sigplan,9pt]{acmart}
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[sigplan,10pt]{acmart}
 
 \usepackage{booktabs} % For formal tables
 
@@ -12,9 +13,10 @@
 
 \usepackage{multirow}
 
-\usepackage{color}
+%\usepackage{setspace}
+\usepackage{ragged2e}
 
-\usepackage{soul}
+	\usepackage{soul}
 
 %\usepackage{flushend}
 
@@ -25,11 +27,75 @@
 %\usepackage{mathrsfs}
 \usepackage{mathtools}
 
-\usepackage[noend]{algpseudocode}
-\usepackage{algorithm}
+
+%% Listing related stuff
+
+\usepackage{listings}
+\usepackage{courier}            %Required for pretty listings (more dense)
+
+
+%% EMACS colors for listing:
+
+\usepackage{color}
+\definecolor{sh_comment}{rgb}{0.65, 0.00, 0.00 } % red-ish
+\definecolor{sh_keyword}{rgb}{0.37, 0.69, 0.69}  % blue-green
+\definecolor{sh_string}{rgb}{0.08, 0.69, 0.08} % green
+
+
+%% This manipulates the listing numbering. It decreases it by one at the point used.
+\newcommand*\lstDNumber{\addtocounter{lstnumber}{-1}}
+
+%% Change from Listing->Algorithm
+%% \renewcommand\lstlistingname{Algorithm} % Fix listing caption name: Listing -> Algorithm
+%% \renewcommand\lstlistlistingname{Algorithms}
+%% \def\lstlistingautorefname{Alg.}
+
+%% \renewcommand{\thelstlisting}{\thesection-\arabic{lstlisting}}
+%\renewcommand{\thelstlisting}{\arabic{lstlisting}} % Fix listing numbering Algorithm 1.1 -> Algorithm 1.
+
+%% \renewcommand{\labelenumi}{\roman{enumi}.}
+
+\lstset{
+float=[*],
+language=C,                % choose the language of the code
+%% basicstyle=\linespread{0.9}
+%% basicstyle=\scriptsize\ttfamily,
+ basicstyle={\linespread{0.97} \scriptsize\ttfamily},
+ stringstyle=\color{sh_string},
+ keywordstyle = \color{sh_keyword}\bfseries,
+ commentstyle=\color{sh_comment}\itshape,
+numbers=left,                   % where to put the line-numbers
+%% numberstyle=\scriptsize,        % the size of the fonts that are used for the line-numbers
+numberstyle=\scriptsize,        % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+xleftmargin=2em,                % Left margin
+frame=lines,                   % adds a frame around the code. none|leftline|topline|bottomline|lines|single|shadowbox
+framexleftmargin=1.5em,         % Margin from frame to line numbers
+framexbottommargin=0em,         % Distance from last text to frame
+morekeywords={in,true,false,and,or,set,is,not},
+%% prebreak=\mbox{\tiny$\searrow$},
+prebreak=\space,                % Line break: insert this character at the end of the top line
+%% postbreak=\mbox{{\color{blue}\scriptsize$\hookrightarrow$}}, % Line break: blue arrow at the beginning of the bottom line
+postbreak=\mbox{{\color{blue}\scriptsize$\hookrightarrow$}}, % Line break: blue arrow at the beginning of the bottom line
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+tabsize=2,                      % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to top
+escapeinside={\@}{\@}             % Escape sequence \@ESCAPED STUFF\@
+}
+
+\usepackage{nasm/lang}
+\usepackage{nasm/style}
+\usepackage{llvm/lang}
+
+
 
 \newcommand{\etal}{et~al.}
-\algrenewcommand\algorithmicindent{3ex}%
 
 % Copyright
 \setcopyright{none}
@@ -62,84 +128,53 @@ Code Generation and Optimization}{2018}{}
 
 \begin{document}
 \title{Online {\IterComp}\\Guided by Low Overhead Profiling}
-%\titlenote{Produces the permission block, and
-%  copyright information}
-%\subtitle{Extended Abstract}
-%\subtitlenote{The full version of the author's guide is available as
-%  \texttt{acmart.pdf} document}
+%\titlenote{...}
+%\subtitle{...}
+%\subtitlenote{...}
 
-
-\author{Rodrigo C. O. Rocha}
-%\authornote{Dr.~Trovato insisted his name be first.}
-%\orcid{1234-5678-9012}
+\author{ }
 \affiliation{%
-  \institution{University of Edinburgh, UK}
-  %\streetaddress{P.O. Box 1212}
-  %\city{Dublin} 
-  %\state{Ohio} 
-  %\postcode{43017-6221}
+  \institution{ }
 }
-\email{r.rocha@ed.ac.uk}
+\email{ }
 
-\author{Pavlos Petoumenos}
-%\authornote{The secretary disavows any knowledge of this author's actions.}
-\affiliation{%
-  \institution{University of Edinburgh, UK}
-  %\streetaddress{P.O. Box 1212}
-  %\city{Dublin} 
-  %\state{Ohio} 
-  %\postcode{43017-6221}
-}
-\email{ppetoume@inf.ed.ac.uk}
+%\author{Rodrigo C. O. Rocha}
+%\affiliation{%
+%  \institution{University of Edinburgh, UK}
+%}
+%\email{r.rocha@ed.ac.uk}
 
-\author{Lu\'is F. W. G\'oes}
-%\authornote{This author is the
-%  one who did all the really hard work.}
-\affiliation{%
-  \institution{PUC Minas, Brazil}
-  %\streetaddress{1 Th{\o}rv{\"a}ld Circle}
-  %\city{Hekla} 
-  %\country{Iceland}
-}
-\email{lfwgoes@pucminas.br}
+%\author{Pavlos Petoumenos}
+%\affiliation{%
+%  \institution{University of Edinburgh, UK}
+%}
+%\email{ppetoume@inf.ed.ac.uk}
 
-\author{Murray Cole}
-\affiliation{
-  \institution{University of Edinburgh, UK}
-  %\streetaddress{P.O. Box 5000}
-}
-\email{mic@inf.ed.ac.uk}
+%\author{Lu\'is F. W. G\'oes}
+%\affiliation{%
+%  \institution{PUC Minas, Brazil}
+%}
+%\email{lfwgoes@pucminas.br}
 
-\author{Zheng Wang}
-\affiliation{%
-  \institution{Lancaster University, UK}
-  %\city{Moffett Field}
-  %\state{California} 
-  %\postcode{94035}
-}
-\email{z.wang@lancaster.ac.uk}
+%\author{Murray Cole}
+%\affiliation{
+%  \institution{University of Edinburgh, UK}
+%}
+%\email{mic@inf.ed.ac.uk}
 
-\author{Hugh Leather}
-\affiliation{%
-  \institution{University of Edinburgh, UK}
-  %\streetaddress{8600 Datapoint Drive}
-  %\city{San Antonio}
-  %\state{Texas} 
-  %\postcode{78229}
-}
-\email{hleather@inf.ed.ac.uk}
+%\author{Zheng Wang}
+%\affiliation{%
+%  \institution{Lancaster University, UK}
+%}
+%\email{z.wang@lancaster.ac.uk}
 
-%\author{John Smith}
-%\affiliation{\institution{The Th{\o}rv{\"a}ld Group}}
-%\email{jsmith@affiliation.org}
+%\author{Hugh Leather}
+%\affiliation{%
+%  \institution{University of Edinburgh, UK}
+%}
+%\email{hleather@inf.ed.ac.uk}
 
-%\author{Julius P.~Kumquat}
-%\affiliation{\institution{The Kumquat Consortium}}
-%\email{jpkumquat@consortium.net}
-
-% The default list of authors is too long for headers}
 \renewcommand{\shortauthors}{R. Rocha et al.}
-
 
 \begin{abstract}
 Efficiently selecting the best combination of compiler optimisations for a program
@@ -198,7 +233,7 @@ Because of the unpredictability of optimisation interactions, in addition to the
 
 Each of these optimisations interacts with the code in complicated ways, depending on all other optimisations and the order they were applied to the code being optimised.
 Understanding the interactions of optimisations is very important in determining a good solution to the phase-ordering problem~\cite{touati06,kulkarni12}.
-Because of all those dependences and interactions, although most compiler optimisations yield significant improvements in many programs, the potential for performance degradation in certain program patterns is known to compiler writers and many users~\cite{pan06,zhou12,kulkarni12}.
+Because of all those dependencies and interactions, although most compiler optimisations yield significant improvements in many programs, the potential for performance degradation in certain program patterns is known to compiler writers and many users~\cite{pan06,zhou12,kulkarni12}.
 %Traditional compilers typically apply the same set of optimisation in a fixed order to all functions in a program, without regard the code being optimised.
 
 Efficiently selecting the best combination of compiler optimisations for a given program or program section remains an open problem.
@@ -231,9 +266,9 @@ In order to speed up this process we intend to reduce the number of actual execu
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{figs/diagram}
+    \includegraphics[width=\linewidth]{figs/infra-diagram}
     \caption{Overview of the execution engine for applying {\itercomp}.}
-    \label{fig:diagram}
+    \label{fig:infra-diagram}
 \end{figure}
 
 In this paper, our main goal is to enable {\itercomp} in \textit{online} scenarios with the restriction of executing distinct inputs only once, while targeting optimal performance across different inputs.
@@ -308,7 +343,12 @@ In other words, $N_B(i)$ is a static value known at compile-time and $f(B)$ is a
 %mape 75.2924320971
 %corr (0.99946441743545622, 0.0)
 
-Similarly to previous work~\cite{giusto01,powell09,brandolese11}, we derive the cost model for the instruction set by modeling the problem as a multi-variable linear regression, where the \textit{regression coefficients} are the costs of the instructions and the \textit{regressors} (or \textit{explanatory variables}) are computed as $\sum_B N_B(i)f(B)$ for each instruction $i$.
+Similarly to previous work~\cite{giusto01,powell09,brandolese11}, we derive the cost model for the instruction set by modelling the problem as a multi-variable linear regression, where the \textit{regression coefficients} are the costs of the instructions and the \textit{regressors} (or \textit{explanatory variables}) are computed as $\sum_B N_B(i)f(B)$ for each instruction $i$.
+\[
+\Delta W = \varepsilon + \sum_{i} \left(w_i \sum_{B} N_B(i)f(B)\right)
+\]
+
+By having some empirical data after executing several benchmarks with different inputs, we can fit the linear model with this empirical data in order to obtain the costs of the instructions.
 
 \section{Instrumentation}
 
@@ -355,71 +395,36 @@ Once we have the maximum spanning tree, probes are placed on any edge not in the
 In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling, the instrumented basic blocks need record an aggregated value of work that represents a path in the CFG.
 These values are constructed with some instrumented basic blocks speculatively assuming some paths while other probes correct when these assumptions are wrong (see for example $w(P_0)$ and $w(P_1)$ in Figure~\ref{fig:cfg-example}).
 
-\begin{algorithm}[h]
-  \caption{Pseudocode of the data-flow analysis for assigning the values computed
-  in each probe of the instrumentation for the profiling of the work metric.}
-  \label{alg:populateEdgeInfo}
-  \begin{algorithmic}
-    \Function{\textrm{populateEdgeInfo}}{$G$}
-    
-    \For{\textbf{each} $e \in $ \textrm{instrumentedEdges}($G$) }
-       \State $B_I \gets $ \textrm{instrumentedBlock}($e$)
-       \State $inc[e] \gets \{ B_I \}$
-       \State $dec[e] \gets \{ \}$
-       \State $known[e] \gets $ \textbf{true}
-    \EndFor
+\begin{lstlisting}[caption={Post-processing of the CFG for populating all edge flows based on the collected probes.}, label={lst:populateEdgeFlows}, float]
+// Inputs: CFG with the known edges flows from
+//         the cotree (collected probes).
+// Output: Updated CFG with all edge flows.
+populateEdgeFlows(G) {
+  changed = true
+  while changed:
+    changed = false
+    for B in G.vertices():
+      unIN = count( G.unknownIncomingEdges(B) )
+      unOUT = count( G.unknownOutgoingEdges(B) )
+      if unIN==0 and unOUT==1:
+        //sum known incoming and outgoing edges
+        sIN = sum( G.incomingEdges(B) )
+        sOUT = sum( G.outgoingEdges(B) )
+        //update unknown outgoing edge in B
+        //with (sIN-sOUT)
+        G.setUnknownOutgoingEdge(B, (sIN-sOUT))
+        changed = true
+      if unIN==1 and unOUT==0:
+        //sum known incoming and outgoing edges
+        sIN = sum( G.incomingEdges(B) )
+        sOUT = sum( G.outgoingEdges(B) )
+        //update unknown incoming edge in B
+        //with (sOUT-sIN)
+        G.setUnknownIncomingEdge(B, (sOUT-sIN))
+        changed = true
+}
+\end{lstlisting}
 
-    \State $changed \gets $ \textbf{true}
-    \While{$changed$}
-       \State $changed \gets $ \textbf{false}
-	   \For{\textbf{each} $B \in V(G)$}
-          \State $uIn \gets $ \textrm{unknownIn}($known, G, B$)
-          \State $uOut \gets $ \textrm{unknownOut}($known, G, B$)
-		  \If{$uIn=0$ \textbf{and} $uOut=1$}
-             \State $changed \gets $ \textbf{true}
-		     \State $incOut \gets \{\}$
-			 \State $decOut \gets \{\}$
-		     \For{$B_p\in$ \textrm{predecessors}($G, B$)}
-			    \State $incOut \gets incOut \bigcup inc[(B_p,B)]$
-			    \State $decOut \gets decOut \bigcup dec[(B_p,B)]$
-			 \EndFor
-		     \For{$B_s\in$ \textrm{successors}($G, B$)}
-			    \State $incOut \gets incOut \cup dec[(B,B_s)]$
-			    \State $decOut \gets decOut \cup inc[(B,B_s)]$
-			 \EndFor
-		     \For{$B_s\in$ \textrm{successors}($G, B$)}
-			    \If{\textbf{not} $known[(B,B_s)]$}
-			       \State $inc[(B,B_s)] \gets incOut\setminus{decOut}$
-			       \State $dec[(B,B_s)] \gets decOut\setminus{incOut}$
-			       \State $known[(B,B_s)] \gets$ \textbf{true}
-				\EndIf
-			 \EndFor
-		  \EndIf
-		  \If{$uIn=1$ \textbf{and} $uOut=0$}
-             \State $changed \gets $ \textbf{true}
-		     \State $incIn \gets \{\}$
-			 \State $decIn \gets \{\}$
-		     \For{$B_s\in$ \textrm{successors}($G, B$)}
-			    \State $incIn \gets incIn \cup inc[(B,B_s)]$
-			    \State $decIn \gets decIn \cup dec[(B,B_s)]$
-			 \EndFor
-		     \For{$B_p\in$ \textrm{predecessors}($G, B$)}
-			    \State $incIn \gets incIn \bigcup dec[(B_p,B)]$
-			    \State $decIn \gets decIn \bigcup inc[(B_p,B)]$
-			 \EndFor
-		     \For{$B_p\in$ \textrm{predecessors}($G, B$)}
-			    \If{\textbf{not} $known[(B_p,B)]$}
-			       \State $inc[(B_p,B)] \gets incIn\setminus{decIn}$
-			       \State $dec[(B_p,B)] \gets decIn\setminus{incIn}$
-			       \State $known[(B_p,B)] \gets$ \textbf{true}
-				\EndIf
-			 \EndFor
-		  \EndIf
-	   \EndFor
-    \EndWhile
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
 
 Because the algorithm for the optimal placement of the probes is proved to uniquely compute the block frequencies by propagating the probe counts, we adapt this algorithm in order to compose the aggregated values that will be instrumented in each probe, based on our model of computational work, $\Delta W$, derived from the basic block frequencies (see Section~\ref{sec:metric}).
 We perform a similar propagation of the probes in a symbolic fashion, as illustrated in Figure~\ref{fig:cfg-example}.
@@ -442,40 +447,33 @@ For example, the symbolic sum of the incoming edges of the basic block $B_8$ is 
 Algorithm~\ref{alg:instrValue} reads the edge information for each basic block by computing the symbolic sum of their respective incoming edges (or outgoing edges).
 From these \textit{edge expressions}, we are able to compose the aggregated value of the probes.
 The positive terms in the edge expression of a basic block indicate that the amount of work of this basic block will be incremented in the probes represented by these positive terms, similarly, the negative terms indicate that the amount of work of this basic block will be decremented in the probes represented by these negative terms.
-For example, because the edge experssion for the basic block $B_8$ is $P_0 - P_1$, the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$ and decremented in $P_1$.
+For example, because the edge expression for the basic block $B_8$ is $P_0 - P_1$, the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$ and decremented in $P_1$.
 
-\begin{algorithm}[h]
-  \caption{Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the predecessors.}
-  \label{alg:instrValue}
-  \begin{algorithmic}
-    \Function{\textrm{instrValue}}{$G, B_I, inc, dec$}
-	\State $v \gets 0$
-    \For{\textbf{each} $B \in V(G)$}
-	   \State $inc_B \gets \{\}$
-	   \State $dec_B \gets \{\}$
-%	   \For{$B_p\in$ \textrm{predecessors}($G, B$)}
-%	      \State $inc_B \gets inc_B \bigcup inc[(B_p,B)]$
-%	      \State $dec_B \gets dec_B \bigcup dec[(B_p,B)]$
-%	   \EndFor
-	   \For{$B_s\in$ \textrm{successors}($G, B$)}
-	      \State $inc_B \gets inc_B \bigcup inc[(B,B_s)]$
-	      \State $dec_B \gets dec_B \bigcup dec[(B,B_s)]$
-	   \EndFor
-	   \If{ $B_I \in inc_B\setminus{dec_B}$}
-	      \State $v \gets v + w(B)$
-	   \EndIf
-	   \If{ $B_I \in dec_B\setminus{inc_B}$}
-	      \State $v \gets v - w(B)$
-	   \EndIf
-	\EndFor
-    \Return $v$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
+\begin{lstlisting}[caption={Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the predecessors.}, label={lst:instrValue}, float]
+// Inputs: 1) CFG with the known edges flows
+//            of the chords.
+//         2) Basic block targeted for probing.
+// Output: Work value to be incremented by the
+//         given probe B.
+instrValue(G, B, inc, dec) {
+  value = 0
+  for B in G.vertices():
+    incB = set()
+    decB = set()
+    for succB in G.successor(B):
+      incB = incB union inc[G.getEdge(B, succB)]
+      decB = decB union dec[G.getEdge(B, succB)]
+    if B in (incB - decB):
+      value = value + w(B)
+    if B in (decB - incB):
+      value = value - w(B)
+  return value
+}
+\end{lstlisting}
 
 \subsection{Relaxed Instrumentation}
 
-Although the optimal instrumentation significantly reduces the profiling overhead when compared to the naive instrumentaion, from an average overhead of 79\% to 13\%, in some critical cases, even the optimal instrumentation can have an overhead of about 70\% (see benchmark \texttt{adpcm\_d} in Figure~\ref{fig:overhead-O3}).
+Although the optimal instrumentation significantly reduces the profiling overhead when compared to the naive instrumentation, from an average overhead of 79\% to 13\%, in some critical cases, even the optimal instrumentation can have an overhead of about 70\% (see benchmark \texttt{adpcm\_d} in Figure~\ref{fig:overhead-O3}).
 In order to further reduce the overhead in these critical cases, we propose a relaxed instrumentation by trading off accuracy and overhead.
 
 %\begin{figure*}[htb]
@@ -541,14 +539,11 @@ The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz 
 
 \subsection{Benchmarks}
 
-%{\Itercomp} is essentially based on repeatedly trying out a large number of compiler optimisations until the best combination of compiler optimisations is found for a particular program.
-%Our main goal is to speed up {\itercomp} while targeting optimal performance across large input datasets.
-
 For the experimental evaluation we have used a subset of the \textit{KDataSets} benchmark suit, which is the same benchmark and dataset suit used by Chen~\etal~\cite{chen10,chen12a}.
 The KDataSets contains 1000 different inputs for each one of its benchmark programs.
 These benchmarks cover a broad spectrum of application scenarios, ranging from simple embedded signal-processing tasks to common mobile-phone and desktop tasks.
 The different inputs try to capture distinct characteristics in terms of workload sizes and how these workloads exercise different control flow paths.
-A summary of the benchmark and dataset suit is shown in Table~\ref{tab:kdatasets}.
+A summary of the benchmarks and dataset suit is shown in Table~\ref{tab:kdatasets}.
 
 \begin{table}[h]
 \centering
@@ -556,10 +551,7 @@ A summary of the benchmark and dataset suit is shown in Table~\ref{tab:kdatasets
 \begin{tabular}{|c|c|c|c|}
 \hline
 \textbf{Program} & \textbf{LOC}    & \textbf{Input file size}            & \textbf{Input description}              \\ \hline % Domain
-%bitcount      & 460    &  -                         & Numbers: random                \\ \hline
 qsort         & 154    & 32K-1.8M                   & 3D coordinates                 \\ \hline
-%dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             \\ \hline
-%patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\ \hline
 jpeg\_d       & 13501  & 3.6K-1.5M                  & JPEG images                    \\ \hline
 jpeg\_c       & 14014  & 16K-137M                   & PPM images                     \\ \hline
 tiff2bw       & 15477  & \multirow{4}{*}{9K-137M}   & \multirow{4}{*}{TIFF images}   \\ \cline{1-2}
@@ -569,31 +561,47 @@ tiffmedian    & 15870  &                            &                           
 susan\_c      & 1376   & \multirow{3}{*}{12K-46M}   & \multirow{3}{*}{PGM images}    \\ \cline{1-2}
 susan\_e      & 1376   &                            &                                \\ \cline{1-2}
 susan\_s      & 1376   &                            &                                \\ \hline
-%mad           & 2358   & 28K-27M                    & MP3 audios                     \\ \hline
-%lame          & 14491  & 167K-36M                   & WAVE audios                    \\ \hline
 adpcm\_c      & 210    & 167K-36M                   & WAVE audios                    \\ \hline
 adpcm\_d      & 211    & 21K-8.8M                   & ADPCM audios                   \\ \hline
+lame          & 14491  & 167K-36M                   & WAVE audios                    \\ \hline
+rsynth        & 4111   & 0.1K-42M                   &  Text files                    \\ \hline
+sha           & 197    & 0.6K-35M                   & Files of any format            \\ \hline
+\rowcolor{gray!20}
+bitcount      & 460    &  -                         & Numbers: random                \\ \hline
+\rowcolor{gray!20}
+dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             \\ \hline
+\rowcolor{gray!20}
+patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\ \hline
+\rowcolor{gray!20}
+mad           & 2358   & 28K-27M                    & MP3 audios                     \\ \hline
+\rowcolor{gray!20}
 %gsm           & 3806   & 83K-18M                    & Sun/NeXT audios                \\ \hline
-%ghostscript   & 99869  & 11K-43M                    & Postscript files               \\ \hline
+ghostscript   & 99869  & 11K-43M                    & Postscript files               \\ \hline
+\rowcolor{gray!20}
 %ispell        & 6522   & \multirow{3}{*}{0.1K-42M}  & \multirow{3}{*}{Text files}    \\ \cline{1-2}
 %rsynth        & 4111   &                            &                                \\ \cline{1-2}
-rsynth        & 4111   &                            &  Text files                    \\ \hline %%%%%% copied line
-%stringsearch  & 338    &                            &                                \\ \hline
+stringsearch  & 338    &  0.1K-42M                 &  Text files                     \\ \hline
+\rowcolor{gray!20}
 %blowfish\_e   & 863    & 0.6K-35M                   & Files of any format            \\ \hline
 %blowfish\_d   & 863    & 0.6K-35M                   & Encrypted files                \\ \hline
 %pgp\_e        & 19575  & 0.6K-35M                   & Files of any format            \\ \hline
 %pgp\_d        & 19575  & 0.4K-18M                   & Encrypted files                \\ \hline
 %rijndael\_e   & 952    & 0.6K-35M                   & Files of any format            \\ \hline
 %rijndael\_d   & 952    & 0.7K-35M                   & Encrypted files                \\ \hline
-sha           & 197    & 0.6K-35M                   & Files of any format            \\ \hline
-%CRC32         & 130    & 0.6K-35M                   & Files of any format            \\ \hline
-%bzip2e        & 5125   & 0.7K-57M                   & Files of any format            \\ \hline
-%bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\ \hline
+CRC32         & 130    & 0.6K-35M                   & Files of any format            \\ \hline
+\rowcolor{gray!20}
+bzip2e        & 5125   & 0.7K-57M                   & Files of any format            \\ \hline
+\rowcolor{gray!20}
+bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\ \hline
 \end{tabular}
 }
 \caption{Description of the KDataSets with 1000 inputs for each benchmark (Chen~\etal~\cite{chen10,chen12a}).}
 \label{tab:kdatasets}
 \end{table}
+
+The shaded (grey) benchmarks in Table~\ref{tab:kdatasets} represent the benchmarks used for training the cost model used for computing the weight of the instructions for the work metric.
+These same training benchmarks were also used for collecting a fixed set of optimisations for the {\itercomp}.
+The remaining (white) benchmarks are used for the experimental evaluation.
 
 \subsection{Evaluation of the Instrumentation}
 
@@ -609,9 +617,9 @@ The naive instrumentation always has 100\% of the basic blocks instrumented, by 
 
 \begin{figure*}[htp]
     \centering
-    \includegraphics[width=\textwidth]{figs/instr.pdf}
+    \includegraphics[width=\textwidth]{figs/num-probes.pdf}
     \caption{Percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.}
-    \label{fig:instr}
+    \label{fig:num-probes}
 \end{figure*}
 
 The \texttt{adpcm\_d} benchmark is the most critical case amongst the used benchmarks, with a overhead of about 66\% with the optimal instrumentation.
@@ -685,6 +693,25 @@ This version uses the work-based metric, $\frac{\Delta W}{\Delta t}$, during the
 %\end{figure*}
 
 
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figs/ipc-vs-work.pdf}
+    \caption{Comparison between {\itercomp} using IPC or the WP metric.}
+    \label{fig:ipc-vs-work}
+\end{figure*}
+
+
+Figure~\ref{fig:ipc-vs-work} presents a comparison between IPC and the WP metric regarding their correlation with the actual speedup over \verb|-O0| observed during {\itercomp}.
+Each point in the figure correspond to each metric averaged over input windows collected during multiple executions of the {\itercomp}.
+The vertical lines correspond to the optimisation sequence selected by the {\itercomp} search, which either represents the highest IPC or the highest value of WP.
+In all cases, the optimisation sequence selected based on the WP is much closer to the best speedup than the optimisation sequence selected based on IPC, which can be attributed to the fact that the WP have a stronger correlation with the speedup.
+In all cases, IPC shows little to no correlation with the speedup, which corroborates the argument given in Section~\ref{sec:ipc-vs-work-metric}.
+
+For some cases, namely for the tiff-related benchmarks, the WP shows a worse correlation with speedup.
+We believe these cases could be improved by improving the cost model used to compute the work metric.
+However, even in these cases, the optimisation sequence selected based on the WP outperforms those selected based on IPC.
+
+
 \section{Related Work}
 
 \subsection{{\IterComp}}
@@ -710,7 +737,7 @@ However, some specific optimisation techniques may affect the use of IPC as a ro
 In particular, IPC can give a skewed performance measure if threads spend time in \textit{spin-lock loops} or other synchronisation mechanisms. 
 Some existing work on performance assessment suggest that total execution time should be used for measuring performance of multi-threaded programs~\cite{alameldeen06,eyerman08}.
 Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used if the unit of work is representative enough.
-Work-related metrics have already been largely used for measuring performance of throughput-oriented applications, for other applications, however, choosing an appropriate unit of work can be more challanging~\cite{alameldeen06}.
+Work-related metrics have already been largely used for measuring performance of throughput-oriented applications, for other applications, however, choosing an appropriate unit of work can be more challenging~\cite{alameldeen06}.
 
 \subsection{Work and Input Size Metrics}
 
@@ -742,8 +769,6 @@ Our proposed technique for relaxed instrumentation can also be applied for simil
 
 \section*{Acknowledgments}
 
-%\textbf{Acknowledge the partial support by EPSRC}.
-
 This work was supported by the UK Engineering
 and Physical Sciences Research Council (EPSRC) under grants
 EP/L01503X/1 for the University of Edinburgh, School
@@ -753,6 +778,6 @@ and also by the Institute for Computing Systems Architecture (ICSA)
 in the School of Informatics at the University of Edinburgh.
 
 \bibliographystyle{ACM-Reference-Format}
-\bibliography{ref} 
+\bibliography{bibliography} 
 
 \end{document}

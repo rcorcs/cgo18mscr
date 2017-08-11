@@ -1,14 +1,20 @@
-@article{dantzig57,
-author = {George B. Dantzig},
-title = {Discrete-Variable Extremum Problems},
-journal = {Operations Research},
-volume = {5},
-number = {2},
-pages = {266-288},
-year = {1957},
-doi = {10.1287/opre.5.2.266},
-}
-
+@article{purini13,
+ author = {Purini, Suresh and Jain, Lakshya},
+ title = {Finding Good Optimization Sequences Covering Program Space},
+ journal = {ACM Trans. Archit. Code Optim.},
+ volume = {9},
+ number = {4},
+ month = jan,
+ year = {2013},
+ issn = {1544-3566},
+ pages = {56:1--56:23},
+ articleno = {56},
+ numpages = {23},
+ doi = {10.1145/2400682.2400715},
+ acmid = {2400715},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
 
 @Inbook{pop05,
 author="Pop, Sebastian
@@ -27,8 +33,33 @@ address="Berlin, Heidelberg",
 pages="218--232",
 isbn="978-3-540-32272-6",
 doi="10.1007/11587514_15",
-url="http://dx.doi.org/10.1007/11587514_15"
 }
+
+﻿@article {knijnenburg04,
+author = {Knijnenburg, P. M. W. and Kisuki, T. and Gallivan, K. and O'Boyle, M. F. P.},
+title = {The effect of cache models on iterative compilation for combined tiling and unrolling},
+journal = {Concurrency and Computation: Practice and Experience},
+volume = {16},
+number = {2-3},
+publisher = {John Wiley & Sons, Ltd.},
+issn = {1532-0634},
+url = {http://dx.doi.org/10.1002/cpe.773},
+doi = {10.1002/cpe.773},
+pages = {247--270},
+keywords = {compiler optimization, phase ordering problem, cache models},
+year = {2004},
+}
+
+@inproceedings{kisuki00,
+author={T. Kisuki and P. M. W. Knijnenburg and M. F. P. O'Boyle}, 
+booktitle={Proceedings 2000 International Conference on Parallel Architectures and Compilation Techniques (Cat. No.PR00622)}, 
+title={Combined selection of tile sizes and unroll factors using iterative compilation}, 
+year={2000}, 
+pages={237-246}, 
+keywords={optimising compilers;parallel architectures;instruction level parallelism;iterative compilation;loop tiling;unrolling;Cost function;Embedded system;Hardware;Iterative methods;Modems;Optimizing compilers;Predictive models;Tiles;Time measurement}, 
+doi={10.1109/PACT.2000.888348}, 
+ISSN={1089-795X}, 
+month={},}
 
 @Inbook{fursin05,
 author="Fursin, G. G.
@@ -142,6 +173,14 @@ month={April},
  publisher = {ACM},
  address = {New York, NY, USA},
 } 
+
+@inproceedings{ogilvie17, 
+author={W. F. Ogilvie and P. Petoumenos and Z. Wang and H. Leather}, 
+booktitle={2017 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)}, 
+title={Minimizing the cost of iterative compilation with active learning}, 
+year={2017}, 
+pages={245-256}, 
+month={Feb},}
 
 @inproceedings{mpeis16,
    author = {Paschalis Mpeis and Pavlos Petoumenos and Hugh Leather},
@@ -335,6 +374,15 @@ month={May},}
  address = {New York, NY, USA},
 }
 
+﻿@article {jantz14,
+author = {Jantz, Michael R. and Kulkarni, Prasad A.},
+title = {Analyzing and addressing false interactions during compiler optimization phase ordering},
+journal = {Software: Practice and Experience},
+volume = {44},
+number = {6},
+pages = {643--679},
+year = {2014},
+}
 
 %%work metrics and empirical computational complexity
 
@@ -374,6 +422,19 @@ volume={40},
 number={12}, 
 pages={1185-1205}, 
 month={Dec},}
+
+@article{mcgeoch07,
+ author = {McGeoch, Catherine C.},
+ title = {Experimental Algorithmics},
+ journal = {Commun. ACM},
+ volume = {50},
+ number = {11},
+ month = nov,
+ year = {2007},
+ pages = {27--31},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
 
 %% Profiling block frequency
 
@@ -426,11 +487,77 @@ pages = {105--133},
 year = {1971},
 }
 
+@Article{nahapetian73,
+author="Nahapetian, A.",
+title="Node flows in graphs with conservative flow",
+journal="Acta Informatica",
+year="1973",
+volume="3",
+number="1",
+pages="37--41",
+}
+
+@inproceedings{wu94,
+ author = {Wu, Youfeng and Larus, James R.},
+ title = {Static Branch Frequency and Program Profile Analysis},
+ booktitle = {Proceedings of the 27th Annual International Symposium on Microarchitecture},
+ series = {MICRO 27},
+ year = {1994},
+ isbn = {0-89791-707-3},
+ location = {San Jose, California, USA},
+ pages = {1--11},
+ numpages = {11},
+ doi = {10.1145/192724.192725},
+ acmid = {192725},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@inproceedings{ball93,
+ author = {Ball, Thomas and Larus, James R.},
+ title = {Branch Prediction for Free},
+ booktitle = {Proceedings of the ACM SIGPLAN 1993 Conference on Programming Language Design and Implementation},
+ series = {PLDI '93},
+ year = {1993},
+ isbn = {0-89791-598-4},
+ location = {Albuquerque, New Mexico, USA},
+ pages = {300--313},
+ numpages = {14},
+ doi = {10.1145/155090.155119},
+ acmid = {155119},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@inproceedings{wagner94,
+ author = {Wagner, Tim A. and Maverick, Vance and Graham, Susan L. and Harrison, Michael A.},
+ title = {Accurate Static Estimators for Program Optimization},
+ booktitle = {Proceedings of the ACM SIGPLAN 1994 Conference on Programming Language Design and Implementation},
+ series = {PLDI '94},
+ year = {1994},
+ isbn = {0-89791-662-X},
+ location = {Orlando, Florida, USA},
+ pages = {85--96},
+ numpages = {12},
+ doi = {10.1145/178243.178251},
+ acmid = {178251},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@book{shafer76,
+  title={A mathematical theory of evidence},
+  author={Shafer, Glenn and others},
+  volume={1},
+  year={1976},
+  publisher={Princeton university press Princeton}
+}
+
 %% Cost model
 
 @inproceedings{powell09,
  author = {Powell, Daniel Christopher and Franke, Bj\"{o}rn},
- title = {Using Continuous Statistical Machine Learning to Enable High-speed Performance Prediction in Hybrid Instruction-/Cycle-accurate Instruction Set Simulators},
+ title = {Using Continuous Statistical Machine Learning to Enable High-speed Performance Prediction in Hybrid Instruction-Cycle-accurate Instruction Set Simulators},
  booktitle = {Proceedings of the 7th IEEE/ACM International Conference on Hardware/Software Codesign and System Synthesis},
  series = {CODES+ISSS '09},
  year = {2009},
@@ -478,4 +605,251 @@ year = {1971},
  address = {Piscataway, NJ, USA},
  keywords = {instruction-level characterization, software energy estimation},
 } 
+
+%% LLVM
+
+@inproceedings{adve03,
+ author = {Adve, Vikram and Lattner, Chris and Brukman, Michael and Shukla, Anand and Gaeke, Brian},
+ title = {{LLVA}: A Low-level Virtual Instruction Set Architecture},
+ booktitle = {Proceedings of the 36th Annual IEEE/ACM International Symposium on Microarchitecture},
+ series = {MICRO 36},
+ year = {2003},
+ isbn = {0-7695-2043-X},
+ pages = {205--},
+ url = {http://dl.acm.org/citation.cfm?id=956417.956545},
+ acmid = {956545},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+} 
+
+@inproceedings{lattner04,
+ author = {Lattner, Chris and Adve, Vikram},
+ title = {{LLVM}: A Compilation Framework for Lifelong Program Analysis \& Transformation},
+ booktitle = {Proceedings of the International Symposium on Code Generation and Optimization: Feedback-directed and Runtime Optimization},
+ series = {CGO '04},
+ year = {2004},
+ isbn = {0-7695-2102-9},
+ location = {Palo Alto, California},
+ pages = {75--},
+ acmid = {977673},
+ publisher = {IEEE Computer Society},
+ address = {Washington, DC, USA},
+} 
+
+%% SSA Form
+
+@inproceedings{cytron89,
+ author = {Cytron, R. and Ferrante, J. and Rosen, B. K. and Wegman, M. N. and Zadeck, F. K.},
+ title = {An Efficient Method of Computing Static Single Assignment Form},
+ booktitle = {Proceedings of the 16th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+ series = {POPL '89},
+ year = {1989},
+ isbn = {0-89791-294-2},
+ location = {Austin, Texas, USA},
+ pages = {25--35},
+ numpages = {11},
+ doi = {10.1145/75277.75280},
+ acmid = {75280},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@article{cytron91,
+ author = {Cytron, Ron and Ferrante, Jeanne and Rosen, Barry K. and Wegman, Mark N. and Zadeck, F. Kenneth},
+ title = {Efficiently Computing Static Single Assignment Form and the Control Dependence Graph},
+ journal = {ACM Trans. Program. Lang. Syst.},
+ issue_date = {Oct. 1991},
+ volume = {13},
+ number = {4},
+ month = oct,
+ year = {1991},
+ issn = {0164-0925},
+ pages = {451--490},
+ numpages = {40},
+ doi = {10.1145/115372.115320},
+ acmid = {115320},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@inproceedings{alpern88,
+ author = {Alpern, B. and Wegman, M. N. and Zadeck, F. K.},
+ title = {Detecting Equality of Variables in Programs},
+ booktitle = {Proceedings of the 15th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+ series = {POPL '88},
+ year = {1988},
+ isbn = {0-89791-252-7},
+ location = {San Diego, California, USA},
+ pages = {1--11},
+ numpages = {11},
+ doi = {10.1145/73560.73561},
+ acmid = {73561},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@inproceedings{allen70,
+ author = {Allen, Frances E.},
+ title = {Control Flow Analysis},
+ booktitle = {Proceedings of a Symposium on Compiler Optimization},
+ year = {1970},
+ location = {Urbana-Champaign, Illinois},
+ pages = {1--19},
+ numpages = {19},
+ doi = {10.1145/800028.808479},
+ acmid = {808479},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@article{ferrante87,
+ author = {Ferrante, Jeanne and Ottenstein, Karl J. and Warren, Joe D.},
+ title = {The Program Dependence Graph and Its Use in Optimization},
+ journal = {ACM Trans. Program. Lang. Syst.},
+ issue_date = {July 1987},
+ volume = {9},
+ number = {3},
+ month = jul,
+ year = {1987},
+ issn = {0164-0925},
+ pages = {319--349},
+ numpages = {31},
+ doi = {10.1145/24039.24041},
+ acmid = {24041},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+
+%% LLVM Optimisations
+
+@ARTICLE{franchetti05, 
+author={F. Franchetti and S. Kral and J. Lorenz and C. W. Ueberhuber}, 
+journal={Proceedings of the IEEE}, 
+title={Efficient Utilization of {SIMD} Extensions}, 
+year={2005}, 
+volume={93}, 
+number={2}, 
+pages={409-425}, 
+month={Feb}}
+
+
+%% Knapsack Problem
+
+@article{dantzig57,
+author = {George B. Dantzig},
+volume = {5},
+title = {Discrete-Variable Extremum Problems},
+journal = {Operations Research},
+number = {2},
+pages = {266-288},
+year = {1957},
+doi = {10.1287/opre.5.2.266},
+}
+
+@article{martello00,
+title = "New trends in exact algorithms for the 0–1 knapsack problem",
+journal = "European Journal of Operational Research",
+volume = "123",
+number = "2",
+pages = "325 - 332",
+year = "2000",
+note = "",
+author = "Silvano Martello and David Pisinger and Paolo Toth",}
+
+@article{martello77,
+title = "An upper bound for the zero-one knapsack problem and a branch and bound algorithm",
+journal = "European Journal of Operational Research",
+volume = "1",
+number = "3",
+pages = "169 - 175",
+year = "1977",
+note = "",
+author = "Silvano Martello and Paolo Toth",
+
+}
+
+@article{martello99,
+author = {Silvano Martello and David Pisinger and Paolo Toth},
+title = {Dynamic Programming and Strong Bounds for the 0-1 Knapsack Problem},
+journal = {Management Science},
+volume = {45},
+number = {3},
+pages = {414-424},
+year = {1999},
+}
+
+%% Linear Regression
+
+@book{seber12,
+  title={Linear regression analysis},
+  author={Seber, George AF and Lee, Alan J},
+  volume={936},
+  year={2012},
+  publisher={John Wiley \& Sons}
+}
+
+
+
+%% Spanning Tree
+
+@article{kruskal56,
+ author = {Joseph B. Kruskal},
+ journal = {Proceedings of the American Mathematical Society},
+ number = {1},
+ pages = {48-50},
+ publisher = {American Mathematical Society},
+ title = {On the Shortest Spanning Subtree of a Graph and the Traveling Salesman Problem},
+ volume = {7},
+ year = {1956}
+}
+
+@article{bazlamacci01,
+title = {Minimum-weight spanning tree algorithms A survey and empirical study},
+journal = {Computers \& Operations Research},
+volume = {28},
+number = {8},
+pages = {767 - 785},
+year = {2001},
+author = {C\"{u}neyt F. Bazlama\c{c}i and Khalil S. Hindi},
+}
+
+@article{hopcroft73,
+author = {J. E. Hopcroft and J. D. Ullman},
+title = {Set Merging Algorithms},
+journal = {SIAM Journal on Computing},
+volume = {2},
+number = {4},
+pages = {294-303},
+year = {1973},
+}
+
+@article{tarjan75,
+ author = {Tarjan, Robert Endre},
+ title = {Efficiency of a Good But Not Linear Set Union Algorithm},
+ journal = {J. ACM},
+ volume = {22},
+ number = {2},
+ month = apr,
+ year = {1975},
+ pages = {215--225},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+@article{galil91,
+ author = {Galil, Zvi and Italiano, Giuseppe F.},
+ title = {Data Structures and Algorithms for Disjoint Set Union Problems},
+ journal = {ACM Comput. Surv.},
+ volume = {23},
+ number = {3},
+ month = sep,
+ year = {1991},
+ pages = {319--344},
+
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+
 
