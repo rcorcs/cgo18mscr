@@ -27,6 +27,9 @@
 %\usepackage{mathrsfs}
 \usepackage{mathtools}
 
+\theoremstyle{definition}
+\newtheorem{prop}{Proposition}[section]
+
 
 %% Listing related stuff
 
@@ -94,9 +97,6 @@ escapeinside={\@}{\@}             % Escape sequence \@ESCAPED STUFF\@
 \usepackage{llvm/lang}
 
 
-
-\newcommand{\etal}{et~al.}
-
 % Copyright
 \setcopyright{none}
 %\setcopyright{acmcopyright}
@@ -122,9 +122,14 @@ Code Generation and Optimization}{2018}{}
 %
 %\acmPrice{15.00}
 
+
+\newcommand{\etal}{et~al.}
+
 \newcommand{\itercomp}{{iterative compilation}}
 \newcommand{\Itercomp}{{Iterative compilation}}
 \newcommand{\IterComp}{{Iterative Compilation}}
+
+\newcommand{\flagstype}{\usefont{T1}{cmr}{m}{n}}
 
 \begin{document}
 \title{Online {\IterComp}\\Guided by Low Overhead Profiling}
@@ -290,23 +295,25 @@ Our main contributions are the following:
 
 \section{Work-based Metric} \label{sec:metric}
 
-In this section we define the work-based performance metric used in this paper.
+In this section we define the work-based performance (WP) metric proposed for comparing different optimised versions of a program when executing with different inputs.
 We define the performance metric as the ratio between the amount of \textit{work}, $\Delta W$, performed during a period of time, $\Delta t$.
 \[
    P = \frac{\Delta W}{\Delta t}
 \]
 
 %The hypothesis is that, given two optimisations $o_1$ and $o_2$, a program compiled with optimisation $o_2$ would \textit{consistently} perform better than when it is compiled with $o_1$, i.e., $o_1 \tilde{<}_p \, o_2$, if it performs more \textit{work} per unit of time when compiled with $o_2$ instead of $o_1$. 
-By measuring the amount of \textit{work} done per unit of time we reduce the impact of input-dependent aspects and focus instead on the efficiency of the optimised program.
+By measuring the amount of \textit{work} done per unit of time, we reduce the impact of input-dependent aspects and focus instead on the efficiency of the optimised program.
 For this metric, the main challenge is to precisely define what represents \textit{work}.
+As discussed in Section~\ref{sec:related-metrics}, many work metrics have been presented in the literature, such as block frequency and others.
+However, for comparing the performance benefits of different compiler optimisations on a program, although block frequency would be able to capture aspects of optimisations that simplify the control-flow graph (CFG), we argue that measuring work only at the basic block resolution would not be enough for capturing the effects of optimisations at the instruction level.
+For this reason, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
 
 %For that purpose, we intend to use profiling techniques to measure the input size and amount of computation performed on the execution path triggered by the input~\cite{ball94,ball96,zaparanuks12,coppa14}.
-
 %In addition to being useful for speeding up {\itercomp} across a large number of different inputs, this metric based on comparing work-based efficiencies could
 %potentially be used for applying {\itercomp} \textit{online}.
 %However, the overhead for estimating the amount of \textit{work} must be low enough for the performance gains to be beneficial.
-
-We model the computational work $\Delta W$ as a linear equation based on block frequency information and a cost-model of the instruction set.
+To this end, we model the computational work $\Delta W$ as a linear equation based on block frequency information and a cost model of the instruction set.
+Formally,
 \[
 \Delta W = \varepsilon + \sum_{B} w(B)f(B)
 \]
@@ -317,9 +324,12 @@ w(B) = \sum_{i} w_i N_B(i)
 \]
 where $w_i$ is the cost of instruction $i$ and $N_B(i)$ is the number of occurrences of instruction $i$ in basic block $B$.
 
-In this simplified model, we consider that $w_i$ is constant across all programs and executions in the given target platform.
-However, $N_B(i)$ is program dependent but constant across executions, while $f(B)$ is both program and execution dependent, since $f(B)$ can change when executing with different inputs.
-In other words, $N_B(i)$ is a static value known at compile-time and $f(B)$ is a dynamic value known only at run-time.
+In this simplified model, we consider that $w_i$ is constant across all programs and executions, varying only between target architectures.
+On the other hand, $N_B(i)$ is a program-dependent static value which is known at compile-time and $f(B)$ is a dynamic value known only at run-time,
+since $f(B)$ is both program and execution dependent as the execution frequency of a basic block can change when executing with different inputs.
+%However, $N_B(i)$ is program dependent but constant across executions, while $f(B)$ is both program and execution dependent, since $f(B)$ can change when executing with different inputs.
+%In other words, $N_B(i)$ is a static value known at compile-time and $f(B)$ is a dynamic value known only at run-time.
+
 %If we define $x_i$ as
 %\[
 %x_i = \sum_{B\in P} N_B(i)f(B)
@@ -343,12 +353,146 @@ In other words, $N_B(i)$ is a static value known at compile-time and $f(B)$ is a
 %mape 75.2924320971
 %corr (0.99946441743545622, 0.0)
 
-Similarly to previous work~\cite{giusto01,powell09,brandolese11}, we derive the cost model for the instruction set by modelling the problem as a multi-variable linear regression, where the \textit{regression coefficients} are the costs of the instructions and the \textit{regressors} (or \textit{explanatory variables}) are computed as $\sum_B N_B(i)f(B)$ for each instruction $i$.
-\[
-\Delta W = \varepsilon + \sum_{i} \left(w_i \sum_{B} N_B(i)f(B)\right)
-\]
+\subsection{Estimating a Cost Model of the Instructions}
 
-By having some empirical data after executing several benchmarks with different inputs, we can fit the linear model with this empirical data in order to obtain the costs of the instructions.
+Similarly to previous work~\citep{giusto01,powell09,brandolese11}, we derive the cost model of the instruction set by modelling the problem as a multi-variable linear regression, where the \textit{regression coefficients} are the costs of the instructions and the \textit{regressors} are computed as $\sum_B N_B(i)f(B)$ for each instruction.
+\begin{equation}\label{eq:linear-work-expression}
+\Delta W = \varepsilon + \sum_{i} \left(w_i \sum_{B} N_B(i)f(B)\right)
+\end{equation}
+By having some empirical data after executing several benchmarks with different inputs, we can fit the linear model with this empirical data in order to obtain estimate costs of the instructions.
+In order to fit the linear model, we measure the wall-clock time when executing the training benchmarks described in Section\ref{sec:benchmarks} with their respective 1000 input datasets.
+For these measurements, the training benchmarks are compiled without optimisation.
+The reason for using no optimisation, as discussed in Section\ref{sec:oic-infra}, is because the amount of work must be only input dependent and consistent between different optimisation sequences.
+This aspect is crucial for the work-based performance metric to enable a consistent comparison between the various optimisation sequences when executing with distinct inputs.
+%it allows to use the estimated cost model for computing a work metric which is independent of optimisations, as we explained in Section~\ref{}.
+
+Our cost model has a total of 52 LLVM instructions\footnote{We do not model all LLVM instructions because some instructions are more common in optimised programs, such as the vector instructions.}.
+Every program, in the set of training benchmarks, was compiled twice: once including the necessary instrumentation for the block frequency profiling, which is required for deriving the linear expression defined in Equation~\ref{eq:linear-work-expression};
+and a standard compilation without any optimisation or instrumentation.
+For each input in the training dataset, the benchmarks were executed once with the instrumented version for collecting the block frequency profiling, and multiple times with the standard compilation just for measuring the wall-clock execution time, until the confidence interval was no larger than 1\% for a 99\% confidence.
+After collecting these measurements, this data can be used to estimate the unknown parameters in the linear model.
+Because we fit the linear model based on the wall-clock execution time, the derived cost model can be interpreted as an estimate of the execution time when the program is compiled without optimisations.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figs/cost-model.pdf}
+    \caption{Linear model fitted from empirical data. The mean absolute error (MAE) for the fitted curve is seven milliseconds.}
+    \label{fig:cost-model}
+\end{figure}
+
+Figure~\ref{fig:cost-model} compare the work metric with the corresponding execution time for some instances of the test benchmarks.
+Notice how the fitted model has a higher relative error for the instances with very short execution time, namely those that run for less than one tenth of a second.
+The mean absolute error (MAE) for the fitted curve is seven milliseconds.
+
+\subsection{Comparison with Instructions Per Cycle} \label{sec:ipc-vs-work-metric}
+
+The IPC metric has been widely used for studying performance benefits of hardware optimisations.
+Although previous work has suggested the use of IPC for guiding {\itercomp}, in this section we argue in favour of the WP metric over IPC.
+
+The IPC metric differs from the proposed WP metric in a key aspect:
+the IPC metric is computed solely based on the final optimised program.
+When executing different optimised versions of a program with the same input, both the number of instructions and the number of clock cycles can change.
+For this reason, higher IPC does not necessarily translate to shorter execution time (or even fewer clock cycles).
+
+We can illustrate this fact with a very small example as shown in Table~\ref{tab:ipc-example}.
+This example shows two versions of a program, namely P1 and P2, and their respective measurements related to IPC.
+Although version P1 has twice the IPC of P2, P1 is one cycle slower than P2.
+As this example illustrates, the IPC metric can be misleading when compared different versions of the same program.
+This problem is only intensified when both the optimisation sequence and the input changes.
+In Chapter~\ref{chap:eval} we show empirical evidence for this argument.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+                       & P1 & P2  \\
+\hline
+Number of Instructions & 5  & 2   \\
+Number of Cycles       & 5  & 4   \\
+IPC                    & 1  & 0.5 \\
+\hline
+\end{tabular}
+\caption{Example that illustrates that a higher IPC does not necessarily translate to shorter execution time.}
+\label{tab:ipc-example}
+\end{table}
+
+On the other hand, WP computes the amount of work based on the unoptimised version of the program, which means that it always measures the same amount of work for the same input, regardless of the optimisations applied on the program.
+This is a key aspect that enables the use of the WP metric for guiding {\itercomp}, because a higher WP, which represents work per unit time, naturally translate to shorter execution time.
+Moreover, previous work has also presented other arguments against the use of IPC in similar use-case scenarios, as discussed in Chapter~\ref{chap:related}.
+  
+\section{Online {\IterComp} Infrastructure} \label{sec:oic-infra}
+
+Although {\itercomp} had been originally proposed as an \textit{offline} optimisation strategy, it can also be adapted to work in online scenarios.
+Instead of selecting the best optimisation sequence as part of the development time (pre-shipping) of a program, a first version of the program is shipped together with an {\itercomp} mechanism.
+In the online scenario, the program is shipped with an initial optimisation sequence and different optimisation sequences are evaluated as the end-user executes the program.
+This optimisation strategy is also known as idle-time optimisation, as the re-compilation happens between runs of the program.
+
+LLVM is particularly suitable for iterative compilation as it makes possible to cache a pre-compiled, but still unoptimised, version of the input program in the bitcode format of the LLVM IR.  
+This caching allows to speedup the time required for re-compilation as it is able to bypass the frontend phase.
+If re-compilation time is critical, it would also be possible to keep only the hot portion of the code in the LLVM bitcode format, while the remaining portion of the code is already compiled to the final object code.
+However, this is out of the scope of this thesis and we always re-compile the whole program.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{figs/infra-diagram}
+    \caption{Overview of the execution engine for applying {\itercomp}.}
+    \label{fig:infra-diagram}
+\end{figure}
+%\textbf{Describe the process step by step.}
+
+Figure~\ref{fig:infra-diagram} shows an overview of the infrastructure required for applying online {\itercomp}
+using WP as the metric of choice for evaluating optimisation sequences.
+The online {\itercomp} follows as described bellow:
+\begin{enumerate}
+\item The program is pre-compiled to the LLVM bitcode format without optimisation.
+\item The unoptimised program is instrumented for work profiling.
+\item Execution-based optimisation search:
+ \begin{enumerate}
+   \item The current optimisation sequence is used for the re-compilation of the program.
+   \item The program is executed with any input provided by the end-user.
+         During the execution of the program, wall-clock time and the work metric are recorded by profiling instrumentation.
+   \item If the recorded profiling for the current optimisation can be used to compute an average performance measurement within a small confidence interval,
+         then a new optimisation sequence is generated.
+         Otherwise, the same optimisation sequence is used for the next execution.
+ \end{enumerate}
+\end{enumerate}
+
+In this work, we focus mainly on the highlighted components.
+The \textit{Work Instrumentation} phase focuses on providing a low-overhead instrumentation for profiling the work metric.
+The instrumentation consists of adding a global counter to the program which is used to accumulate the amount of work computed during the program's execution, using the cost model of the instruction set.
+A detailed description of the work instrumentation is presented in Section~\ref{chap:instr}.
+
+Notice how the \textit{Work Instrumentation} phase is executed before performing any optimisation to the program.
+It is critical so that the work profiling always measure the same amount of work for a given input, regardless of the optimisation sequence applied to the program.
+Because the instrumentation is performed before optimising the program, it means that the work profiling derives the linear expression defined in Equation~\ref{eq:linear-work-expression}
+based on the unoptimised program.
+In other words, the basic blocks and the number of occurrences of the instruction in the basic blocks reflect the unoptimised program.
+This particular sequence of compilation guarantees that the amount of work must is only input dependent, but consistent between different optimisation sequences.
+
+%In both phases the goal is to improve the performance of the execution phase, but from different perspectives.
+%\textit{(i.)} In the compilation phase we focused on providing a low-overhead instrumentation for profiling the work metric. This phase is responsible to improve performance by lowering the overhead of the work profiling.
+%\textit{(ii.)} In the evaluation phase we proposed the use of the WP metric in order to enable {\itercomp} in an online scenario.
+%This phase is responsible to improve performance by being able to properly assess different optimisations such that the best optimisation can be selected.
+%Chapter~\ref{chap:instr} describes our work profiling strategy and Section~\ref{sec:metric} describes the work-based metric.
+
+%\textbf{Talk about the process of keeping the same optimization for a given input-window and how the optimizations as selected based on the evaluation of these "evidences". Perhaps we could suggest using the Theory of Evidences at this point?!}
+
+As the name suggests, the component called \textit{Optimisation Selector} is responsible for selecting which optimisation sequence to use for the next execution of the program.
+It can either keep the same optimisation sequence used in the previous execution or start monitoring the performance of a new optimisation sequence.
+An optimisation sequence can be kept for multiple executions of the program in order to gather enough measurement to compute an average performance with small statistical deviations, i.e., for which the confidence interval has a small range.
+We call by \textit{Input-Window Size} the number of executions performed using the same optimisation sequence.
+
+\subsection{Real Online Scenarios}
+
+In most online scenarios, it is common for periods of peak usage and idle periods.
+For example, mobile devices are usually intensely used during the day, with some idle periods usually when the battery is being re-charged~\citep{mpeis16}.
+Similarly, many authors have also considered peak and idle (or underutilised) periods in the context of data centres~\citep{armbrust10,chen12b}.
+
+The proposed infrastructure is very well suited for these real online scenarios\footnote{
+However, if idle time is almost non-existent, the proposed infrastructure can still be used by re-compiling the program with a different optimisation while multiple runs of the program are being executed.}.
+In particular, periods of peak usage could be used to monitor multiple runs of the program using the same optimisation sequence, collecting the work profiling and measuring its execution time,
+while periods of idleness or underutilisation could be leveraged to use the profiling statistics for selecting better optimisations and re-compiling the program.
+
 
 \section{Instrumentation}
 
@@ -471,10 +615,19 @@ instrValue(G, B, inc, dec) {
 }
 \end{lstlisting}
 
+
 \subsection{Relaxed Instrumentation}
 
 Although the optimal instrumentation significantly reduces the profiling overhead when compared to the naive instrumentation, from an average overhead of 79\% to 13\%, in some critical cases, even the optimal instrumentation can have an overhead of about 70\% (see benchmark \texttt{adpcm\_d} in Figure~\ref{fig:overhead-O3}).
 In order to further reduce the overhead in these critical cases, we propose a relaxed instrumentation by trading off accuracy and overhead.
+While the optimal placement of probes tries to place probes in edges that are less likely to be executed, the relaxation focus on removing probes that are more likely to be executed but add little to the work metric.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.9]{figs/relax-instr-diagram.pdf}
+  \caption{Overview of the work instrumentation algorithm, including the relaxation technique.}
+  \label{fig:relax-instr-diagram}
+\end{figure}
 
 %\begin{figure*}[htb]
 %    \centering
@@ -484,12 +637,20 @@ In order to further reduce the overhead in these critical cases, we propose a re
 %    \label{fig:overhead-O0}
 %\end{figure*}
 
-%Define an extended DAG of a CFG as a directed graph which may contain cycles if they have known constant trip counts.
-
+%Define an DAG of a CFG as a directed graph which may contain cycles if they have known constant trip counts.
+Figure~\ref{fig:relax-instr-diagram} shows an overview of the relaxed instrumentation algorithm.
+The highlighted step is introduced by the relaxed instrumentation on top of the previously defined optimal profiling.
 The relaxed instrumentation performs a post-processing on the resulting instrumentation of the optimal algorithm.
-The relaxation starts by extracting \textit{extended} DAGs (directed acyclic graphs) from the CFG, as illustrated in Figure~\ref{fig:cfg-relax-example}.
-Each loop (and the outer most region of the function) represents an extended DAG where any inner loop is considered to never execute, i.e. only the headers of the inner loops are included into the extended DAG.
+This post-processing identifies probes that add little to the work metric, and removes their instrumentation.
+In order to guarantee an upper bound for the dynamic error in the profiling measurement, the relaxation algorithm applies a constrained post-processing on a per DAG (directed acyclic graph) basis.
+By constraining the relaxation within each DAG by a maximum allowed static error, it guarantees that the overall relaxation will also be constrained by the same bound.
 
+
+The relaxation starts by extracting DAGs (directed acyclic graphs) from the CFG, as illustrated in Figure~\ref{fig:cfg-relax-example}.
+First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
+Section~\ref{sec:natural-loops} explains how loops can be identified in the CFG.
+Afterwards, these subgraphs are transformed into DAGs by ignoring the backedge and also by considering that any loop within the subgraph is never executed, i.e., only the headers of the inner loops are actually included into the DAG.
+Figure~\ref{fig:cfg-relax-example} shows a CFG partitioned into two DAGs (consider only basic blocks and edges completely inside the yellow and green boundaries).
 %
 %LLVM has a Scalar Evolution Analysis which is used primarily to analyse expressions involving induction variables in loops~\cite{pop05}.
 %An induction variable is a variable that is increased or decreased by a fixed amount on every iteration of a loop or is a linear function of another induction variable.
@@ -498,34 +659,130 @@ Each loop (and the outer most region of the function) represents an extended DAG
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.9]{figs/cfg-relax-example.pdf}
-  \caption{Example of a CFG containing a loop and its decomposition into extended DAGs when applying the relaxation.}
+  \includegraphics[scale=1]{figs/cfg-relax-example.pdf}
+  \caption{Example of a CFG containing a loop and its decomposition into DAGs when applying the relaxation.
+           The DAGs are the subgraphs within the dashed boundaries.}
   \label{fig:cfg-relax-example}
 \end{figure}
 
-For every extended DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we relax the instrumentation accuracy by selecting a subset of the probes to be removed, subject to the maximum allowed percentage error, $M$.
+\newpage
+\begin{lstlisting}[caption={Optimal placement of probes for block frequency.}, label={lst:instrumentCFG}]
+// Input: CFG	
+relaxInstrumentation(G) {
+  for loop in G:
+     DAG = colapseInnerLoops(loop)
+     relaxInstrumentedDAG(DAG)
+  DAG = colapseInnerLoops(G)
+  relaxInstrumentedDAG(DAG)
+}
+\end{lstlisting}
+
+For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we relax the profiling accuracy by selecting a subset of the probes to be removed, subject to the maximum allowed percentage error, $M$.
 
 We model the relaxation as a 0-1 Knapsack problem:
+\begin{equation*}
+\begin{aligned}
+& \textrm{maximise }\quad \sum_{i=0}^{k} f(P_i)x_i \\
+& \textrm{subject to }\quad \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M
+\end{aligned}
+\end{equation*}
 \[
-%\textrm{maximise } \sum_{i=0}^{k} f(I_i)c(I_i)x_i
-\textrm{maximise } \sum_{i=0}^{k} f(P_i)x_i
+x_i\in\{0,1\}, i\in\{0,\ldots,k\}
 \]
-\[
-\textrm{subject to } \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \textrm{ and } x_i\in\{0,1\}
-\]
-%$c(I_i)$ is the relative overhead of the instrumentation on the instrumented basic block,
-where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to the minimum work value possible to compute in the extended DAG, and $x_i$ denotes the probes selected for removal.
+where $f(P_i)$ is the execution frequency of probe $P_i$, $x_i$ denotes the probes selected for removal, and $\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to the minimum work value possible to compute in the DAG, i.e., if $m$ is the minimum amount of work possible to be computed when executing the DAG, then $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$.
 Because the percentage error is computed based on the path with the minimum amount of work, $\varepsilon(P_i)$ represents the maximum error possible that would be incurred when removing probe $P_i$.
-Furthermore, by constraining the percentage error of every extended DAG below a given threshold we guarantee that the final error of the relaxation will always be bounded by the threshold.
+Furthermore, by constraining the percentage error of every DAG below a given threshold, we guarantee that the final error of the relaxation will always be bounded by the threshold, as demonstrated by Proposition~\ref{prop:relax-bound}.
 
-While the optimal placement of probes tries to place probes in edges that are less likely to be executed, the relaxation focus on removing probes that are more likely to be executed.
-The necessary block frequency information for optimising both the placement of probes can be acquired from profiles of previous executions of the program or by a static heuristic of the CFG during compilation.
+\begin{prop}\label{prop:relax-bound}
+Let $n_i$ be the number of times a given DAG $i$ is executed, $r_i$ be the total relaxation (amount of work removed) in DAG $i$, and $m_i$ be its minimum amount of work.
+If $\frac{r_i}{m_i} \leq M$ for every $i$,
+then the final error of the relaxation will always be bounded by the same threshold.
+\end{prop}
+\begin{proof}
+We can model the overall error of the relaxation as:
+\[
+1 - \frac{n_1(m_1 - r_1) + n_2(m_2 - r_2) + \ldots + n_k(m_k - r_k) + c}{n_1m_1 + n_2m_2 + \ldots + n_km_k + c}
+\]
+That is,
+%\begin{equation*}
+\begin{gather*}
+ 1 - \frac{n_1m_1 + n_2m_2 + \ldots + n_km_k + c}{n_1m_1 + n_2m_2 + \ldots + n_km_k + c} + \frac{n_1r_1 + n_2r_2 + \ldots + n_kr_k}{n_1m_1 + n_2m_2 + \ldots + n_km_k + c} = \\
+ \frac{n_1r_1 + n_2r_2 + \ldots + n_kr_k}{n_1m_1 + n_2m_2 + \ldots + n_km_k + c}
+\end{gather*}
+%\end{equation*}
+If $\frac{r_j}{m_j}$ is the maximum ratio $\frac{r_i}{m_i}$ for every $i$, then
+\begin{equation*}
+\begin{aligned}
+ \frac{n_1r_1 + n_2r_2 + \ldots + n_kr_k}{n_1m_1 + n_2m_2 + \ldots + n_km_k + c} &\leq\\
+ \frac{n_1r_j + n_2r_j + \ldots + n_kr_j}{n_1m_j + n_2m_j + \ldots + n_km_j + c} &\leq\\
+ \frac{n_1r_j + n_2r_j + \ldots + n_kr_j}{n_1m_j + n_2m_j + \ldots + n_km_j} & 
+\end{aligned}
+\end{equation*}
+If $N = max\{n_i$ for every $i\}$, then
+\begin{equation*}
+\begin{aligned}
+ \frac{n_1r_j + n_2r_j + \ldots + n_kr_j}{n_1m_j + n_2m_j + \ldots + n_km_j} &\leq\\
+ \frac{Nr_j + Nr_j + \ldots + Nr_j}{Nm_j + Nm_j + \ldots + Nm_j} &=\\
+ \frac{Nkr_j}{Nkm_j} = \frac{r_j}{m_j} &\leq M
+\end{aligned}
+\end{equation*}
+\end{proof}
+
+
+\begin{lstlisting}[caption={Optimal placement of probes for block frequency.}, label={lst:instrumentCFG}]
+// Input: CFG	
+relaxInstrumentedDAG(DAG){
+   P = ProbesIn(DAG)
+   m = minWork(DAG,P)
+   K = createKnapsackModel(P,m)
+   Bag = solveKnapsack(K)
+   for B in (P-Bag):
+     removeProbe(B)
+}
+\end{lstlisting}
+
+The necessary block-frequency information for optimising both the placement of probes can be acquired from profiles of previous executions of the program or by a static heuristic of the CFG during compilation.
 
 For our experiments, we implemented two solvers for the 0-1 Knapsack problem:
 the optimal brute-force solver;
-the greedy heuristic based on sorting the items ~\cite{dantzig57}.
+the greedy heuristic based on sorting the items~\citep{dantzig57}.
 We use the brute-force solver for DAGs with a small number of probes and the greedy heuristic when the number of probes is greater than a threshold.
 Some of the benchmarks have DAGs with several hundreds of probes, which could result in a long compilation time.
+
+\subsection{Whole Program Relaxation}
+
+In some cases, the proposed relaxation can be very conservative, because it considers the static error of removing probe $P_i$ relative to the minimum work possible of a DAG, in order to be able to guarantee that the dynamic error will be bounded by a given threshold.
+This conservatism can be overly restrictive in some cases, resulting in a negligible overhead reduction but also causing just a negligible dynamic error to the work profiling.
+
+In some cases, this overly restrictive conservatism may be unnecessary.
+For these cases, we propose an adapted version of the relaxation algorithm that operates on the whole program.
+Traditionally, compilers optimisations are performed on the function-level, or at best on a per module basis.
+Whole program optimisation (WPO) means that the compiler considers all compilation units of the program and optimises them using the combined knowledge of how they are used together.
+
+The whole program relaxation works by using block-frequency profiling from previous executions.
+By having this profiling information, the \textit{whole program relaxation} is able to compute the error of removing a given probe in terms of the whole program's execution,
+and then use this error values for selecting a subset of all the probes to be removed.
+
+For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the whole program the relaxation as the following 0-1 Knapsack problem:
+\begin{equation*}
+\begin{aligned}
+& \textrm{maximise }\quad \sum_{i=0}^{k} f(P_i)x_i \\
+& \textrm{subject to }\quad \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M
+\end{aligned}
+\end{equation*}
+\[
+x_i\in\{0,1\}, i\in\{0,\ldots,k\}
+\]
+where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $x_i$ denotes the probes selected for removal, $M$ is the error threshold, and $\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to the profiled global work, i.e.,
+if $\Delta W$ is the work value for the whole program's execution, computed from the basic block frequencies profiled from previous executions, the error for a given probe $P_i$ is
+\[
+\varepsilon(P_i) = \frac{\omega(P_i)f(P_i)}{\Delta W}.
+\]
+
+Contrary to the per DAG relaxation, the whole program relaxation is not guaranteed to be bounded by the error threshold $M$,
+as it depends on the representativity % representativeness
+ of the profiling information provided to the whole program relaxation.
+ 
 
 \section{Experimental Evaluation}
 
@@ -657,41 +914,106 @@ These two removed probes were placed in branches, inside the hot loop, with a hi
 
 \subsection{Evaluation of the Online {\IterComp}}
 
+For comparison, we use four configurations\footnote{A configuration using the WPO relaxation was not used due to the time necessary for executing the experiments.}.
+In all configurations, the same optimisation sequence is used for multiple inputs, using a dynamic input-window size, as explained in Section~\ref{sec:oic-infra}.
+The average performance over the input window provides an estimate for the overall performance of the optimisation sequence across distinct inputs.
+The optimisation sequences are ranked based on their average performance, and the best optimisation sequence is selected.
+%When selecting the best optimisation sequence, they are ranked by the average of their performance measurement, using the WP metric, except for the Oracle-RM which uses the real speedup over \texttt{-O0}.
 \begin{itemize}
-\item Oracle-RM executes the program twice, for each input, and then measuring the real speedup for each compiler optimisation and uses the real speedup for selecting the best optimisation.
-\item Oracle-PP represents the \textit{perfect} non-intrusive profiling by also executing the program twice, once for estimating the amount of work and the second for measuring its execution time.
-This version uses the work-based metric, $\frac{\Delta W}{\Delta t}$, during the {\itercomp} search.
+\item \textbf{Oracle-RM} executes the program multiple times for each input, measuring the real speedup for each optimisation sequence, and then uses the real speedup over {\flagstype -O0} for comparing the optimisation sequences.
+  The speedups are computed based on the wall-clock time.
+  In order to reduce noise, the program is executed several times for the same input, until the confidence interval was no larger than 1\% for a 99\% confidence.
+\newpage
+\item \textbf{Oracle-PP} represents an oracle with a \textit{perfect} non-intrusive profiling.
+  Although it uses the WP metric for comparing optimisation sequences, this oracle also avoids noise in its measurements by also executing the program multiple times for each input.
+  The first execution is used for profiling the work metric.
+  The remaining executions are used for measuring the wall-clock time without using the work profiling.
+\item \textbf{Real-OP} corresponds to the online {\itercomp} as it would be applied in a real online scenario.
+  For each optimisation, a random sample of inputs is selected, and the program is executed only once with each input.
+  When executing each input, it uses the optimal work instrumentation for profiling the work metric.
+  The average of the WP for the sample of inputs is then used for selecting the best optimisation.
+\item \textbf{Real-R5} is similar to the {Real-OP}.
+  It also corresponds to the online {\itercomp} as it would be applied in a real online scenario.
+  For each optimisation, a random sample of inputs is selected, and the program is executed only once with each input.
+  When executing each input, it uses the relaxed work instrumentation, with a 5\% threshold, for profiling the work metric.
+  The average of the WP for the sample of inputs is then used for selecting the best optimisation.
+\item \textbf{Real-IPC} corresponds to the online {\itercomp} based on the IPC metric.
+  For each optimisation, a random sample of inputs is selected, and the program is executed only once with each input.
+  The average of the IPC metric for the sample of inputs is then used for selecting the best optimisation.
 \end{itemize}
+The comparison between Oracle-RM and Oracle-PP is useful for validating the use of the WP metric for guiding {\itercomp}, while the other configurations demonstrate the viability of applying the online {\itercomp} in a real scenario.
+
+Figure~\ref{fig:window-size} shows the average input-window size for each benchmark and configuration.
+It shows that we can have a statistically sound measurement of the performance metric using just a small number of inputs.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\textwidth]{figs/window-size.pdf}
+    \caption{Average input-window sizes observed during the online {\itercomp}.}
+    \label{fig:window-size}
+\end{figure}
+
+\subsection{The Set of Optimisation Sequences}
+
+For the purpose of evaluating the use of the WP metric with {\itercomp}, we collected in advance a fixed set of optimisation sequences.
+The reason for using this fixed set, as explained in Section~\ref{sec:oic-infra}, is because this thesis is focused on other components of the infrastructure for performing {\itercomp} and we assume that a good generator of optimisation sequences will be used in a real online scenario.
+This set contains 500 optimisation sequences collected in a random search using the training benchmarks.
+These optimisation sequences contain an average of 40 individual optimisation passes, including repetitions, with a maximum of 119 optimisation passes, but it also contains optimisation sequences which consist of a single flag, such as the default optimisations {\flagstype -O1}, {\flagstype -O2}, {\flagstype -O3}, {\flagstype -Os}, and {\flagstype -Oz}.
+
+  \begin{minipage}{0.9\textwidth}
+     \vspace{1em}
+     \noindent\textbf{Example of a short optimisation sequence:}\vspace{-1ex}
+     \justify{\flagstype -mem2reg -simplifycfg -constprop -dce}
+  \end{minipage}
+
+  \begin{minipage}{0.9\textwidth}
+     \vspace{1em}
+     \noindent\textbf{Example of a long optimisation sequence:}\vspace{-1ex}
+     \justify{\flagstype -globalopt -reassociate -instcombine -loop-rotate -block-freq -deadargelim -early-cse -sroa -argpromotion -sccp -tbaa -barrier -constmerge \mbox{-loop-vectorize} -domtree -basicaa -memdep -basiccg -memcpyopt \mbox{-constprop} -adce -globaldce -mem2reg -constmerge \mbox{-globaldce} -constprop -instsimplify -dse -dce -simplifycfg -loop-unroll -reassociate -constprop \mbox{-globaldce} -instsimplify -adce -constmerge -bb-vectorize -dce -mergefunc -simplifycfg -dse -loop-unroll -globaldce}
+  \end{minipage}
+
+  \begin{minipage}{0.9\textwidth}
+     \vspace{1em}
+     \noindent\textbf{Example of an optimisation sequence which includes {-O3}:}\vspace{-1ex}
+     \justify{\flagstype -O3 -adce -globaldce -simplifycfg -memcpyopt -reassociate -mergefunc \mbox{-dce} -dse}
+     \vspace{2em}
+  \end{minipage}
+
+Repeating the same optimisation pass can be beneficial and usually expected by other passes.
+For example, the {\flagstype -loop-simplify} pass is used for transforming loops into a canonical form by inserting pre-header and exit basic blocks.
+Although this pass inserts jumps due to redundant basic blocks, this canonical form can be favourable to other loop optimisations.
+Because of the redundant basic blocks, this optimisation pass expects that the {\flagstype -simplifycfg} will eventually be executor later on the optimisation pipeline.
+Another example of such inter-relation between transformations concerns the {\flagstype -licm} and {\flagstype -mem2reg} passes.
+The {\flagstype -licm} pass is responsible for moving invariant code out from the loop body.
+It usually creates new local variables, using memory access operations, for assisting with the code manipulation, which means that the executing the {\flagstype -mem2reg} pass afterwards would be useful as a cleanup pass for removing the extra memory accesses generated.
+However, many of the analysis required for identifying loop invariant also benefit from the transformations performed by the {\flagstype -mem2reg} pass.
+These examples illustrate the importance of repeating optimisation passes.
+Moreover, they illustrate the intricate relation amongst several transformations.
+
+However, all optimisation sequences in the set of optimisations were generated completely at random, without using any knowledge of individual transformations.
+Each optimisation sequence was generated in two steps: \textit{(1)} randomly selects the number of flags; \textit{(2)} randomly selects the flags, allowing repetitions.
+Afterwards, this randomly generated optimisation sequence would be included in the set of optimisation sequences only if it was able to improve the performance of a training benchmark, also selected at random, in respect of the {\flagstype -O3} default optimisation.
+This process was repeated until we obtained all the 500 distinct optimisation sequences.
+
+\subsection{Performance Evaluation}
+
+In order to evaluate the quality of the final optimisation sequences selected by the {\itercomp} search, we compare their speedup by measuring wall-clock time of the benchmarks when compiled with the standard {\flagstype -O3} optimisation.
+For each benchmark, after selecting the final optimisation sequence, we compute the average speedup over all the 1000 input dataset.
+When measuring the wall-clock time for each input, to reduce noise, we execute the same input until we have a statistically sound measurement, i.e. we execute until we have an interval no larger than 1\% with 99\% confidence.
+Figure~\ref{fig:speedups} shows these average speedups over all the 1000 input dataset.
+This figure shows that the best optimisation sequence selected with the Oracle-PP is very close to the performance of the best optimisation sequence selected with the Oracle-RM.
+This result is important for demonstrating that a work-based metric has the potential to produce good results in a real online scenario, where there is the restriction that programs execute distinct inputs only once.
+Moreover, the evaluation also indicates that the use of relaxation algorithms does not degrade the optimisation search,
+it might even benefit the {\itercomp} as it tends to insert smaller interferences in the performance measurement.
+Finally, Figure~\ref{fig:speedups} also presents the results of {\itercomp} guided by IPC, which is futher discussed in Figure~\ref{fig:ipc-vs-work}.
 
 \begin{figure*}[htb]
     \centering
     \includegraphics[width=\textwidth]{figs/speedups.pdf}
-    \caption{Speedups observed with the online {\itercomp}.}
+    \caption{Speedups obtained from the final optimisation sequence selected by the online {\itercomp}.
+	         The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
     \label{fig:speedups}
 \end{figure*}
-
-%\begin{figure*}[htb]
-%    \centering
-%    \includegraphics[width=\textwidth]{figs/profiled-speedups.pdf}
-%    \caption{Speedups observed with the online {\itercomp} if we
-%             consider the instrumentation overhead.}
-%    \label{fig:profiled-speedups}
-%\end{figure*}
-
-%\subsubsection{Contribution of individual optimisation passes}
-%
-%Figure~\ref{fig:flagsfreq} shows an aggregated view of the final combination of compiler optimisations that were selected by {\itercomp} search.
-%The figure presents the individual optimisation passes with at least 1\% of frequency in the selected combination of compiler optimisations that improved the performance over {\texttt{-O3}}.
-%
-%\begin{figure*}[htb]
-%    \centering
-%    \includegraphics[width=\textwidth]{figs/flagsfreq.pdf}
-%    \caption{Frequency of individual optimisation passes on the final selected 
-%             compiler optimisations of the {\itercomp} search over
-%             all benchmarks.}
-%    \label{fig:flagsfreq}
-%\end{figure*}
-
 
 \begin{figure*}[h]
     \centering
@@ -700,17 +1022,15 @@ This version uses the work-based metric, $\frac{\Delta W}{\Delta t}$, during the
     \label{fig:ipc-vs-work}
 \end{figure*}
 
-
 Figure~\ref{fig:ipc-vs-work} presents a comparison between IPC and the WP metric regarding their correlation with the actual speedup over \verb|-O0| observed during {\itercomp}.
-Each point in the figure correspond to each metric averaged over input windows collected during multiple executions of the {\itercomp}.
+Each point in the figure corresponds to each metric averaged over input windows collected during multiple executions of the {\itercomp}.
 The vertical lines correspond to the optimisation sequence selected by the {\itercomp} search, which either represents the highest IPC or the highest value of WP.
-In all cases, the optimisation sequence selected based on the WP is much closer to the best speedup than the optimisation sequence selected based on IPC, which can be attributed to the fact that the WP have a stronger correlation with the speedup.
+In all cases, the optimisation sequence selected based on the WP is much closer to the best speedup than the optimisation sequence selected based on IPC, which can be attributed to the fact that the WP has a stronger correlation with the speedup.
 In all cases, IPC shows little to no correlation with the speedup, which corroborates the argument given in Section~\ref{sec:ipc-vs-work-metric}.
 
 For some cases, namely for the tiff-related benchmarks, the WP shows a worse correlation with speedup.
 We believe these cases could be improved by improving the cost model used to compute the work metric.
-However, even in these cases, the optimisation sequence selected based on the WP outperforms those selected based on IPC.
-
+However, even in these cases, the optimisation sequences selected based on the WP outperform those selected based on the IPC metric.
 
 \section{Related Work}
 
