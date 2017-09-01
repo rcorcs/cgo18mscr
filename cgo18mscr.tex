@@ -182,25 +182,46 @@ Code Generation and Optimization}{2018}{}
 \renewcommand{\shortauthors}{R. Rocha et al.}
 
 \begin{abstract}
-Efficiently selecting the best combination of compiler optimisations for a program
-remains an open problem due to their complex interaction and the large optimisation search space.
-{\Itercomp} techniques, which consist of iterating
-over this large space searching for the best optimisation,
-has the ability to adapt to new platforms, programs and workload while still
-having a systematic and simple optimisation process.
-Although some recent work have studied the impact of using multiple
-input datasets for performing \itercomp, applying this
-technique in an online scenario still poses some challenges.
+%Efficiently selecting the best combination of compiler optimisations for a program
+%remains an open problem due to their complex interaction and the large optimisation search space.
+%{\Itercomp} techniques, which consist of iterating
+%over this large space searching for the best optimisation,
+%has the ability to adapt to new platforms, programs and workload while still
+%having a systematic and simple optimisation process.
+%Although some recent work have studied the impact of using multiple
+%input datasets for performing \itercomp, applying this
+%technique in an online scenario still poses some challenges.
+%
+%In this paper, our main goal is to enable \itercomp in
+%online scenarios with the restriction of executing distinct inputs
+%only once.
+%In order to address this challenge,
+%we propose a the use of a work-based metric that allows for comparing different
+%combination of compiler optimisations even when executed with distinct inputs.
+%Because of its online nature, we also propose a relaxed instrumentation
+%that performs low overhead profiling of the amount of work executed, while
+%being able to trade-off between accuracy and overhead in a controlled manner.
+In modern optimising compilers,  the correct choice of an optimisation sequence can have a significant impact on the performance of the final optimised program.
+%Each of these optimisation passes interacts with the code in complicated ways, depending on all other optimisations and the order they were applied to the code being optimised.
+Because of the unpredictability of optimisation interactions and their complexity,
+efficiently selecting the best optimisation sequence for a given program, or program section, remains an open problem.
+A well-known compilation technique that addresses this challenge is {\itercomp}.
 
-In this paper, our main goal is to enable \itercomp in
-online scenarios with the restriction of executing distinct inputs
-only once.
-In order to address this challenge,
-we propose a the use of a work-based metric that allows for comparing different
-combination of compiler optimisations even when executed with distinct inputs.
-Because of its online nature, we also propose a relaxed instrumentation
-that performs low overhead profiling of the amount of work executed, while
-being able to trade-off between accuracy and overhead in a controlled manner.
+In this thesis, we focus on enabling {\itercomp} in \textit{online} scenarios.
+%We define the online scenario as having the restriction that programs execute multiple inputs and distinct inputs are executed only once.
+%Because of these restrictions, standard metrics for comparing optimisations, such as speedups or execution time alone, are not viable.
+We propose the use of a work-based performance metric for guiding {\itercomp},
+where we instrument the program for measuring the amount of work it performed during its execution.
+In order to reduce the profiling overhead, we also propose two relaxation algorithms which provide a trade-off between measurement accuracy and overhead.
+Our experimental evaluation shows that the two relaxation algorithms can reduce
+the average overhead by 43\% and $2.1\times$ over the optimal work profiling.
+%In our experimental evaluation, the first relaxation algorithm that operates on regions of functions is able to reduce the average overhead by about 43\% over the optimal work profiling, while incurring in a dynamic measurement error of much less than 1\%.
+%Similarly, the second relaxation algorithm which operates on the whole program, which also makes use of profiling from previous execution, was able to reduce even further this overhead by a factor of $2.1\times$ compared to the optimal profiling, while incurring in a dynamic measurement error of less than 3\%.
+
+Our evaluation also corroborates the use of the work-based performance metric for guiding online {\itercomp}.
+Under real conditions, it was able to achieve good performance improvements when compared to the oracles, which were allowed to execute the program with the same input multiple times,
+achieving an average improvement of 5.4\% and a maximum of about 20\%.
+Contrary to what previous work has suggested, we have also shown that instructions per cycle (IPC) is not a good metric for guiding online {\itercomp}.
 \end{abstract}
 
 %
@@ -410,7 +431,7 @@ For this reason, higher IPC does not necessarily translate to shorter execution 
 
 On the other hand, WP computes the amount of work based on the unoptimised version of the program, which means that it always measures the same amount of work for the same input, regardless of the optimisations applied on the program.
 This is a key aspect that enables the use of the WP metric for guiding {\itercomp}, because a higher WP, which represents work per unit time, naturally translate to shorter execution time.
-Moreover, previous work has also presented other arguments against the use of IPC in similar use-case scenarios, as discussed in Chapter~\ref{chap:related}.
+Moreover, previous work has also presented other arguments against the use of IPC in similar use-case scenarios. %, as discussed in Chapter~\ref{chap:related}.
 
 \section{Online {\IterComp} Infrastructure} \label{sec:oic-infra}
 
@@ -831,27 +852,62 @@ The remaining (white) benchmarks are used for the experimental evaluation.
 
 \subsection{Evaluation of the Instrumentation}
 
-\begin{figure*}[htp]
-    \centering
-    \includegraphics[width=\textwidth]{figs/overhead-O3.pdf}
-    \caption{Overhead of the instrumentations compiled with {\texttt{-O3}}.}
-    \label{fig:overhead-O3}
-\end{figure*}
-
-Figure~\ref{fig:instr} shows percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.
+We first compare static aspects of the instrumentation algorithms.
 The naive instrumentation always has 100\% of the basic blocks instrumented, by definition.
+First, we evaluate the optimal work profiling compared to the relaxation algorithm applied per DAG.
+Afterwards, we compare these profiling techniques with the whole program relaxation.
 
-\begin{figure*}[htp]
+Figure~\ref{fig:num-probes} shows the percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.
+While Figure~\ref{fig:num-probes} compares the various instrumentation algorithms in respect of the naive instrumentation, Figure~\ref{fig:num-probes-improvement} shows the improvement of the relaxation algorithm  over the optimal instrumentation.
+
+\begin{figure*}[ht]
     \centering
     \includegraphics[width=\textwidth]{figs/num-probes.pdf}
     \caption{Percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.}
     \label{fig:num-probes}
 \end{figure*}
 
-The \texttt{adpcm\_d} benchmark is the most critical case amongst the used benchmarks, with a overhead of about 66\% with the optimal instrumentation.
-This benchmark consists mainly of a single hot loop with several branches inside it.
-The relaxation algorithm is able to reduce this overhead down to about 52\% (with an error threshold of 1\%) and 19\% (with an error threshold of 2\%) by removing only one and two probes from the hot loop, respectively.
-These two removed probes were placed in branches, inside the hot loop, with a high probability of being taken, but with a small contribution to the work measured in the loop.
+For the evaluation of the performance overhead that the instrumentation incur to the benchmarks, we measure the wall-clock time of the benchmarks when compiled with the default {\flagstype -O3} optimisation.
+For each benchmark, we compute the average overhead over all its 1000 input dataset.
+When measuring the wall-clock time for each input, in order to reduce noise, we execute the same input until we have a statistically sound measurement, i.e. we execute until we have an interval no larger than 1\% with 99\% confidence.
+Figure~\ref{fig:overhead-O3} shows the performance overhead imposed by the work instrumentation on the benchmarks when compared to their non-instrumented counterparts.
+Figure~\ref{fig:overhead-improvement-O3} indicates the improvement of the relaxation algorithm over the optimal instrumentation, regarding the reduction in overhead.
+
+\begin{figure*}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{figs/overhead-O3.pdf}
+    \caption{Overhead of the instrumentations compiled with {\flagstype -O3}.}
+    \label{fig:overhead-O3}
+\end{figure*}
+
+The WPO relaxation was performed using profiling information for every specific input, which provides the perfect information to perform the WPO relaxation.
+This means that the experiments show its best performance enabled by having perfect profiling information.
+
+%\begin{figure*}[ht]
+%    \centering
+%    \includegraphics[width=\textwidth]{figs/overhead-improvement-O3.pdf}
+%    \caption{Overhead of the instrumentations compiled with {\flagstype -O3}.
+%             Notice that the average of the ratios does not equal the ratio of the averages.}
+%    \label{fig:overhead-improvement-O3}
+%\end{figure*}
+
+\begin{figure*}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{figs/error-O3.pdf}
+    \caption{Dynamic error of the work profiling averaged over the 1000 inputs, after relaxing the number of probes.}
+    \label{fig:error-O3}
+\end{figure*}
+
+%Figure~\ref{fig:overhead-improvement-O3} shows that the relaxation algorithm, with 5\% threshold, is able to improve an average of 48\% over the optimal instrumentation, 
+%and the WPO relaxation achieves an average of $2\times$ improvement over the optimal instrumentation.
+%While the optimal profiling has a maximum overhead of almost 60\%, the work profiling with a relaxation of 5\% threshold has an overhead of less than 20\% for all benchmarks,
+%with the WPO relaxation reaching an average overhead of only 5\%, compared to an average of 12\% for the optimal profiling.
+
+Furthermore, these improvements can be obtained while incurring very little dynamic error, as shown in Figure~\ref{fig:error-O3}.
+This result confirms the overly conservative aspect of the relaxation algorithm applied per DAG,
+while the WPO relaxation is significantly less conservative.
+Because we performed the WPO relaxation having perfect profiling information, its dynamic error was always below the 5\% thresholds.
+Although it is not guaranteed by the algorithm, profiling representative inputs should also result in small dynamic errors.
 
 \subsection{Evaluation of the Online {\IterComp}}
 
