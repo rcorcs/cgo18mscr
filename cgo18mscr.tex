@@ -543,7 +543,9 @@ Once we have the maximum spanning tree, probes are placed on any edge not in the
 In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling, the instrumented basic blocks need record an aggregated value of work that represents a path in the CFG.
 These values are constructed with some instrumented basic blocks speculatively assuming some paths while other probes correct when these assumptions are wrong (see for example $w(P_0)$ and $w(P_1)$ in Figure~\ref{fig:cfg-example}).
 
-\begin{lstlisting}[caption={Post-processing of the CFG for populating all edge flows based on the collected probes.}, label={lst:populateEdgeFlows}, float]
+
+\begin{lstlisting}[caption={Post-processing of the CFG for populating all edge flows based on the collected probes.
+\textbf{ToDo: Replace the algorithm with a formal data-flow equation.}}, label={lst:populateEdgeFlows}, float]
 // Inputs: CFG with the known edges flows from
 //         the cotree (collected probes).
 // Output: Updated CFG with all edge flows.
@@ -597,7 +599,10 @@ From these \textit{edge expressions}, we are able to compose the aggregated valu
 The positive terms in the edge expression of a basic block indicate that the amount of work of this basic block will be incremented in the probes represented by these positive terms, similarly, the negative terms indicate that the amount of work of this basic block will be decremented in the probes represented by these negative terms.
 For example, because the edge expression for the basic block $B_8$ is $P_0 - P_1$, the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$ and decremented in $P_1$.
 
-\begin{lstlisting}[caption={Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the predecessors.}, label={lst:instrValue}, float]
+\begin{lstlisting}[caption={Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the predecessors.
+\textbf{ToDo: Using the vector format, we could replace this algorithm with a single equation. Let $V$ be the vector of $\{-1,0,1\}$ and $W$ the weight for each basic block.
+This algorithm could be re-written as $reduce (+) (map (*) (zip V W))$.}
+}, label={lst:instrValue}, float]
 // Inputs: 1) CFG with the known edges flows
 //            of the chords.
 //         2) Basic block targeted for probing.
@@ -1027,6 +1032,8 @@ In all cases, IPC shows little to no correlation with the speedup, which corrobo
 For some cases, namely for the tiff-related benchmarks, the WP shows a worse correlation with speedup.
 We believe these cases could be improved by improving the cost model used to compute the work metric.
 However, even in these cases, the optimisation sequences selected based on the WP outperform those selected based on the IPC metric.
+
+\textbf{ToDo: Include results using Genetic Algorithm search.}
 
 \section{Related Work}
 
