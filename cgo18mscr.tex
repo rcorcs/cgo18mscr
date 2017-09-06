@@ -1,147 +1,13 @@
 \PassOptionsToPackage{table}{xcolor}
 
 \documentclass[sigplan,10pt]{acmart}
+\input{premable}
 
-\usepackage{booktabs} % For formal tables
-
-\usepackage[utf8]{inputenc}
-\usepackage{fullpage}
-
-\usepackage{graphics}
-
-\usepackage{graphicx}
-\usepackage{subcaption}
-
-\usepackage{multirow}
-
-%\usepackage{setspace}
-\usepackage{ragged2e}
-
-	\usepackage{soul}
-
-%\usepackage{flushend}
-
-%\usepackage{indentfirst}
-
-\usepackage{amsthm}
-\usepackage{amsmath,amssymb}
-%\usepackage{mathrsfs}
-\usepackage{mathtools}
-
-\theoremstyle{definition}
-\newtheorem{prop}{Proposition}[section]
-
-
-%% Listing related stuff
-
-\usepackage{listings}
-\usepackage{courier}            %Required for pretty listings (more dense)
-
-
-%% EMACS colors for listing:
-
-\usepackage{color}
-\definecolor{sh_comment}{rgb}{0.65, 0.00, 0.00 } % red-ish
-\definecolor{sh_keyword}{rgb}{0.37, 0.69, 0.69}  % blue-green
-\definecolor{sh_string}{rgb}{0.08, 0.69, 0.08} % green
-
-
-%% This manipulates the listing numbering. It decreases it by one at the point used.
-\newcommand*\lstDNumber{\addtocounter{lstnumber}{-1}}
-
-%% Change from Listing->Algorithm
-%% \renewcommand\lstlistingname{Algorithm} % Fix listing caption name: Listing -> Algorithm
-%% \renewcommand\lstlistlistingname{Algorithms}
-%% \def\lstlistingautorefname{Alg.}
-
-%% \renewcommand{\thelstlisting}{\thesection-\arabic{lstlisting}}
-%\renewcommand{\thelstlisting}{\arabic{lstlisting}} % Fix listing numbering Algorithm 1.1 -> Algorithm 1.
-
-%% \renewcommand{\labelenumi}{\roman{enumi}.}
-
-\lstset{
-float=[*],
-language=C,                % choose the language of the code
-%% basicstyle=\linespread{0.9}
-%% basicstyle=\scriptsize\ttfamily,
- basicstyle={\linespread{0.97} \scriptsize\ttfamily},
- stringstyle=\color{sh_string},
- keywordstyle = \color{sh_keyword}\bfseries,
- commentstyle=\color{sh_comment}\itshape,
-numbers=left,                   % where to put the line-numbers
-%% numberstyle=\scriptsize,        % the size of the fonts that are used for the line-numbers
-numberstyle=\scriptsize,        % the size of the fonts that are used for the line-numbers
-stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
-numbersep=5pt,                  % how far the line-numbers are from the code
-backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
-showspaces=false,               % show spaces adding particular underscores
-showstringspaces=false,         % underline spaces within strings
-showtabs=false,                 % show tabs within strings adding particular underscores
-xleftmargin=2em,                % Left margin
-frame=lines,                   % adds a frame around the code. none|leftline|topline|bottomline|lines|single|shadowbox
-framexleftmargin=1.5em,         % Margin from frame to line numbers
-framexbottommargin=0em,         % Distance from last text to frame
-morekeywords={in,true,false,and,or,set,is,not},
-%% prebreak=\mbox{\tiny$\searrow$},
-prebreak=\space,                % Line break: insert this character at the end of the top line
-%% postbreak=\mbox{{\color{blue}\scriptsize$\hookrightarrow$}}, % Line break: blue arrow at the beginning of the bottom line
-postbreak=\mbox{{\color{blue}\scriptsize$\hookrightarrow$}}, % Line break: blue arrow at the beginning of the bottom line
-breaklines=true,                % sets automatic line breaking
-breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
-tabsize=2,                      % sets default tabsize to 2 spaces
-captionpos=b,                   % sets the caption-position to top
-escapeinside={\@}{\@}             % Escape sequence \@ESCAPED STUFF\@
-}
-
-\usepackage{nasm/lang}
-\usepackage{nasm/style}
-\usepackage{llvm/lang}
-
-
-% Copyright
-\setcopyright{none}
-%\setcopyright{acmcopyright}
-%\setcopyright{acmlicensed}
-%\setcopyright{rightsretained}
-%\setcopyright{usgov}
-%\setcopyright{usgovmixed}
-%\setcopyright{cagov}
-%\setcopyright{cagovmixed}
-
-
-% DOI
-%\acmDOI{10.475/123_4}
-
-% ISBN
-%\acmISBN{123-4567-24-567/08/06}
-
-%Conference
-\acmConference[CGO'18]{International Symposium on Code Generation and Optimization}{2018}{}
-%\acmYear{1997}
-%\copyrightyear{2016}
-%
-%\acmPrice{15.00}
-
-
-\newcommand{\etal}{et~al.}
-
-\newcommand{\itercomp}{{iterative compilation}}
-\newcommand{\Itercomp}{{Iterative compilation}}
-\newcommand{\IterComp}{{Iterative Compilation}}
-
-\newcommand{\flagstype}{\usefont{T1}{cmr}{m}{n}}
 
 \begin{document}
 \title{Online {\IterComp}\\Guided by Low Overhead Profiling}
-%\titlenote{...}
-%\subtitle{...}
-%\subtitlenote{...}
 
-\author{ \vspace{1em} }
-\affiliation{%
-  \institution{ }
-}
-\email{ }
+\author{  }
 
 %\author{Rodrigo C. O. Rocha}
 %\affiliation{%
@@ -179,31 +45,9 @@ escapeinside={\@}{\@}             % Escape sequence \@ESCAPED STUFF\@
 %}
 %\email{hleather@inf.ed.ac.uk}
 
-\renewcommand{\shortauthors}{R. Rocha et al.}
+%\renewcommand{\shortauthors}{R. Rocha et al.}
 
-\begin{abstract}
-Until recently, most of the existing work in {\itercomp} had been focusing on
-finding the best optimisation through repeated runs using a single input.
-However, in real-world online scenarios, the user rarely executes a program with
-the same input multiple times and most of the programs are complex enough that a
-single input case does not capture the whole range of possible scenarios and
-program behaviours.
-
-In this thesis, we focus on enabling {\itercomp} in \textit{online} scenarios.
-Because of the restriction on repeating the execution with same input, it is
-not always feasible to measure the real speedup when comparing optimisations.
-To this end, we propose a \textit{work efficiency} metric to guide 
-online {\itercomp}, which is able to achieve about 80\% of the performance 
-of the offline oracle, with improvements of up to about 20\%.
-
-Moreover, because we need to instrument the program for measuring work
-efficiency, providing a low-overhead profiling is essential.
-In order to reduce the profiling overhead, we also propose two relaxation
-algorithms which provide a trade-off between measurement accuracy and overhead.
-Our results show that the two relaxation algorithms can reduce the average
-overhead by 43\% and $2.1\times$ over the optimal work profiling, observing
-up to about $5\times$ of overhead reduction.
-\end{abstract}
+\input{abstract}
 
 %
 % The code below should be generated by the tool at
@@ -227,95 +71,11 @@ up to about $5\times$ of overhead reduction.
 
 %\ccsdesc[500]{Software and its engineering~Compilers}
 %\ccsdesc[500]{Software and its engineering~Retargetable compilers}
-
-
 \keywords{{\IterComp}, Profiling, Relaxed Instrumentation}
 
 \maketitle
 
-\section{Introduction}
-Modern optimising compilers have reached a high level of sophistication,
-providing a large number of optimisations, where the correct choice of
-optimisations and their ordering can have a significant impact on the
-performance of the code being optimised.
-Although compilers offer a set of prearranged optimisation sequences that are
-expected to yield reasonable improvements in many programs, there is still the
-potential for performance degradation for certain programs, as these
-optimisation sequences do not include all possible optimisations and are always
-applied in the same pre-defined order, without regard the code being
-optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
-A well known compilation technique that addresses this challenge is {\itercomp},
-which has the ability to adapt to new platforms, program and workload while
-still having a systematic and simple optimisation process.
-It works by repeatedly evaluating a large number of optimisation sequences until
-the best combination is found for a particular
-program~\cite{kisuki99,fursin07,chen10}.
-
-
-%{\Itercomp} is a well-known compilation technique that addresses the problem of
-%efficiently selecting the best optimisation sequence for a given program.
-%Although compilers offer a set of prearranged optimisation sequences that are
-%expected to yield reasonable improvements in many programs, there is still the
-%potential for performance degradation for certain programs, as these
-%optimisation sequences do not include all possible optimisations and are always
-%applied in the same pre-defined order, without regard the code being
-%optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
-%{\Itercomp} have a systematic and simple optimisation process, where it works
-%by repeatedly evaluating a large number of optimisation sequences until the best
-%combination is found for a particular program~\cite{kisuki99,fursin07,chen10}.
-
-
-Until recently, most of the existing work in {\itercomp} had been focusing on
-finding the best optimisation through repeated runs using a single input.
-Although they demonstrate the potential of {\itercomp}, in real scenarios the
-user rarely executes a program with the same input multiple
-times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
-Furthermore, most of real world applications are complex enough so that a single
-input case does not capture the whole range of possible scenarios and program
-behaviours~\cite{haneda06,fursin07,chen10,chen12a}.
-Because programs can exhibit behaviours that differ greatly depending on the
-input, using a single input for {\itercomp} may not result in a good performance
-when executing the optimised code with different inputs.
-
-The main goal of this paper is to enable {\itercomp} in \textit{online} scenarios.
-We define the online scenario as having the restriction that programs execute multiple inputs and distinct inputs are executed only once.
-This online aspect is usually found in mobile and data centre platforms~\citep{chen12b,fang15,mpeis16}, where the goal is to optimise programs based on the workload of a particular user, or group of users.
-Online {\itercomp} must also target optimal performance across different inputs.
-
-Because of the restriction of having a single execution per input, it is not possible to measure speedup for comparing optimisations.
-On the other hand, measuring just execution time, for example, is useful only if the amount of work is constant between executions with different inputs.
-While previous work have suggested using \textit{instructions per cycle} (IPC) for performing {\itercomp} in \textit{online} scenarios, IPC have no correlation with speedup~\citep{fursin07}.
-
-In order to address this challenge, we propose the use of a work-based metric to compare the performance of different optimisations across multiple executions of the program with distinct inputs.
-We instrument the program for measuring the amount of work it performed during its execution.
-Having a low overhead instrumentation is essential in this online scenario for two main reasons:
-$(i)$ the user is directly affected by large overheads;
-$(ii)$ a highly intrusive instrumentation can have a significant impact on the effect of the optimisations.
-With the purpose of reducing profiling overhead, we propose two relaxation algorithms which provide a trade-off between measurement accuracy and overhead.
-The first is a relaxation algorithm that operates on the level of regions of functions, while the second performs the relaxation considering the whole program at the same time.
-
-Our experimental evaluation shows that performing online {\itercomp} guided by the work-based performance (WP) metric good results compared to the oracle, which is allowed to execute each input multiple times in order to use the actual speedup for guiding the {\itercomp}.
-Online {\itercomp} guided by the WP metric is able to achieve an average of 7.5\% and a maximum of 33\% improvement over the standard {\flagstype -O3} optimisation.
-Moreover, the experiments regarding the work profiling show that both relaxation algorithms are able to significantly reduce the profiling overhead while incurring a dynamic error of less than 5\% in the work measurement.
-The whole program relaxation achieves an average of $2\times$ reduction in the overhead compared with the optimal profiling technique, while the more conservative relaxation that operates per region achieves an average improvement of 40\% over the optimal profiling.
-
-%Our main contributions are the following:
-%\begin{itemize}
-%\item The use of a work-based performance metric in order to enable \textit{online} {\itercomp} by comparing different combination of compiler optimisations even when executed with distinct inputs.
-%\item We propose a relaxed instrumentation for low overhead profiling, with a controlled trade-off between accuracy and overhead.
-%\end{itemize}
-
-To summarise, the main contributions of this paper are the following:
-\begin{itemize}
-\item We propose the use of a work-based performance (WP) metric for comparing different optimised versions of a program.
-      In particular, we use the WP metric to guide {\itercomp} in an online scenario, where the program is expected to execute only once for distinct inputs.
-
-\item Contrary to what previous work has suggested, we show that instructions per cycle (IPC) is not a good metric for online {\itercomp}.
-\item We adapt the block frequency profiling in order to measure the WP metric.
-\item A relaxation algorithm is proposed for lowering the overhead of the work profiling, with a controlled trade-off between accuracy and overhead.
-\item A whole program relaxation is proposed in order to further reduce the overhead of the work profiling.
-\end{itemize}
-
+\input{intro}
 
 \section{Work-based Performance Metric} \label{sec:metric}
 
@@ -884,7 +644,7 @@ This means that the experiments show its best performance enabled by having perf
     \label{fig:error-O3}
 \end{figure*}
 
-%Figure~\ref{fig:overhead-improvement-O3} shows that the relaxation algorithm, with 5\% threshold, is able to improve an average of 48\% over the optimal instrumentation, 
+%Figure~\ref{fig:overhead-improvement-O3} shows that the relaxation algorithm, with 5\% threshold, is able to improve an average of 48\% over the optimal instrumentation,
 %and the WPO relaxation achieves an average of $2\times$ improvement over the optimal instrumentation.
 %While the optimal profiling has a maximum overhead of almost 60\%, the work profiling with a relaxation of 5\% threshold has an overhead of less than 20\% for all benchmarks,
 %with the WPO relaxation reaching an average overhead of only 5\%, compared to an average of 12\% for the optimal profiling.
@@ -1016,70 +776,20 @@ However, even in these cases, the optimisation sequences selected based on the W
 
 \textbf{ToDo: Include results using Genetic Algorithm search.}
 
-\section{Related Work}\label{sec:relatedwork}
+\input{related}
 
-\subsection{{\IterComp}}
+\input{conclusions}
 
-Chen~\etal~\cite{chen10,chen12a} evaluate the effectiveness of iterative compilations across a large number of input test cases.
-Their main motivation is to answer the question:
-\textit{How data input dependent is {\itercomp}?}
-Their results show that it is possible to find a combination of compiler optimisations that achieves at least 86\% of the maximum speedup across all input test cases.
-These optimal combinations are program-specific and yield average speedups up to 3.75$\times$ over the highest optimisation level of compilers.
-
-When optimising a program, the main method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a} evaluates each combination of compiler optimisations across all the available inputs, i.e., if $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimisations, they perform a total of $O(NM)$ runs of the program being optimised.
-Furthermore, they use a pre-defined set of only 300 different combinations of compiler optimisations, which represents a very small sample of the optimisation search space for most modern compilers, e.g.
-LLVM has 56 distinct optimisation passes and GCC has about 47 high-level (SSA form) optimisation passes and about 25 low-level (RTL) optimisation passes, which in both cases result in much more than $2^{50}$ distinct combinations of compiler optimisations, without considering repetition.
-
-Recent work~\cite{chen12b,fang15} have applied the same idea of performing input-dependent {\itercomp} to distributed applications on data centres.
-In summary, each worker receives a subset of the input dataset, called the evaluation dataset, to perform an \textit{online} {\itercomp} of the code being executed.
-Each worker performs the same the method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a}, i.e., they evaluate each combination of compiler optimisations across all the evaluation dataset.
-However, because the optimisation is performed online, they usually consider a small evaluation dataset and a small number of compiler optimisations.
-
-Fursin~\etal~\cite{fursin07} addressed the problem of comparing the effect of two optimisations on two distinct inputs. For that purpose, they proposed to use instruction per cycle (IPC) as the metric for performing such comparison.
-Their result show that using IPC seems promising as a robust metric for {\itercomp} across large input datasets.
-However, some specific optimisation techniques may affect the use of IPC as a robust metric, and specially IPC has been shown to provide poor performance estimation for multi-threaded programs~\cite{alameldeen06,eyerman08}.
-In particular, IPC can give a skewed performance measure if threads spend time in \textit{spin-lock loops} or other synchronisation mechanisms.
-Some existing work on performance assessment suggest that total execution time should be used for measuring performance of multi-threaded programs~\cite{alameldeen06,eyerman08}.
-Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used if the unit of work is representative enough.
-Work-related metrics have already been largely used for measuring performance of throughput-oriented applications, for other applications, however, choosing an appropriate unit of work can be more challenging~\cite{alameldeen06}.
-
-\subsection{Work and Input Size Metrics}
-
-Previous work have proposed profiling-based mechanism to estimate input sizes~\cite{zaparanuks12,coppa14}.
-Coppa~\etal~\cite{coppa14} in particular propose the concept of \textit{read memory size} for automatically estimating the size of the input passed to a routine, where \textit{read memory size} represents the number of distinct memory cells first accessed by a read operation.
-In other words, the \textit{read memory size} metric measures the size of the useful portion of the input's memory footprint.
-However, because we are interested in the amount of computational work performed in respect of a given input, the memory footprint of the input may not always have a direct correspondence to  the amount of computational work.
-
-Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the measure for performance for empirically describing the asymptotic behaviour of programs, which is known as empirical computational complexity.
-Block frequency is a relative metric that represents the number of times a basic block executes~\cite{ball94,ball96}.
-They argue in favour of block frequency due to its portability, repeatability and exactness, since it does not suffer from timer resolution problems or non-deterministic noises.
-Block frequency also has the advantage of being efficiently profiled by means of automatic code instrumentation~\cite{knuth73,ball94}.
-
-However, in the context of comparing different optimisations, although block frequency would be able to capture aspects of optimisations that simplify the control-flow graph (CFG), measuring work at the basic block resolution would not capture effects of optimisations at the instruction level.
-Because of that, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
-The computational cost of a basic block is given by weighing the instructions that it contains.
-
-\subsection{Optimal Instrumentation}
-
-In 1973, Donald Knuth~\cite{knuth73} provided an optimal algorithm for profiling block frequency, inserting fewer probes than the previously described naive instrumentation that was commonly used in practice~\cite{knuth71}.
-Forman~\cite{forman81} proposed further overhead reductions by placing the probes in basic blocks that are less likely to be executed based on static heuristics.
-
-Ball and Larus~\cite{ball94} offered a detailed discussion comparing two approaches for optimally profiling block frequency, namely, placing probes on the vertices or the edges of the control-flow graph (CFG).
-They show that the edge-based approach produces optimal placement of probes.
-
-\section{Conclusion and Future Work}
-
-Our proposed technique for relaxed instrumentation can also be applied for similar profiling scenarios, such as profiling empirical computational complexity~\cite{goldsmith07,zaparanuks12,coppa14}.
-
-\section*{Acknowledgments}
-
-This work was supported by the UK Engineering
-and Physical Sciences Research Council (EPSRC) under grants
-EP/L01503X/1 for the University of Edinburgh, School
-of Informatics, Centre for Doctoral Training in Pervasive
-Parallelism, % (\url{http://pervasiveparallelism.inf.ed.ac.uk/}),
-and also by the Institute for Computing Systems Architecture (ICSA)
-in the School of Informatics at the University of Edinburgh.
+%
+%\section*{Acknowledgments}
+%
+%This work was supported by the UK Engineering
+%and Physical Sciences Research Council (EPSRC) under grants
+%EP/L01503X/1 for the University of Edinburgh, School
+%of Informatics, Centre for Doctoral Training in Pervasive
+%Parallelism, % (\url{http://pervasiveparallelism.inf.ed.ac.uk/}),
+%and also by the Institute for Computing Systems Architecture (ICSA)
+%in the School of Informatics at the University of Edinburgh.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliography}

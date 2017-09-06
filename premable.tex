@@ -1,0 +1,127 @@
+\usepackage{booktabs} % For formal tables
+
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+
+\usepackage{graphics}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\usepackage{multirow}
+
+%\usepackage{setspace}
+\usepackage{ragged2e}
+
+	\usepackage{soul}
+
+%\usepackage{flushend}
+
+%\usepackage{indentfirst}
+
+\usepackage{amsthm}
+\usepackage{amsmath,amssymb}
+%\usepackage{mathrsfs}
+\usepackage{mathtools}
+
+\theoremstyle{definition}
+\newtheorem{prop}{Proposition}[section]
+
+
+%% Listing related stuff
+
+\usepackage{listings}
+\usepackage{courier}            %Required for pretty listings (more dense)
+
+
+%% EMACS colors for listing:
+
+\usepackage{color}
+\definecolor{sh_comment}{rgb}{0.65, 0.00, 0.00 } % red-ish
+\definecolor{sh_keyword}{rgb}{0.37, 0.69, 0.69}  % blue-green
+\definecolor{sh_string}{rgb}{0.08, 0.69, 0.08} % green
+
+
+%% This manipulates the listing numbering. It decreases it by one at the point used.
+\newcommand*\lstDNumber{\addtocounter{lstnumber}{-1}}
+
+%% Change from Listing->Algorithm
+%% \renewcommand\lstlistingname{Algorithm} % Fix listing caption name: Listing -> Algorithm
+%% \renewcommand\lstlistlistingname{Algorithms}
+%% \def\lstlistingautorefname{Alg.}
+
+%% \renewcommand{\thelstlisting}{\thesection-\arabic{lstlisting}}
+%\renewcommand{\thelstlisting}{\arabic{lstlisting}} % Fix listing numbering Algorithm 1.1 -> Algorithm 1.
+
+%% \renewcommand{\labelenumi}{\roman{enumi}.}
+
+\lstset{
+float=[*],
+language=C,                % choose the language of the code
+%% basicstyle=\linespread{0.9}
+%% basicstyle=\scriptsize\ttfamily,
+ basicstyle={\linespread{0.97} \scriptsize\ttfamily},
+ stringstyle=\color{sh_string},
+ keywordstyle = \color{sh_keyword}\bfseries,
+ commentstyle=\color{sh_comment}\itshape,
+numbers=left,                   % where to put the line-numbers
+%% numberstyle=\scriptsize,        % the size of the fonts that are used for the line-numbers
+numberstyle=\scriptsize,        % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+xleftmargin=2em,                % Left margin
+frame=lines,                   % adds a frame around the code. none|leftline|topline|bottomline|lines|single|shadowbox
+framexleftmargin=1.5em,         % Margin from frame to line numbers
+framexbottommargin=0em,         % Distance from last text to frame
+morekeywords={in,true,false,and,or,set,is,not},
+%% prebreak=\mbox{\tiny$\searrow$},
+prebreak=\space,                % Line break: insert this character at the end of the top line
+%% postbreak=\mbox{{\color{blue}\scriptsize$\hookrightarrow$}}, % Line break: blue arrow at the beginning of the bottom line
+postbreak=\mbox{{\color{blue}\scriptsize$\hookrightarrow$}}, % Line break: blue arrow at the beginning of the bottom line
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+tabsize=2,                      % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to top
+escapeinside={\@}{\@}             % Escape sequence \@ESCAPED STUFF\@
+}
+
+\usepackage{nasm/lang}
+\usepackage{nasm/style}
+\usepackage{llvm/lang}
+
+
+% Copyright
+\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+%\acmDOI{10.475/123_4}
+
+% ISBN
+%\acmISBN{123-4567-24-567/08/06}
+
+%Conference
+\acmConference[CGO'18]{International Symposium on Code Generation and Optimization}{2018}{}
+%\acmYear{1997}
+%\copyrightyear{2016}
+%
+%\acmPrice{15.00}
+
+
+\newcommand{\etal}{et~al.}
+
+\newcommand{\itercomp}{{iterative compilation}}
+\newcommand{\Itercomp}{{Iterative compilation}}
+\newcommand{\IterComp}{{Iterative Compilation}}
+\newcommand{\flagstype}{\usefont{T1}{cmr}{m}{n}}

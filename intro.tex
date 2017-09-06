@@ -1,0 +1,82 @@
+\section{Introduction}
+Modern optimising compilers have reached a high level of sophistication,
+providing a large number of optimisations, where the correct choice of
+optimisations and their ordering can have a significant impact on the
+performance of the code being optimised.
+Although compilers offer a set of prearranged optimisation sequences that are
+expected to yield reasonable improvements in many programs, there is still the
+potential for performance degradation for certain programs, as these
+optimisation sequences do not include all possible optimisations and are always
+applied in the same pre-defined order, without regard the code being
+optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
+A well known compilation technique that addresses this challenge is {\itercomp},
+which has the ability to adapt to new platforms, program and workload while
+still having a systematic and simple optimisation process.
+It works by repeatedly evaluating a large number of optimisation sequences until
+the best combination is found for a particular
+program~\cite{kisuki99,fursin07,chen10}.
+
+
+%{\Itercomp} is a well-known compilation technique that addresses the problem of
+%efficiently selecting the best optimisation sequence for a given program.
+%Although compilers offer a set of prearranged optimisation sequences that are
+%expected to yield reasonable improvements in many programs, there is still the
+%potential for performance degradation for certain programs, as these
+%optimisation sequences do not include all possible optimisations and are always
+%applied in the same pre-defined order, without regard the code being
+%optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
+%{\Itercomp} have a systematic and simple optimisation process, where it works
+%by repeatedly evaluating a large number of optimisation sequences until the best
+%combination is found for a particular program~\cite{kisuki99,fursin07,chen10}.
+
+
+Until recently, most of the existing work in {\itercomp} had been focusing on
+finding the best optimisation through repeated runs using a single input.
+Although they demonstrate the potential of {\itercomp}, in real scenarios the
+user rarely executes a program with the same input multiple
+times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
+Furthermore, most of real world applications are complex enough so that a single
+input case does not capture the whole range of possible scenarios and program
+behaviours~\cite{haneda06,fursin07,chen10,chen12a}.
+Because programs can exhibit behaviours that differ greatly depending on the
+input, using a single input for {\itercomp} may not result in a good performance
+when executing the optimised code with different inputs.
+
+The main goal of this paper is to enable {\itercomp} in \textit{online} scenarios.
+We define the online scenario as having the restriction that programs execute multiple inputs and distinct inputs are executed only once.
+This online aspect is usually found in mobile and data centre platforms~\citep{chen12b,fang15,mpeis16}, where the goal is to optimise programs based on the workload of a particular user, or group of users.
+Online {\itercomp} must also target optimal performance across different inputs.
+
+Because of the restriction of having a single execution per input, it is not possible to measure speedup for comparing optimisations.
+On the other hand, measuring just execution time, for example, is useful only if the amount of work is constant between executions with different inputs.
+While previous work have suggested using \textit{instructions per cycle} (IPC) for performing {\itercomp} in \textit{online} scenarios, IPC have no correlation with speedup~\citep{fursin07}.
+
+In order to address this challenge, we propose the use of a work-based metric to compare the performance of different optimisations across multiple executions of the program with distinct inputs.
+We instrument the program for measuring the amount of work it performed during its execution.
+Having a low overhead instrumentation is essential in this online scenario for two main reasons:
+$(i)$ the user is directly affected by large overheads;
+$(ii)$ a highly intrusive instrumentation can have a significant impact on the effect of the optimisations.
+With the purpose of reducing profiling overhead, we propose two relaxation algorithms which provide a trade-off between measurement accuracy and overhead.
+The first is a relaxation algorithm that operates on the level of regions of functions, while the second performs the relaxation considering the whole program at the same time.
+
+Our experimental evaluation shows that performing online {\itercomp} guided by the work-based performance (WP) metric good results compared to the oracle, which is allowed to execute each input multiple times in order to use the actual speedup for guiding the {\itercomp}.
+Online {\itercomp} guided by the WP metric is able to achieve an average of 7.5\% and a maximum of 33\% improvement over the standard {\flagstype -O3} optimisation.
+Moreover, the experiments regarding the work profiling show that both relaxation algorithms are able to significantly reduce the profiling overhead while incurring a dynamic error of less than 5\% in the work measurement.
+The whole program relaxation achieves an average of $2\times$ reduction in the overhead compared with the optimal profiling technique, while the more conservative relaxation that operates per region achieves an average improvement of 40\% over the optimal profiling.
+
+%Our main contributions are the following:
+%\begin{itemize}
+%\item The use of a work-based performance metric in order to enable \textit{online} {\itercomp} by comparing different combination of compiler optimisations even when executed with distinct inputs.
+%\item We propose a relaxed instrumentation for low overhead profiling, with a controlled trade-off between accuracy and overhead.
+%\end{itemize}
+
+To summarise, the main contributions of this paper are the following:
+\begin{itemize}
+\item We propose the use of a work-based performance (WP) metric for comparing different optimised versions of a program.
+      In particular, we use the WP metric to guide {\itercomp} in an online scenario, where the program is expected to execute only once for distinct inputs.
+
+\item Contrary to what previous work has suggested, we show that instructions per cycle (IPC) is not a good metric for online {\itercomp}.
+\item We adapt the block frequency profiling in order to measure the WP metric.
+\item A relaxation algorithm is proposed for lowering the overhead of the work profiling, with a controlled trade-off between accuracy and overhead.
+\item A whole program relaxation is proposed in order to further reduce the overhead of the work profiling.
+\end{itemize}

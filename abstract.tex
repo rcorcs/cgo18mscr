@@ -1,0 +1,23 @@
+\begin{abstract}
+Until recently, most of the existing work in {\itercomp} had been focusing on
+finding the best optimisation through repeated runs using a single input.
+However, in real-world online scenarios, the user rarely executes a program with
+the same input multiple times and most of the programs are complex enough that a
+single input case does not capture the whole range of possible scenarios and
+program behaviours.
+
+In this thesis, we focus on enabling {\itercomp} in \textit{online} scenarios.
+Because of the restriction on repeating the execution with same input, it is
+not always feasible to measure the real speedup when comparing optimisations.
+To this end, we propose a \textit{work efficiency} metric to guide
+online {\itercomp}, which is able to achieve about 80\% of the performance
+of the offline oracle, with improvements of up to about 20\%.
+
+Moreover, because we need to instrument the program for measuring work
+efficiency, providing a low-overhead profiling is essential.
+In order to reduce the profiling overhead, we also propose two relaxation
+algorithms which provide a trade-off between measurement accuracy and overhead.
+Our results show that the two relaxation algorithms can reduce the average
+overhead by 43\% and $2.1\times$ over the optimal work profiling, observing
+up to about $5\times$ of overhead reduction.
+\end{abstract}
