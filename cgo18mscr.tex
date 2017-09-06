@@ -1,4 +1,5 @@
 \PassOptionsToPackage{table}{xcolor}
+
 \documentclass[sigplan,10pt]{acmart}
 
 \usepackage{booktabs} % For formal tables
@@ -115,8 +116,7 @@ escapeinside={\@}{\@}             % Escape sequence \@ESCAPED STUFF\@
 %\acmISBN{123-4567-24-567/08/06}
 
 %Conference
-\acmConference[CGO'18]{International Symposium on
-Code Generation and Optimization}{2018}{}
+\acmConference[CGO'18]{International Symposium on Code Generation and Optimization}{2018}{}
 %\acmYear{1997}
 %\copyrightyear{2016}
 %
@@ -182,46 +182,27 @@ Code Generation and Optimization}{2018}{}
 \renewcommand{\shortauthors}{R. Rocha et al.}
 
 \begin{abstract}
-%Efficiently selecting the best combination of compiler optimisations for a program
-%remains an open problem due to their complex interaction and the large optimisation search space.
-%{\Itercomp} techniques, which consist of iterating
-%over this large space searching for the best optimisation,
-%has the ability to adapt to new platforms, programs and workload while still
-%having a systematic and simple optimisation process.
-%Although some recent work have studied the impact of using multiple
-%input datasets for performing \itercomp, applying this
-%technique in an online scenario still poses some challenges.
-%
-%In this paper, our main goal is to enable \itercomp in
-%online scenarios with the restriction of executing distinct inputs
-%only once.
-%In order to address this challenge,
-%we propose a the use of a work-based metric that allows for comparing different
-%combination of compiler optimisations even when executed with distinct inputs.
-%Because of its online nature, we also propose a relaxed instrumentation
-%that performs low overhead profiling of the amount of work executed, while
-%being able to trade-off between accuracy and overhead in a controlled manner.
-In modern optimising compilers,  the correct choice of an optimisation sequence can have a significant impact on the performance of the final optimised program.
-%Each of these optimisation passes interacts with the code in complicated ways, depending on all other optimisations and the order they were applied to the code being optimised.
-Because of the unpredictability of optimisation interactions and their complexity,
-efficiently selecting the best optimisation sequence for a given program, or program section, remains an open problem.
-A well-known compilation technique that addresses this challenge is {\itercomp}.
+Until recently, most of the existing work in {\itercomp} had been focusing on
+finding the best optimisation through repeated runs using a single input.
+However, in real-world online scenarios, the user rarely executes a program with
+the same input multiple times and most of the programs are complex enough that a
+single input case does not capture the whole range of possible scenarios and
+program behaviours.
 
 In this thesis, we focus on enabling {\itercomp} in \textit{online} scenarios.
-%We define the online scenario as having the restriction that programs execute multiple inputs and distinct inputs are executed only once.
-%Because of these restrictions, standard metrics for comparing optimisations, such as speedups or execution time alone, are not viable.
-We propose the use of a work-based performance metric for guiding {\itercomp},
-where we instrument the program for measuring the amount of work it performed during its execution.
-In order to reduce the profiling overhead, we also propose two relaxation algorithms which provide a trade-off between measurement accuracy and overhead.
-Our experimental evaluation shows that the two relaxation algorithms can reduce
-the average overhead by 43\% and $2.1\times$ over the optimal work profiling.
-%In our experimental evaluation, the first relaxation algorithm that operates on regions of functions is able to reduce the average overhead by about 43\% over the optimal work profiling, while incurring in a dynamic measurement error of much less than 1\%.
-%Similarly, the second relaxation algorithm which operates on the whole program, which also makes use of profiling from previous execution, was able to reduce even further this overhead by a factor of $2.1\times$ compared to the optimal profiling, while incurring in a dynamic measurement error of less than 3\%.
+Because of the restriction on repeating the execution with same input, it is
+not always feasible to measure the real speedup when comparing optimisations.
+To this end, we propose a \textit{work efficiency} metric to guide 
+online {\itercomp}, which is able to achieve about 80\% of the performance 
+of the offline oracle, with improvements of up to about 20\%.
 
-Our evaluation also corroborates the use of the work-based performance metric for guiding online {\itercomp}.
-Under real conditions, it was able to achieve good performance improvements when compared to the oracles, which were allowed to execute the program with the same input multiple times,
-achieving an average improvement of 5.4\% and a maximum of about 20\%.
-Contrary to what previous work has suggested, we have also shown that instructions per cycle (IPC) is not a good metric for guiding online {\itercomp}.
+Moreover, because we need to instrument the program for measuring work
+efficiency, providing a low-overhead profiling is essential.
+In order to reduce the profiling overhead, we also propose two relaxation
+algorithms which provide a trade-off between measurement accuracy and overhead.
+Our results show that the two relaxation algorithms can reduce the average
+overhead by 43\% and $2.1\times$ over the optimal work profiling, observing
+up to about $5\times$ of overhead reduction.
 \end{abstract}
 
 %
@@ -229,20 +210,20 @@ Contrary to what previous work has suggested, we have also shown that instructio
 % http://dl.acm.org/ccs.cfm
 % Please copy and paste the code instead of the example below.
 %
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10011007.10011006.10011041</concept_id>
-<concept_desc>Software and its engineering~Compilers</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10011007.10011006.10011041.10011043</concept_id>
-<concept_desc>Software and its engineering~Retargetable compilers</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
+%\begin{CCSXML}
+%<ccs2012>
+%<concept>
+%<concept_id>10011007.10011006.10011041</concept_id>
+%<concept_desc>Software and its engineering~Compilers</concept_desc>
+%<concept_significance>500</concept_significance>
+%</concept>
+%<concept>
+%<concept_id>10011007.10011006.10011041.10011043</concept_id>
+%<concept_desc>Software and its engineering~Retargetable compilers</concept_desc>
+%<concept_significance>500</concept_significance>
+%</concept>
+%</ccs2012>
+%\end{CCSXML}
 
 %\ccsdesc[500]{Software and its engineering~Compilers}
 %\ccsdesc[500]{Software and its engineering~Retargetable compilers}
@@ -253,53 +234,53 @@ Contrary to what previous work has suggested, we have also shown that instructio
 \maketitle
 
 \section{Introduction}
+Modern optimising compilers have reached a high level of sophistication,
+providing a large number of optimisations, where the correct choice of
+optimisations and their ordering can have a significant impact on the
+performance of the code being optimised.
+Although compilers offer a set of prearranged optimisation sequences that are
+expected to yield reasonable improvements in many programs, there is still the
+potential for performance degradation for certain programs, as these
+optimisation sequences do not include all possible optimisations and are always
+applied in the same pre-defined order, without regard the code being
+optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
+A well known compilation technique that addresses this challenge is {\itercomp},
+which has the ability to adapt to new platforms, program and workload while
+still having a systematic and simple optimisation process.
+It works by repeatedly evaluating a large number of optimisation sequences until
+the best combination is found for a particular
+program~\cite{kisuki99,fursin07,chen10}.
 
-Modern optimising compilers have reached a high level of sophistication, providing a large number of optimisations.
-Because of the unpredictability of optimisation interactions, in addition to the growing complexity of processor architectures and applications, the correct choice of optimisations and their ordering can have a significant impact on the performance of the code being optimised~\cite{pan06,fursin07,kulkarni12}.
 
-Each of these optimisations interacts with the code in complicated ways, depending on all other optimisations and the order they are applied to the code being optimised.
-However, understanding the interactions of optimisations is very important in determining a good solution to the phase-ordering problem~\cite{touati06,kulkarni12}.
-Because of all those dependencies and interactions, although most compiler optimisations yield significant improvements in many programs, the potential for performance degradation in certain program patterns is known to compiler writers and many users~\cite{pan06,zhou12,kulkarni12}.
-%Traditional compilers typically apply the same set of optimisation in a fixed order to all functions in a program, without regard the code being optimised.
+%{\Itercomp} is a well-known compilation technique that addresses the problem of
+%efficiently selecting the best optimisation sequence for a given program.
+%Although compilers offer a set of prearranged optimisation sequences that are
+%expected to yield reasonable improvements in many programs, there is still the
+%potential for performance degradation for certain programs, as these
+%optimisation sequences do not include all possible optimisations and are always
+%applied in the same pre-defined order, without regard the code being
+%optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
+%{\Itercomp} have a systematic and simple optimisation process, where it works
+%by repeatedly evaluating a large number of optimisation sequences until the best
+%combination is found for a particular program~\cite{kisuki99,fursin07,chen10}.
 
-Efficiently selecting the best optimisation sequence for a given program, or program section, remains an open problem.
-Compiler writers typically use a combination of experience and insight to construct the default sequences of prearranged optimisations found in compilers.
-However, these pre-arranged optimisation sequences do not include all possible optimisations and they are always applied in the same pre-defined order, without regard the code being optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
-%in hopes that a programmer will know which combination of optimisations will benefit their code~\cite{pan06,cavazos07,zhou12,kulkarni12}.
 
-A well known compilation technique that addresses this challenge is {\itercomp}.
-{\Itercomp} has the ability to adapt to new platforms, program and workload while still having a systematic and simple optimisation process.
-It works by repeatedly evaluating a large number of optimisation sequences until the best combination is found for a particular program~\cite{fursin07,chen10}.
-The main challenge concerning {\itercomp} is the need for efficiently exploring such a large optimisation space~\cite{fursin07,cavazos07,zhou12}.
+Until recently, most of the existing work in {\itercomp} had been focusing on
+finding the best optimisation through repeated runs using a single input.
+Although they demonstrate the potential of {\itercomp}, in real scenarios the
+user rarely executes a program with the same input multiple
+times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
+Furthermore, most of real world applications are complex enough so that a single
+input case does not capture the whole range of possible scenarios and program
+behaviours~\cite{haneda06,fursin07,chen10,chen12a}.
+Because programs can exhibit behaviours that differ greatly depending on the
+input, using a single input for {\itercomp} may not result in a good performance
+when executing the optimised code with different inputs.
 
-Until recently, most of existing work  had been focusing on finding the best optimisation through repeated runs using a single input.
-Although they demonstrate the potential of {\itercomp}, in real scenarios the user rarely executes a program with the same input multiple times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
-Furthermore, most of real world applications are complex enough so that a single input case does not capture the whole range of possible scenarios and program behaviour~\cite{haneda06,fursin07,chen10,chen12a}.
-Because programs can exhibit behaviours that differ greatly depending on the input,
-%applying {\itercomp} in light of a single input may not result in a good performance when executing the optimised code with different inputs.
-using a single input for {\itercomp} may not result in a good performance when executing the optimised code with different inputs.
-
-%This is something that is well known when writing test cases for correctness.
-%We can extend the same argument when optimising the code for performance.
-%using a single input for {\itercomp} can produce poor performance when executed with different inputs.
-
-Recent work have been studying the impact of using multiple inputs for
-performing {\itercomp}.
-%This previous work suggests that optimising based on a representative range of
-%inputs allows for selecting a robust optimisation sequence that produces
-%good performance in real scenarios where the input is expected to change
-%constantly~\cite{haneda06,fursin07,chen10,chen12a,chen12b,fang15,mpeis16}.
-Their results suggest that optimising based on a relatively small set of
-representative inputs delivers good performance across a wide range of different
-inputs~\cite{haneda06,fursin07,chen10,chen12a,chen12b,fang15,mpeis16}.
-%Their results show that a limited number of inputs may be sufficient to obtain
-%a well-optimised program for a wide range of different
-%inputs~\cite{haneda06,fursin07,chen10,chen12a}.
-
-In this work, our main goal is to enable {\itercomp} in \textit{online} scenarios.
-For the purposes of this paper, we define the online scenario as having the restriction that programs execute multiple inputs and distinct inputs are executed only once.
-This online aspect is usually found in mobile and data centre platforms~\citep{chen12b,fang15,mpeis16}, where the goal is to optimise programs based on the workload of a particular user (or group of users) between executions.
-Online {\itercomp} must target optimal performance across different inputs.
+The main goal of this paper is to enable {\itercomp} in \textit{online} scenarios.
+We define the online scenario as having the restriction that programs execute multiple inputs and distinct inputs are executed only once.
+This online aspect is usually found in mobile and data centre platforms~\citep{chen12b,fang15,mpeis16}, where the goal is to optimise programs based on the workload of a particular user, or group of users.
+Online {\itercomp} must also target optimal performance across different inputs.
 
 Because of the restriction of having a single execution per input, it is not possible to measure speedup for comparing optimisations.
 On the other hand, measuring just execution time, for example, is useful only if the amount of work is constant between executions with different inputs.
@@ -346,7 +327,7 @@ We define the performance metric as the ratio between the amount of \textit{work
 
 By measuring the amount of \textit{work} done per unit of time, we reduce the impact of input-dependent aspects and focus instead on the efficiency of the optimised program.
 For this metric, the main challenge is to precisely define what represents \textit{work}.
-As discussed in Section~\ref{sec:related-metrics}, many work metrics have been presented in the literature, such as block frequency and others.
+As discussed in Section~\ref{sec:relatedwork}, many work metrics have been presented in the literature, such as block frequency and others.
 However, for comparing the performance benefits of different compiler optimisations on a program, although block frequency would be able to capture aspects of optimisations that simplify the control-flow graph (CFG), we argue that measuring work only at the basic block resolution would not be enough for capturing the effects of optimisations at the instruction level.
 For this reason, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
 
@@ -1035,7 +1016,7 @@ However, even in these cases, the optimisation sequences selected based on the W
 
 \textbf{ToDo: Include results using Genetic Algorithm search.}
 
-\section{Related Work}
+\section{Related Work}\label{sec:relatedwork}
 
 \subsection{{\IterComp}}
 
