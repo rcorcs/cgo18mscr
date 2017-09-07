@@ -22,3 +22,6 @@ cgo18mscr.pdf
 *.zip
 *.rpi
 *~
+acmart.cls
+*.synctex
+cgo18mscr.synctex
