@@ -80,16 +80,16 @@
 
 \section{Work-based Performance Metric} \label{sec:metric}
 
-In this section we define the work-based performance (WP) metric proposed for comparing different optimised versions of a program when executing with different inputs.
+In this section we define the work-based performance (WP) metric proposed for comparing different optimized versions of a program when executing with different inputs.
 We define the performance metric as the ratio between the amount of \textit{work}, $\Delta W$, performed during a period of time, $\Delta t$.
 \[
    P = \frac{\Delta W}{\Delta t}
 \]
 
-By measuring the amount of \textit{work} done per unit of time, we reduce the impact of input-dependent aspects and focus instead on the efficiency of the optimised program.
+By measuring the amount of \textit{work} done per unit of time, we reduce the impact of input-dependent aspects and focus instead on the efficiency of the optimized program.
 For this metric, the main challenge is to precisely define what represents \textit{work}.
 As discussed in Section~\ref{sec:relatedwork}, many work metrics have been presented in the literature, such as block frequency and others.
-However, for comparing the performance benefits of different compiler optimisations on a program, although block frequency would be able to capture aspects of optimisations that simplify the control-flow graph (CFG), we argue that measuring work only at the basic block resolution would not be enough for capturing the effects of optimisations at the instruction level.
+However, for comparing the performance benefits of different compiler optimizations on a program, although block frequency would be able to capture aspects of optimizations that simplify the control-flow graph (CFG), we argue that measuring work only at the basic block resolution would not be enough for capturing the effects of optimizations at the instruction level.
 For this reason, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
 
 To this end, we model the computational work $\Delta W$ as a linear equation based on block frequency information and a cost model of the instruction set.
@@ -116,17 +116,17 @@ Similarly to previous work~\citep{giusto01,powell09,brandolese11}, we derive the
 \end{equation}
 By having some empirical data after executing several benchmarks with different inputs, we can fit the linear model with this empirical data in order to obtain estimate costs of the instructions.
 In order to fit the linear model, we measure the wall-clock time when executing the training benchmarks described in Section\ref{sec:benchmarks} with their respective 1000 input datasets.
-For these measurements, the training benchmarks are compiled without optimisation.
-The reason for using no optimisation, as discussed in Section\ref{sec:oic-infra}, is because the amount of work must be only input dependent and consistent between different optimisation sequences.
-This aspect is crucial for the work-based performance metric to enable a consistent comparison between the various optimisation sequences when executing with distinct inputs.
-%it allows to use the estimated cost model for computing a work metric which is independent of optimisations, as we explained in Section~\ref{}.
+For these measurements, the training benchmarks are compiled without optimization.
+The reason for using no optimization, as discussed in Section\ref{sec:oic-infra}, is because the amount of work must be only input dependent and consistent between different optimization sequences.
+This aspect is crucial for the work-based performance metric to enable a consistent comparison between the various optimization sequences when executing with distinct inputs.
+%it allows to use the estimated cost model for computing a work metric which is independent of optimizations, as we explained in Section~\ref{}.
 
-Our cost model has a total of 52 LLVM instructions\footnote{We do not model all LLVM instructions because some instructions are more common in optimised programs, such as the vector instructions.}.
+Our cost model has a total of 52 LLVM instructions\footnote{We do not model all LLVM instructions because some instructions are more common in optimized programs, such as the vector instructions.}.
 Every program, in the set of training benchmarks, was compiled twice: once including the necessary instrumentation for the block frequency profiling, which is required for deriving the linear expression defined in Equation~\ref{eq:linear-work-expression};
-and a standard compilation without any optimisation or instrumentation.
+and a standard compilation without any optimization or instrumentation.
 For each input in the training dataset, the benchmarks were executed once with the instrumented version for collecting the block frequency profiling, and multiple times with the standard compilation just for measuring the wall-clock execution time, until the confidence interval was no larger than 1\% for a 99\% confidence.
 After collecting these measurements, this data can be used to estimate the unknown parameters in the linear model.
-Because we fit the linear model based on the wall-clock execution time, the derived cost model can be interpreted as an estimate of the execution time when the program is compiled without optimisations.
+Because we fit the linear model based on the wall-clock execution time, the derived cost model can be interpreted as an estimate of the execution time when the program is compiled without optimizations.
 
 \begin{figure}[htb]
     \centering
@@ -141,19 +141,19 @@ The mean absolute error (MAE) for the fitted curve is seven milliseconds.
 
 \subsection{Comparison with Instructions Per Cycle} \label{sec:ipc-vs-work-metric}
 
-The IPC metric has been widely used for studying performance benefits of hardware optimisations.
+The IPC metric has been widely used for studying performance benefits of hardware optimizations.
 Although previous work has suggested the use of IPC for guiding {\itercomp}, in this section we argue in favour of the WP metric over IPC.
 
 The IPC metric differs from the proposed WP metric in a key aspect:
-the IPC metric is computed solely based on the final optimised program.
-When executing different optimised versions of a program with the same input, both the number of instructions and the number of clock cycles can change.
+the IPC metric is computed solely based on the final optimized program.
+When executing different optimized versions of a program with the same input, both the number of instructions and the number of clock cycles can change.
 For this reason, higher IPC does not necessarily translate to shorter execution time (or even fewer clock cycles).
 
 % We can illustrate this fact with a very small example as shown in Table~\ref{tab:ipc-example}.
 % This example shows two versions of a program, namely P1 and P2, and their respective measurements related to IPC.
 % Although version P1 has twice the IPC of P2, P1 is one cycle slower than P2.
 % As this example illustrates, the IPC metric can be misleading when compared different versions of the same program.
-% This problem is only intensified when both the optimisation sequence and the input changes.
+% This problem is only intensified when both the optimization sequence and the input changes.
 % In Chapter~\ref{chap:eval} we show empirical evidence for this argument.
 %
 % \begin{table}[h]
@@ -171,18 +171,18 @@ For this reason, higher IPC does not necessarily translate to shorter execution 
 % \label{tab:ipc-example}
 % \end{table}
 
-On the other hand, WP computes the amount of work based on the unoptimised version of the program, which means that it always measures the same amount of work for the same input, regardless of the optimisations applied on the program.
+On the other hand, WP computes the amount of work based on the unoptimized version of the program, which means that it always measures the same amount of work for the same input, regardless of the optimizations applied on the program.
 This is a key aspect that enables the use of the WP metric for guiding {\itercomp}, because a higher WP, which represents work per unit time, naturally translate to shorter execution time.
 Moreover, previous work has also presented other arguments against the use of IPC in similar use-case scenarios. %, as discussed in Chapter~\ref{chap:related}.
 
 \section{Online {\IterComp} Infrastructure} \label{sec:oic-infra}
 
-Although {\itercomp} had been originally proposed as an \textit{offline} optimisation strategy, it can also be adapted to work in online scenarios.
-Instead of selecting the best optimisation sequence as part of the development time (pre-shipping) of a program, a first version of the program is shipped together with an {\itercomp} mechanism.
-In the online scenario, the program is shipped with an initial optimisation sequence and different optimisation sequences are evaluated as the end-user executes the program.
-This optimisation strategy is also known as idle-time optimisation, as the re-compilation happens between runs of the program.
+Although {\itercomp} had been originally proposed as an \textit{offline} optimization strategy, it can also be adapted to work in online scenarios.
+Instead of selecting the best optimization sequence as part of the development time (pre-shipping) of a program, a first version of the program is shipped together with an {\itercomp} mechanism.
+In the online scenario, the program is shipped with an initial optimization sequence and different optimization sequences are evaluated as the end-user executes the program.
+This optimization strategy is also known as idle-time optimization, as the re-compilation happens between runs of the program.
 
-LLVM is particularly suitable for iterative compilation as it makes possible to cache a pre-compiled, but still unoptimised, version of the input program in the bitcode format of the LLVM IR.
+LLVM is particularly suitable for iterative compilation as it makes possible to cache a pre-compiled, but still unoptimized, version of the input program in the bitcode format of the LLVM IR.
 This caching allows to speedup the time required for re-compilation as it is able to bypass the frontend phase.
 If re-compilation time is critical, it would also be possible to keep only the hot portion of the code in the LLVM bitcode format, while the remaining portion of the code is already compiled to the final object code.
 However, this is out of the scope of this paper and we always re-compile the whole program.
@@ -196,19 +196,19 @@ However, this is out of the scope of this paper and we always re-compile the who
 %\textbf{Describe the process step by step.}
 
 Figure~\ref{fig:infra-diagram} shows an overview of the infrastructure required for applying online {\itercomp}
-using WP as the metric of choice for evaluating optimisation sequences.
+using WP as the metric of choice for evaluating optimization sequences.
 The online {\itercomp} follows as described bellow:
 \begin{enumerate}
-\item The program is pre-compiled to the LLVM bitcode format without optimisation.
-\item The unoptimised program is instrumented for work profiling.
-\item Execution-based optimisation search:
+\item The program is pre-compiled to the LLVM bitcode format without optimization.
+\item The unoptimized program is instrumented for work profiling.
+\item Execution-based optimization search:
  \begin{enumerate}
-   \item The current optimisation sequence is used for the re-compilation of the program.
+   \item The current optimization sequence is used for the re-compilation of the program.
    \item The program is executed with any input provided by the end-user.
          During the execution of the program, wall-clock time and the work metric are recorded by profiling instrumentation.
-   \item If the recorded profiling for the current optimisation can be used to compute an average performance measurement within a small confidence interval,
-         then a new optimisation sequence is generated.
-         Otherwise, the same optimisation sequence is used for the next execution.
+   \item If the recorded profiling for the current optimization can be used to compute an average performance measurement within a small confidence interval,
+         then a new optimization sequence is generated.
+         Otherwise, the same optimization sequence is used for the next execution.
  \end{enumerate}
 \end{enumerate}
 
@@ -217,28 +217,28 @@ The \textit{Work Instrumentation} phase focuses on providing a low-overhead inst
 The instrumentation consists of adding a global counter to the program which is used to accumulate the amount of work computed during the program's execution, using the cost model of the instruction set.
 A detailed description of the work instrumentation is presented in Section~\ref{chap:instr}.
 
-Notice how the \textit{Work Instrumentation} phase is executed before performing any optimisation to the program.
-It is critical so that the work profiling always measure the same amount of work for a given input, regardless of the optimisation sequence applied to the program.
+Notice how the \textit{Work Instrumentation} phase is executed before performing any optimization to the program.
+It is critical so that the work profiling always measure the same amount of work for a given input, regardless of the optimization sequence applied to the program.
 Because the instrumentation is performed before optimising the program, it means that the work profiling derives the linear expression defined in Equation~\ref{eq:linear-work-expression}
-based on the unoptimised program.
-In other words, the basic blocks and the number of occurrences of the instruction in the basic blocks reflect the unoptimised program.
-This particular sequence of compilation guarantees that the amount of work must is only input dependent, but consistent between different optimisation sequences.
+based on the unoptimized program.
+In other words, the basic blocks and the number of occurrences of the instruction in the basic blocks reflect the unoptimized program.
+This particular sequence of compilation guarantees that the amount of work must is only input dependent, but consistent between different optimization sequences.
 
-As the name suggests, the component called \textit{Optimisation Selector} is responsible for selecting which optimisation sequence to use for the next execution of the program.
-It can either keep the same optimisation sequence used in the previous execution or start monitoring the performance of a new optimisation sequence.
-An optimisation sequence can be kept for multiple executions of the program in order to gather enough measurement to compute an average performance with small statistical deviations, i.e., for which the confidence interval has a small range.
-We call by \textit{Input-Window Size} the number of executions performed using the same optimisation sequence.
+As the name suggests, the component called \textit{Optimization Selector} is responsible for selecting which optimization sequence to use for the next execution of the program.
+It can either keep the same optimization sequence used in the previous execution or start monitoring the performance of a new optimization sequence.
+An optimization sequence can be kept for multiple executions of the program in order to gather enough measurement to compute an average performance with small statistical deviations, i.e., for which the confidence interval has a small range.
+We call by \textit{Input-Window Size} the number of executions performed using the same optimization sequence.
 
 \subsection{Real Online Scenarios}
 
 In most online scenarios, it is common for periods of peak usage and idle periods.
 For example, mobile devices are usually intensely used during the day, with some idle periods usually when the battery is being re-charged~\citep{mpeis16}.
-Similarly, many authors have also considered peak and idle (or underutilised) periods in the context of data centres~\citep{armbrust10,chen12b}.
+Similarly, many authors have also considered peak and idle (or underutilized) periods in the context of data centres~\citep{armbrust10,chen12b}.
 
 The proposed infrastructure is very well suited for these real online scenarios\footnote{
-However, if idle time is almost non-existent, the proposed infrastructure can still be used by re-compiling the program with a different optimisation while multiple runs of the program are being executed.}.
-In particular, periods of peak usage could be used to monitor multiple runs of the program using the same optimisation sequence, collecting the work profiling and measuring its execution time,
-while periods of idleness or underutilisation could be leveraged to use the profiling statistics for selecting better optimisations and re-compiling the program.
+However, if idle time is almost non-existent, the proposed infrastructure can still be used by re-compiling the program with a different optimization while multiple runs of the program are being executed.}.
+In particular, periods of peak usage could be used to monitor multiple runs of the program using the same optimization sequence, collecting the work profiling and measuring its execution time,
+while periods of idleness or underutilisation could be leveraged to use the profiling statistics for selecting better optimizations and re-compiling the program.
 
 \section{Instrumentation}
 
@@ -252,10 +252,10 @@ Although this instrumentation is easily implemented, it inserts a large amount o
 However, it is possible to insert fewer probes by carefully placing the probes in a way that is possible to reconstruct the complete profiling information~\cite{knuth73,ball94}.
 
 Ball and Larus~\cite{ball94} show that a set of edges represents the minimum number of probes for profiling block frequency if and only if the complementary set of edges forms a spanning tree.
-The instrumentation optimises the placement of the probes with respect to a weighing that assigns a non-negative value to each edge in the CFG.
+The instrumentation optimizes the placement of the probes with respect to a weighing that assigns a non-negative value to each edge in the CFG.
 The cost of profiling a set of edges is proportional to the sum of the weights of the edges.
 These weights can be obtained either by empirical measurements or heuristic estimations.
-In order to minimise the profiling cost, the instrumentation computes the maximum spanning tree for avoiding probing in frequently executed edges.
+In order to minimize the profiling cost, the instrumentation computes the maximum spanning tree for avoiding probing in frequently executed edges.
 Although this instrumentation algorithm is proved to produce the optimal placement of probes for well-structured CFGs, it may produce sub-optimal placement for some unstructured CFGs.
 
 Once we have the maximum spanning tree, probes are placed on any edge not in the spanning tree. Figure~\ref{fig:cfg-example} shows an example of a CFG with a maximum spanning tree represented by the black edges, while the edges highlighted in red represent the placement of the probes.
@@ -418,7 +418,7 @@ For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we relax the pro
 We model the relaxation as a 0-1 Knapsack problem:
 \begin{equation*}
 \begin{aligned}
-& \textrm{maximise }\quad \sum_{i=0}^{k} f(P_i)x_i \\
+& \textrm{maximize }\quad \sum_{i=0}^{k} f(P_i)x_i \\
 & \textrm{subject to }\quad \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M
 \end{aligned}
 \end{equation*}
@@ -493,8 +493,8 @@ This conservatism can be overly restrictive in some cases, resulting in a neglig
 
 In some cases, this overly restrictive conservatism may be unnecessary.
 For these cases, we propose an adapted version of the relaxation algorithm that operates on the whole program.
-Traditionally, compilers optimisations are performed on the function-level, or at best on a per module basis.
-Whole program optimisation (WPO) means that the compiler considers all compilation units of the program and optimises them using the combined knowledge of how they are used together.
+Traditionally, compilers optimizations are performed on the function-level, or at best on a per module basis.
+Whole program optimization (WPO) means that the compiler considers all compilation units of the program and optimizes them using the combined knowledge of how they are used together.
 
 The whole program relaxation works by using block-frequency profiling from previous executions.
 By having this profiling information, the \textit{whole program relaxation} is able to compute the error of removing a given probe in terms of the whole program's execution,
@@ -503,7 +503,7 @@ and then use this error values for selecting a subset of all the probes to be re
 For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the whole program the relaxation as the following 0-1 Knapsack problem:
 \begin{equation*}
 \begin{aligned}
-& \textrm{maximise }\quad \sum_{i=0}^{k} f(P_i)x_i \\
+& \textrm{maximize }\quad \sum_{i=0}^{k} f(P_i)x_i \\
 & \textrm{subject to }\quad \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M
 \end{aligned}
 \end{equation*}

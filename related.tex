@@ -5,21 +5,21 @@
 Chen~\etal~\cite{chen10,chen12a} evaluate the effectiveness of iterative compilations across a large number of input test cases.
 Their main motivation is to answer the question:
 \textit{How data input dependent is {\itercomp}?}
-Their results show that it is possible to find a combination of compiler optimisations that achieves at least 86\% of the maximum speedup across all input test cases.
-These optimal combinations are program-specific and yield average speedups up to 3.75$\times$ over the highest optimisation level of compilers.
+Their results show that it is possible to find a combination of compiler optimizations that achieves at least 86\% of the maximum speedup across all input test cases.
+These optimal combinations are program-specific and yield average speedups up to 3.75$\times$ over the highest optimization level of compilers.
 
-When optimising a program, the main method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a} evaluates each combination of compiler optimisations across all the available inputs, i.e., if $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimisations, they perform a total of $O(NM)$ runs of the program being optimised.
-Furthermore, they use a pre-defined set of only 300 different combinations of compiler optimisations, which represents a very small sample of the optimisation search space for most modern compilers, e.g.
-LLVM has 56 distinct optimisation passes and GCC has about 47 high-level (SSA form) optimisation passes and about 25 low-level (RTL) optimisation passes, which in both cases result in much more than $2^{50}$ distinct combinations of compiler optimisations, without considering repetition.
+When optimising a program, the main method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a} evaluates each combination of compiler optimizations across all the available inputs, i.e., if $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimizations, they perform a total of $O(NM)$ runs of the program being optimized.
+Furthermore, they use a pre-defined set of only 300 different combinations of compiler optimizations, which represents a very small sample of the optimization search space for most modern compilers, e.g.
+LLVM has 56 distinct optimization passes and GCC has about 47 high-level (SSA form) optimization passes and about 25 low-level (RTL) optimization passes, which in both cases result in much more than $2^{50}$ distinct combinations of compiler optimizations, without considering repetition.
 
 Recent work~\cite{chen12b,fang15} have applied the same idea of performing input-dependent {\itercomp} to distributed applications on data centres.
 In summary, each worker receives a subset of the input dataset, called the evaluation dataset, to perform an \textit{online} {\itercomp} of the code being executed.
-Each worker performs the same the method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a}, i.e., they evaluate each combination of compiler optimisations across all the evaluation dataset.
-However, because the optimisation is performed online, they usually consider a small evaluation dataset and a small number of compiler optimisations.
+Each worker performs the same the method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a}, i.e., they evaluate each combination of compiler optimizations across all the evaluation dataset.
+However, because the optimization is performed online, they usually consider a small evaluation dataset and a small number of compiler optimizations.
 
-Fursin~\etal~\cite{fursin07} addressed the problem of comparing the effect of two optimisations on two distinct inputs. For that purpose, they proposed to use instruction per cycle (IPC) as the metric for performing such comparison.
+Fursin~\etal~\cite{fursin07} addressed the problem of comparing the effect of two optimizations on two distinct inputs. For that purpose, they proposed to use instruction per cycle (IPC) as the metric for performing such comparison.
 Their result show that using IPC seems promising as a robust metric for {\itercomp} across large input datasets.
-However, some specific optimisation techniques may affect the use of IPC as a robust metric, and specially IPC has been shown to provide poor performance estimation for multi-threaded programs~\cite{alameldeen06,eyerman08}.
+However, some specific optimization techniques may affect the use of IPC as a robust metric, and specially IPC has been shown to provide poor performance estimation for multi-threaded programs~\cite{alameldeen06,eyerman08}.
 In particular, IPC can give a skewed performance measure if threads spend time in \textit{spin-lock loops} or other synchronisation mechanisms.
 Some existing work on performance assessment suggest that total execution time should be used for measuring performance of multi-threaded programs~\cite{alameldeen06,eyerman08}.
 Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used if the unit of work is representative enough.
@@ -32,12 +32,12 @@ Coppa~\etal~\cite{coppa14} in particular propose the concept of \textit{read mem
 In other words, the \textit{read memory size} metric measures the size of the useful portion of the input's memory footprint.
 However, because we are interested in the amount of computational work performed in respect of a given input, the memory footprint of the input may not always have a direct correspondence to  the amount of computational work.
 
-Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the measure for performance for empirically describing the asymptotic behaviour of programs, which is known as empirical computational complexity.
+Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the measure for performance for empirically describing the asymptotic behavior of programs, which is known as empirical computational complexity.
 Block frequency is a relative metric that represents the number of times a basic block executes~\cite{ball94,ball96}.
-They argue in favour of block frequency due to its portability, repeatability and exactness, since it does not suffer from timer resolution problems or non-deterministic noises.
+They argue in favor of block frequency due to its portability, repeatability and exactness, since it does not suffer from timer resolution problems or non-deterministic noises.
 Block frequency also has the advantage of being efficiently profiled by means of automatic code instrumentation~\cite{knuth73,ball94}.
 
-However, in the context of comparing different optimisations, although block frequency would be able to capture aspects of optimisations that simplify the control-flow graph (CFG), measuring work at the basic block resolution would not capture effects of optimisations at the instruction level.
+However, in the context of comparing different optimizations, although block frequency would be able to capture aspects of optimizations that simplify the control-flow graph (CFG), measuring work at the basic block resolution would not capture effects of optimizations at the instruction level.
 Because of that, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
 The computational cost of a basic block is given by weighing the instructions that it contains.
 

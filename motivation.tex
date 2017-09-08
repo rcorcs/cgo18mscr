@@ -1,10 +1,41 @@
 \section{Motivation}
 
-As a motivation example, consider...
+%As a motivation example, consider...
 
-Here we give an example to motivate our work. E.g. assuming we have a zero-cost profiling based work metric,
-how can we use it to perform iterative compilation across runs? Then we talk about while it is impossible to
-build a zero-overhead metric, we can develop one with low overhead.
+%Here we give an example to motivate our work. E.g. assuming we have a zero-cost profiling based work metric,
+%how can we use it to perform iterative compilation across runs? Then we talk about while it is impossible to
+%build a zero-overhead metric, we can develop one with low overhead.
+
+This section provides a comparison between the offline and online approaches for
+{\itercomp}.
+The goal is to motivate the need for an online {\itercomp}, highlighting
+weaknesses of using offline {\itercomp}.
+
+In the offline approach, a fixed set of inputs is selected for which the best
+optimization sequence is selected during the development time (pre-shipping) of
+a program.
+Although this fixed set of inputs is expected to be representative of the user's
+workload,
+in most cases, it might be infeasible to identify and collect representative
+workloads for every group of users.
+Furthermore, a user can dynamically change its workload pattern, rendering
+a fixed optimization sequence innapropriate for his performance requirements.
+
+In the online approach, the program is shipped with an initial optimization
+sequence and different optimisation sequences are evaluated as the end-user
+executes the program.
+This approach frees developers from the need to collect representative
+workloads for every group of users so that the program can be optimized
+accordingly.
+More importantly, even in scenarios where the user's workload can dynamically
+change its pattern, the online {\itercomp} would still be able to optimize the
+program accordingly.
+
+Figure~\ref{fig:motivation} compares the offline {\itercomp} with a potential
+implementation of the online {\itercomp}.
+This figure shows the performance gains of the best optimization 
+sequence found by each approach, compared with the standard
+compiler's optimization (i.e.,\texttt{-O3}), executed with 1,000 inputs.
 
 
 \begin{figure}[ht]
