@@ -15,12 +15,12 @@ Afterwards, we compare these profiling techniques with the whole program relaxat
 Figure~\ref{fig:num-probes} shows the percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.
 While Figure~\ref{fig:num-probes} compares the various instrumentation algorithms in respect of the naive instrumentation, Figure~\ref{fig:num-probes-improvement} shows the improvement of the relaxation algorithm  over the optimal instrumentation.
 
-\begin{figure*}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{figs/num-probes.pdf}
-    \caption{Percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.}
-    \label{fig:num-probes}
-\end{figure*}
+%\begin{figure*}[ht]
+%    \centering
+%    \includegraphics[width=\textwidth]{figs/num-probes.pdf}
+%    \caption{Percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.}
+%    \label{fig:num-probes}
+%\end{figure*}
 
 For the evaluation of the performance overhead that the instrumentation incur to the benchmarks, we measure the wall-clock time of the benchmarks when compiled with the default {\flagstype -O3} optimization.
 For each benchmark, we compute the average overhead over all its 1000 input dataset.

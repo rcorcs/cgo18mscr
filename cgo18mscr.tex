@@ -78,19 +78,31 @@
 \input{intro}
 \input{motivation}
 
-\section{Work-based Performance Metric} \label{sec:metric}
+\section{The Work-Efficiency Performance Metric} \label{sec:metric}
 
-In this section we define the work-based performance (WP) metric proposed for comparing different optimized versions of a program when executing with different inputs.
-We define the performance metric as the ratio between the amount of \textit{work}, $\Delta W$, performed during a period of time, $\Delta t$.
+In this section we define work efficiency, a metric proposed for comparing different optimized versions of a program when executing with different inputs.
+We define it as the ratio between the amount of \textit{work}, $\Delta W$, performed during a period of time, $\Delta t$.
 \[
    P = \frac{\Delta W}{\Delta t}
 \]
 
-By measuring the amount of \textit{work} done per unit of time, we reduce the impact of input-dependent aspects and focus instead on the efficiency of the optimized program.
-For this metric, the main challenge is to precisely define what represents \textit{work}.
-As discussed in Section~\ref{sec:relatedwork}, many work metrics have been presented in the literature, such as block frequency and others.
-However, for comparing the performance benefits of different compiler optimizations on a program, although block frequency would be able to capture aspects of optimizations that simplify the control-flow graph (CFG), we argue that measuring work only at the basic block resolution would not be enough for capturing the effects of optimizations at the instruction level.
-For this reason, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
+By measuring the amount of \textit{computational work} done per unit of time,
+it reduces the impact of input-dependent aspects and focus instead on the
+efficiency of the optimized program.
+For this metric, the main challenge is to precisely define what represents
+\textit{work}.
+In the context of experimental algorithmics, previous work has suggested using
+\textit{block frequency} as a metric for empirical computational
+complexity~\cite{goldsmith07}.
+%Block frequency is a relative metric that represents the number of times a basic
+%block executes~\citep{ball94,ball96}.
+
+However, in the context of comparing different optimization sequences,
+although block frequency would be able to capture aspects of optimizations that
+simplify the control-flow graph (CFG), measuring work at the basic block
+resolution would not capture effects of optimisations at the instruction level.
+Because of that, in this thesis, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
+The computational cost of a basic block is given by weighting the instructions that it contains.
 
 To this end, we model the computational work $\Delta W$ as a linear equation based on block frequency information and a cost model of the instruction set.
 Formally,
@@ -130,7 +142,7 @@ Because we fit the linear model based on the wall-clock execution time, the deri
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.9\linewidth]{figs/cost-model.pdf}
+    \includegraphics[width=0.6\linewidth]{figs/cost-model.pdf}
     \caption{Linear model fitted from empirical data. The mean absolute error (MAE) for the fitted curve is seven milliseconds.}
     \label{fig:cost-model}
 \end{figure}
@@ -262,7 +274,7 @@ Once we have the maximum spanning tree, probes are placed on any edge not in the
 
 \begin{figure}[htb]
 \centering {
-  \includegraphics[scale=0.85]{figs/cfg-example.pdf}\\\vspace{1ex}
+  \includegraphics[scale=0.75]{figs/cfg-example.pdf}\\\vspace{1ex}
   \resizebox{0.45\textwidth}{!}{
   %\scalebox{0.8}{
      \begin{minipage}{0.5\textwidth}
@@ -396,7 +408,7 @@ Figure~\ref{fig:cfg-relax-example} shows a CFG partitioned into two DAGs (consid
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.85]{figs/cfg-relax-example.pdf}
+  \includegraphics[scale=0.75]{figs/cfg-relax-example.pdf}
   \caption{Example of a CFG containing a loop and its decomposition into DAGs when applying the relaxation.
            The DAGs are the subgraphs within the dashed boundaries.}
   \label{fig:cfg-relax-example}
@@ -416,15 +428,11 @@ Figure~\ref{fig:cfg-relax-example} shows a CFG partitioned into two DAGs (consid
 For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we relax the profiling accuracy by selecting a subset of the probes to be removed, subject to the maximum allowed percentage error, $M$.
 
 We model the relaxation as a 0-1 Knapsack problem:
-\begin{equation*}
-\begin{aligned}
-& \textrm{maximize }\quad \sum_{i=0}^{k} f(P_i)x_i \\
-& \textrm{subject to }\quad \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M
-\end{aligned}
-\end{equation*}
-\[
+\begin{gather*}
+\textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
+\textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
 x_i\in\{0,1\}, i\in\{0,\ldots,k\}
-\]
+\end{gather*}
 where $f(P_i)$ is the execution frequency of probe $P_i$, $x_i$ denotes the probes selected for removal, and $\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to the minimum work value possible to compute in the DAG, i.e., if $m$ is the minimum amount of work possible to be computed when executing the DAG, then $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$.
 Because the percentage error is computed based on the path with the minimum amount of work, $\varepsilon(P_i)$ represents the maximum error possible that would be incurred when removing probe $P_i$.
  Furthermore, by constraining the percentage error of every DAG below a given threshold, we guarantee that the final error of the relaxation will always be bounded by the threshold.
@@ -501,15 +509,11 @@ By having this profiling information, the \textit{whole program relaxation} is a
 and then use this error values for selecting a subset of all the probes to be removed.
 
 For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the whole program the relaxation as the following 0-1 Knapsack problem:
-\begin{equation*}
-\begin{aligned}
-& \textrm{maximize }\quad \sum_{i=0}^{k} f(P_i)x_i \\
-& \textrm{subject to }\quad \sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M
-\end{aligned}
-\end{equation*}
-\[
+\begin{gather*}
+\textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
+\textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
 x_i\in\{0,1\}, i\in\{0,\ldots,k\}
-\]
+\end{gather*}
 where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $x_i$ denotes the probes selected for removal, $M$ is the error threshold, and $\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to the profiled global work, i.e.,
 if $\Delta W$ is the work value for the whole program's execution, computed from the basic block frequencies profiled from previous executions, the error for a given probe $P_i$ is
 \[

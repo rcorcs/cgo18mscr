@@ -25,21 +25,21 @@ Some existing work on performance assessment suggest that total execution time s
 Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used if the unit of work is representative enough.
 Work-related metrics have already been largely used for measuring performance of throughput-oriented applications, for other applications, however, choosing an appropriate unit of work can be more challenging~\cite{alameldeen06}.
 
-\subsection{Work and Input Size Metrics}
+%\subsection{Work and Input Size Metrics}
 
-Previous work have proposed profiling-based mechanism to estimate input sizes~\cite{zaparanuks12,coppa14}.
-Coppa~\etal~\cite{coppa14} in particular propose the concept of \textit{read memory size} for automatically estimating the size of the input passed to a routine, where \textit{read memory size} represents the number of distinct memory cells first accessed by a read operation.
-In other words, the \textit{read memory size} metric measures the size of the useful portion of the input's memory footprint.
-However, because we are interested in the amount of computational work performed in respect of a given input, the memory footprint of the input may not always have a direct correspondence to  the amount of computational work.
+%Previous work have proposed profiling-based mechanism to estimate input sizes~\cite{zaparanuks12,coppa14}.
+%Coppa~\etal~\cite{coppa14} in particular propose the concept of \textit{read memory size} for automatically estimating the size of the input passed to a routine, where \textit{read memory size} represents the number of distinct memory cells first accessed by a read operation.
+%In other words, the \textit{read memory size} metric measures the size of the useful portion of the input's memory footprint.
+%However, because we are interested in the amount of computational work performed in respect of a given input, the memory footprint of the input may not always have a direct correspondence to  the amount of computational work.
 
-Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the measure for performance for empirically describing the asymptotic behavior of programs, which is known as empirical computational complexity.
-Block frequency is a relative metric that represents the number of times a basic block executes~\cite{ball94,ball96}.
-They argue in favor of block frequency due to its portability, repeatability and exactness, since it does not suffer from timer resolution problems or non-deterministic noises.
-Block frequency also has the advantage of being efficiently profiled by means of automatic code instrumentation~\cite{knuth73,ball94}.
+%Goldsmith~\etal~\cite{goldsmith07} use \textit{block frequency} as the measure for performance for empirically describing the asymptotic behavior of programs, which is known as empirical computational complexity.
+%Block frequency is a relative metric that represents the number of times a basic block executes~\cite{ball94,ball96}.
+%They argue in favor of block frequency due to its portability, repeatability and exactness, since it does not suffer from timer resolution problems or non-deterministic noises.
+%Block frequency also has the advantage of being efficiently profiled by means of automatic code instrumentation~\cite{knuth73,ball94}.
 
-However, in the context of comparing different optimizations, although block frequency would be able to capture aspects of optimizations that simplify the control-flow graph (CFG), measuring work at the basic block resolution would not capture effects of optimizations at the instruction level.
-Because of that, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
-The computational cost of a basic block is given by weighing the instructions that it contains.
+%However, in the context of comparing different optimizations, although block frequency would be able to capture aspects of optimizations that simplify the control-flow graph (CFG), measuring work at the basic block resolution would not capture effects of optimizations at the instruction level.
+%Because of that, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
+%The computational cost of a basic block is given by weighing the instructions that it contains.
 
 \subsection{Optimal Instrumentation}
 
