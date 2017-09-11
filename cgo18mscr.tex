@@ -74,6 +74,7 @@
 \keywords{{\IterComp}, Profiling} %, Relaxed Instrumentation}
 
 \maketitle
+\vspace{-1em}
 
 \input{intro}
 \input{motivation}
@@ -394,7 +395,7 @@ While the optimal placement of probes tries to place probes in edges that are le
 
 %Figure~\ref{fig:relax-instr-diagram} shows an overview of the relaxed instrumentation algorithm.
 %The highlighted step is introduced by the relaxed instrumentation on top of the previously defined optimal profiling.
-The relaxed instrumentation performs a post-processing on the resulting instrumentation of the optimal algorithm.
+The relaxed instrumentation performs a post processing on the resulting instrumentation of the optimal algorithm.
 This post-processing identifies probes that add little to the work metric, and removes their instrumentation.
 In order to guarantee an upper bound for the dynamic error in the profiling measurement, the relaxation algorithm applies a constrained post-processing on a per DAG (directed acyclic graph) basis.
 By constraining the relaxation within each DAG by a maximum allowed static error, it guarantees that the overall relaxation will also be constrained by the same bound.

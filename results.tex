@@ -72,25 +72,16 @@ The average performance over the input window provides an estimate for the overa
 The optimization sequences are ranked based on their average performance, and the best optimization sequence is selected.
 %When selecting the best optimization sequence, they are ranked by the average of their performance measurement, using the WP metric, except for the Oracle-RM which uses the real speedup over \texttt{-O0}.
 \begin{itemize}
-\item \textbf{Oracle-RM} executes the program multiple times for each input, measuring the real speedup for each optimization sequence, and then uses the real speedup over {\flagstype -O0} for comparing the optimization sequences.
-  The speedups are computed based on the wall-clock time.
-  In order to reduce noise, the program is executed several times for the same input, until the confidence interval was no larger than 1\% for a 99\% confidence.
+\item \textbf{Oracle-RM} executes the program twice for each input, measuring the real speedup for each optimization sequence, and then uses the real speedup over {\flagstype -O0} for guiding online {\itercomp}. This oracle provides a reference results for assessing the effectiveness work-efficiency metric.
 \item \textbf{Oracle-PP} represents an oracle with a \textit{perfect} non-intrusive profiling.
-  Although it uses the WP metric for comparing optimization sequences, this oracle also avoids noise in its measurements by also executing the program multiple times for each input.
-  The first execution is used for profiling the work metric.
-  The remaining executions are used for measuring the wall-clock time without using the work profiling.
-\item \textbf{Real-OP} corresponds to the online {\itercomp} as it would be applied in a real online scenario.
-  For each optimization, a random sample of inputs is selected, and the program is executed only once with each input.
-  When executing each input, it uses the optimal work instrumentation for profiling the work metric.
-  The average of the WP for the sample of inputs is then used for selecting the best optimization.
-\item \textbf{Real-R5} is similar to the {Real-OP}.
-  It also corresponds to the online {\itercomp} as it would be applied in a real online scenario.
-  For each optimization, a random sample of inputs is selected, and the program is executed only once with each input.
-  When executing each input, it uses the relaxed work instrumentation, with a 5\% threshold, for profiling the work metric.
-  The average of the WP for the sample of inputs is then used for selecting the best optimization.
-\item \textbf{Real-IPC} corresponds to the online {\itercomp} based on the IPC metric.
-  For each optimization, a random sample of inputs is selected, and the program is executed only once with each input.
-  The average of the IPC metric for the sample of inputs is then used for selecting the best optimization.
+  It uses the work-efficiency metric for guiding online {\itercomp}.
+  Because this version simulates a \textit{perfect} profiling, with zero overhead,
+  it allows us isolate and evaluate the effectiveness work-efficiency metric.
+\item \textbf{Real-OP} corresponds to the online {\itercomp} as it would be applied in a real-world online scenario.
+  The program is executed only once with each input.
+  It uses the optimal work profiling for computing the work efficiency.
+\item \textbf{Real-R5} is similar to the {Real-OP}, but with a relaxation of 5\% in the work profiling.
+\item \textbf{Real-IPC} uses IPC for guiding the online {\itercomp}.
 \end{itemize}
 The comparison between Oracle-RM and Oracle-PP is useful for validating the use of the WP metric for guiding {\itercomp}, while the other configurations demonstrate the viability of applying the online {\itercomp} in a real scenario.
 
