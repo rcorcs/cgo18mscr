@@ -11,53 +11,74 @@ This section provides a comparison between the offline and online approaches for
 The goal is to motivate the need for an online {\itercomp}, highlighting
 weaknesses of using offline {\itercomp}.
 
-In the offline approach, a fixed set of inputs is selected for which the best
-optimization sequence is selected during the development time (pre-shipping) of
-a program.
-Although this fixed set of inputs is expected to be representative of the user's
-workload,
-in most cases, it might be infeasible to identify and collect representative
-workloads for every group of users.
-Furthermore, a user can dynamically change its workload pattern, rendering
-a fixed optimization sequence innapropriate for his performance requirements.
+%In the offline approach, a fixed set of inputs is selected for which the best
+%optimization sequence is selected during the development time (pre-shipping) of
+%a program.
+%Although this fixed set of inputs is expected to be representative of the user's
+%workload,
+%in most cases, it might be infeasible to identify and collect representative
+%workloads for every group of users.
+%Furthermore, a user can dynamically change its workload pattern, rendering
+%a fixed optimization sequence innapropriate for his performance requirements.
 
-In the online approach, the program is shipped with an initial optimization
-sequence and different optimization sequences are evaluated as the end-user
-executes the program.
-This approach frees developers from the need to collect representative
-workloads for every group of users so that the program can be optimized
-accordingly.
-More importantly, even in scenarios where the user's workload can dynamically
-change its pattern, the online {\itercomp} would still be able to optimize the
-program accordingly.
+%In the online approach, the program is shipped with an initial optimization
+%sequence and different optimization sequences are evaluated as the end-user
+%executes the program.
+%This approach frees developers from the need to collect representative
+%workloads for every group of users so that the program can be optimized
+%accordingly.
+%More importantly, even in scenarios where the user's workload can dynamically
+%change its pattern, the online {\itercomp} would still be able to optimize the
+%program accordingly.
 
-Figure~\ref{fig:motivation} compares the offline {\itercomp} with a potential
-implementation of the online {\itercomp}.
-For this experiment, we have executed the program twice for each input
-in order to compute the speedup of the optimization sequence being evaluated.
-This figure shows the performance gains of the best optimization 
-sequence found by each approach, compared with the standard
-compiler's optimization (i.e.,\texttt{-O3}), executed with 1,000 inputs.
-Both approaches used the same set of optimization sequences, but because
-the online {\itercomp} compares optimization sequences across inputs,
-it is better informed throughout the search.
+In the offline approach, a small fixed set of inputs is selected for which all
+optimization sequences are evaluated.
+In the online approach, each optimization sequence is evaluated based on a,
+dynamically selected, distinct set of inputs.
+In both cases, the optimization sequences are ranked based on their average
+speedup, and the best optimization sequence is selected.
+
+In order to assess the quality of the optimization sequence selected by each
+approach, we evaluate both optimization sequences against all available inputs
+in our dataset.
+Figure~\ref{fig:motivation-online} shows this comparison between both the offline
+and online approaches for {\itercomp}.
+It shows the performance gains of both optimization sequences compared with the
+standard compiler's optimization (i.e.,\texttt{-O3}).
+The online {\itercomp} achieves an average speedup which is about 13\% better
+than the solution selected by the offline approach.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{figs/motivation.pdf}
+    \includegraphics[width=0.5\textwidth]{figs/motivation-online.pdf}
     \caption{Comparison between the offline and online {\itercomp}.
              The vertical lines represent the average speedups over
              all the 1,000 inputs.
              }
-    \label{fig:motivation}
+    \label{fig:motivation-online}
 \end{figure}
 
+It is worth mentioning that our goal is to improve the average performance
+across the user's workload, and not only for a specific input.
+This means that the online {\itercomp} is better informed throughout the search,
+as it compares optimization sequences across different sets inputs.
 
 However, because of the restriction of having a single execution per input,
 it is not possible to measure speedup in a real-world online scenario.
 Moreover, measuring just execution time, for example, is also not viable since
 different inputs often mean different amounts of work,
 rendering it meaningless to compare optimizations only by execution time.
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
+    \caption{Comparison between the offline and online {\itercomp}.
+             The vertical lines represent the average speedups over
+             all the 1,000 inputs.
+             }
+    \label{fig:motivation-metric}
+\end{figure}
 
 In the remaining of this paper we develop a work efficiency metric, suitable
 for guiding online {\itercomp}, which can be profiled with a single execution
