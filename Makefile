@@ -18,7 +18,7 @@ PDF = ${SAMPLES:%.tex=%.pdf}
 all:  ${PDF}
 
 
-%.pdf:  %.dtx   $(PACKAGE).cls
+%.pdf:  %.dtx   $(PACKAGE).cls 
 	pdflatex $<
 	- bibtex $*
 	pdflatex $<
@@ -39,7 +39,7 @@ acmguide.pdf: $(PACKAGE).dtx $(PACKAGE).cls
 %.cls:   %.ins %.dtx  
 	pdflatex $<
 
-%.pdf:  %.tex   $(PACKAGE).cls ACM-Reference-Format.bst
+%.pdf:  %.tex   $(PACKAGE).cls ACM-Reference-Format.bst abstract.tex
 	pdflatex $<
 	- bibtex $*
 	pdflatex $<
