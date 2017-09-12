@@ -1,23 +1,23 @@
 \begin{abstract}
-Until recently, most of the existing work in {\itercomp} had been focusing on
-finding the best optimisation through repeated runs using a single input.
-However, in real-world online scenarios, the user rarely executes a program with
-the same input multiple times and most of the programs are complex enough that a
-single input case does not capture the whole range of possible scenarios and
-program behaviours.
+    
+    Iterative or adaptive compilation can dramatically improve the performance of a program by searching for the best optimisation
+    settings. However, it relies upon repeatedly evaluating and comparing optimisations off-line on representative inputs. If the
+    developers fail to guess what is a representative input or usage patterns change over time, then the wrong optimisations may be
+    selected. Until this paper, it has been impossible to search online over actual user inputs. Program side effects, interactivity and
+    difficulties capturing the system state prevent repeated execution. Since each input may be executed only once and each input may
+    entail a different amount of work, the search cannot use runtime to compare optimisations. Unless we find a way to compare
+    optimisations even when inputs are executed only once, we will be unable to use real user input for online iterative compilation, users
+    will not have the best optimised programs, and performance and energy efficiency will suffer.
 
-In this thesis, we focus on enabling {\itercomp} in \textit{online} scenarios.
-Because of the restriction on repeating the execution with same input, it is
-not always feasible to measure the real speedup when comparing optimisations.
-To this end, we propose a \textit{work efficiency} metric to guide
-online {\itercomp}, which is able to achieve about 80\% of the performance
-of an offline oracle, with improvements of up to 20\%.
-
-Moreover, because we need to instrument the program for measuring work
-efficiency, providing a low-overhead profiling is essential.
-In order to reduce the profiling overhead, we also propose two relaxation
-algorithms which provide a trade-off between measurement accuracy and overhead.
-Our results show that the two relaxation algorithms can reduce the average
-overhead by 43\% and $2.1\times$ over the optimal work profiling, observing
-up to about $5\times$ of overhead reduction.
+    This paper demonstrates online iterative compilation. We compare optimisations by work efficiency, or work divided by time, executing
+    each input only once. We develop an instrumented, low overhead, work efficiency metric with optimal probe placement. Then we further
+    reduce the overhead by removing high-cost probes whose absence introduces only small errors to the work metric, without significantly
+    affecting the outcome of the iterative compilation. We give two variants for probe removal optimisation: the first offers strong
+    guarantees about the maximum possible error, while the second targets the average, whole program error.
+    
+    Our online method yields programs that get 80\% of the speedup an offline oracle achieves but without executing any input more than
+    once, which the oracle cannot do. Through probe removal we bring the instrumentation overhead down to only 4\% on average, making our
+    approach suitable for regular use. We show practical online iterative compilation for the first time, optimising programs according to
+    the range of inputs users actually present.
+    
 \end{abstract}
