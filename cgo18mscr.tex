@@ -79,10 +79,12 @@
 \input{intro}
 \input{motivation}
 
-\section{The Work-Efficiency Performance Metric} \label{sec:metric}
+\section{The Work Efficiency Metric} \label{sec:metric}
 
-In this section we define work efficiency, a metric proposed for comparing different optimized versions of a program when executing with different inputs.
-We define it as the ratio between the amount of \textit{work}, $\Delta W$, performed during a period of time, $\Delta t$.
+In this section we define work efficiency, a metric proposed for comparing
+different optimized versions of a program when executing with different inputs.
+We define it as the ratio between the amount of \textit{work}, $\Delta W$,
+performed during a period of time, $\Delta t$.
 \[
    P = \frac{\Delta W}{\Delta t}
 \]
@@ -92,7 +94,7 @@ it reduces the impact of input-dependent aspects and focus instead on the
 efficiency of the optimized program.
 For this metric, the main challenge is to precisely define what represents
 \textit{work}.
-In the context of experimental algorithmics, previous work has suggested using
+In the context of experimental algorithmics, previous works have suggested using
 \textit{block frequency} as a metric for empirical computational
 complexity~\cite{goldsmith07}.
 %Block frequency is a relative metric that represents the number of times a basic
@@ -102,8 +104,13 @@ However, in the context of comparing different optimization sequences,
 although block frequency would be able to capture aspects of optimizations that
 simplify the control-flow graph (CFG), measuring work at the basic block
 resolution would not capture effects of optimisations at the instruction level.
-Because of that, in this thesis, we extend the idea of using basic block frequency to measure computational work by also considering the computational cost of each basic block.
-The computational cost of a basic block is given by weighting the instructions that it contains.
+%Because of that, in this thesis, we extend the idea of using basic block
+%frequency to measure computational work by also considering the computational
+%cost of each basic block.
+Because of that, we adopt a work metric that takes into account the
+computational cost within each basic block.
+The computational cost of a basic block is given by weighting the instructions
+that it contains.
 
 To this end, we model the computational work $\Delta W$ as a linear equation based on block frequency information and a cost model of the instruction set.
 Formally,
@@ -338,6 +345,36 @@ We consider that both sets represent the \textit{edge expressions} shown in Figu
 This data-flow analysis is based on the invariant that the symbolic sum of all the incoming edges must equals the symbolic sum of the outgoing edges.
 For example, the symbolic sum of the incoming edges of the basic block $B_8$ is $P_0 - P_1$, where $P_3$ is cancelled out.
 
+We first initialize the edge information $D_{u,v}$, for each edge $(u,v)$ in the CFG.
+\[
+D_{u,v} \gets 
+\begin{cases}
+    P_{u,v} & \quad \text{if edge $(u,v)$ has a probe}\\
+    0       & \quad \text{otherwise}
+\end{cases}   
+\]
+Afetwards, for each vertex $u$, in post-order of the spanning tree, we apply the following operations:
+\[
+\Sigma^+_u = \sum_{v\in N^+(u)} D_{u,v}
+\]
+\[
+\Sigma^-_u = \sum_{v\in N^-(u)} D_{v,u}
+\]
+\[
+\forall v\in N^+(u):  D_{u,v} \gets 
+\begin{cases}
+    D_{u,v} & \quad \text{if $D_{u,v}\neq 0$}\\
+    \Sigma^-_u - \Sigma^+_u       & \quad \text{otherwise}
+\end{cases}   
+\]
+\[
+\forall v\in N^-(u):  D_{v,u} \gets 
+\begin{cases}
+    D_{v,u} & \quad \text{if $D_{v,u}\neq 0$}\\
+    \Sigma^+_u - \Sigma^-_u       & \quad \text{otherwise}
+\end{cases}   
+\]
+
 %By construction, the \textit{symbolic experssions} of a basic block, i.e., the \textit{symbolic sum} of the incoming edges (or outgoing edges) of a basic block, has the following properties:
 %\begin{enumerate}
 %\item Probes in the increment set either (post-)dominates or is (post-)dominated by the given basic block;
@@ -376,6 +413,12 @@ instrValue(G, P) {
 }
 \end{lstlisting}
 
+Let $x$ be a symbolic expression, and $\kappa_P(x)$ be the coefficient of the term $P$ in $x$.
+In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
+Then, for all probes $P$, we have that
+\[
+w(P) = \sum_u \kappa_P(\Sigma^+_u)w(u)
+\]
 
 \subsection{Relaxed Instrumentation}
 
