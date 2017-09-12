@@ -295,12 +295,11 @@ Once we have the maximum spanning tree, probes are placed on any edge not in the
   \label{fig:cfg-example}
 \end{figure}
 
-In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling, the instrumented basic blocks need record an aggregated value of work that represents a path in the CFG.
+In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling, the instrumented basic blocks need to record an aggregated value of work that represents a path in the CFG.
 These values are constructed with some instrumented basic blocks speculatively assuming some paths while other probes correct when these assumptions are wrong (see for example $w(P_0)$ and $w(P_1)$ in Figure~\ref{fig:cfg-example}).
 
-
-\begin{lstlisting}[caption={Post-processing of the CFG for populating all edge flows based on the collected probes.
-\textbf{ToDo: Replace the algorithm with a formal data-flow equation.}}, label={lst:populateEdgeFlows}, float]
+\begin{lstlisting}[caption={Pseudocode of the data-flow analysis necessary for assigning the values computed in each probe.},
+label={lst:populateEdgeInfo}, float]
 // Inputs: CFG with the known edges flows from
 //         the cotree (collected probes).
 // Output: Updated CFG with all edge flows.
@@ -330,12 +329,11 @@ populateEdgeFlows(G) {
 }
 \end{lstlisting}
 
-
-Because the algorithm for the optimal placement of the probes is proved to uniquely compute the block frequencies by propagating the probe counts, we adapt this algorithm in order to compose the aggregated values that will be instrumented in each probe, based on our model of computational work, $\Delta W$, derived from the basic block frequencies (see Section~\ref{sec:metric}).
+Because the algorithm for the optimal placement of the probes is proved to uniquely compute the block frequencies by propagating the probe counts, we adapt this algorithm (see \lstlistingname~\ref{lst:populateEdgeFlows}) in order to compose the aggregated values that will be instrumented in each probe, based on our model of computational work, $\Delta W$, derived from the basic block frequencies (see Section~\ref{sec:metric}).
 We perform a similar propagation of the probes in a symbolic fashion, as illustrated in Figure~\ref{fig:cfg-example}.
-This symbolic propagation of the probes is implemented by the data-flow analysis described in Algorithm~\ref{alg:populateEdgeInfo}, and the final aggregated values are extracted from the edge information as described by Algorithm~\ref{alg:instrValue}.
+This symbolic propagation of the probes is implemented by the data-flow analysis described in \lstlistingname~\ref{lst:populateEdgeInfo}, and the final aggregated values are extracted from the edge information as described by \lstlistingname~\ref{lst:instrValue}.
 
-The data-flow analysis in Algorithm~\ref{alg:populateEdgeInfo} keeps two sets for each edge, namely, the increment and the decrement sets.
+The data-flow analysis in \lstlistingname~\ref{lst:populateEdgeInfo} keeps two sets for each edge, namely, the increment and the decrement sets.
 We consider that both sets represent the \textit{edge expressions} shown in Figure~\ref{fig:cfg-example}, for which we define a \textit{symbolic sum} by computing the union of the increment and decrement sets, respectively, with the appropriate cancellation of common elements.
 This data-flow analysis is based on the invariant that the symbolic sum of all the incoming edges must equals the symbolic sum of the outgoing edges.
 For example, the symbolic sum of the incoming edges of the basic block $B_8$ is $P_0 - P_1$, where $P_3$ is cancelled out.
@@ -349,32 +347,31 @@ For example, the symbolic sum of the incoming edges of the basic block $B_8$ is 
 %From property (1) it follows that whenever the given basic block is executed, exactly one of the probes in the increment set is executed.
 %From properties (2) and (3), it follows that whenever a probe in the decrement set is executed, although the given basic block is not executed, one of the probes in the decrement set is executed.
 
-Algorithm~\ref{alg:instrValue} reads the edge information for each basic block by computing the symbolic sum of their respective incoming edges (or outgoing edges).
+\lstlistingname~\ref{lst:instrValue} reads the edge information for each basic block by computing the symbolic sum of their respective incoming edges (or outgoing edges).
 From these \textit{edge expressions}, we are able to compose the aggregated value of the probes.
-The positive terms in the edge expression of a basic block indicate that the amount of work of this basic block will be incremented in the probes represented by these positive terms, similarly, the negative terms indicate that the amount of work of this basic block will be decremented in the probes represented by these negative terms.
+The positive terms in the edge expression of a basic block indicate that the amount of work of this basic block will be incremented in the probes represented by these positive terms. Similarly, the negative terms indicate that the amount of work of this basic block will be decremented in the probes represented by these negative terms.
 For example, because the edge expression for the basic block $B_8$ is $P_0 - P_1$, the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$ and decremented in $P_1$.
 
-\begin{lstlisting}[caption={Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the predecessors.
-\textbf{ToDo: Using the vector format, we could replace this algorithm with a single equation. Let $V$ be the vector of $\{-1,0,1\}$ and $W$ the weight for each basic block.
-This algorithm could be re-written as $reduce (+) (map (*) (zip V W))$.}
-}, label={lst:instrValue}, float]
+
+%Let $V$ be a vector of $\{-1,0,1\}$ with the sum of the edge information from the incoming edges of a given basic block.
+%Let $W$ be the 
+%\[
+%\mathrm{reduce}\,\,(+)\,\,(\mathrm{map}\,\,(\times W)\,\,E^+(B))
+%\]
+
+\begin{lstlisting}[caption={Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the outgoing edges.}, label={lst:instrValue}, float]
 // Inputs: 1) CFG with the known edges flows
 //            of the chords.
-//         2) Basic block targeted for probing.
+//         2) Probe to be instrumented.
 // Output: Work value to be incremented by the
-//         given probe B.
-instrValue(G, B, inc, dec) {
+//         given probe P.
+instrValue(G, P) {
   value = 0
   for B in G.vertices():
-    incB = set()
-    decB = set()
-    for succB in G.successor(B):
-      incB = incB union inc[G.getEdge(B, succB)]
-      decB = decB union dec[G.getEdge(B, succB)]
-    if B in (incB - decB):
-      value = value + w(B)
-    if B in (decB - incB):
-      value = value - w(B)
+    expr = sum( G.incomingEdges(B) ) 
+    //coef(P,expr) is the coefficient
+    //-1,0, or 1 of P in expr
+    value = value + coef(P, expr)*w(B)
   return value
 }
 \end{lstlisting}

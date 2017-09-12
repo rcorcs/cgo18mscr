@@ -68,7 +68,13 @@ it is not possible to measure speedup in a real-world online scenario.
 Moreover, measuring just execution time, for example, is also not viable since
 different inputs often mean different amounts of work,
 rendering it meaningless to compare optimizations only by execution time.
-
+Therefore, we need a performance metric which can be profiled from a single
+execution of the program.
+Although a previous work has suggested that \textit{instructions per cycle}~(IPC)
+could be used with that goal, IPC have no correlation with speedup~\citep{fursin07}.
+In a case where we have two distinct versions of the program, due to different
+optimizations, which is also executed with distinct inputs, higher IPC does not
+necessarily mean lower execution time (higher performance).
 
 \begin{figure}[ht]
     \centering
@@ -80,7 +86,18 @@ rendering it meaningless to compare optimizations only by execution time.
     \label{fig:motivation-metric}
 \end{figure}
 
-In the remaining of this paper we develop a work efficiency metric, suitable
+Figure~\ref{fig:motivation-metric} shows a comparison among these three metrics,
+namely speedup, execution time, and IPC, and their correlation with the actual
+speedup.
+Each point in the figure corresponds to each metric averaged over 
+a set of inputs, collected during the {\itercomp}.
+The vertical lines correspond to the optimization sequence 
+with the best score for each one of the metrics.
+This figure shows that both execution time and IPC are unsuitable for
+online {\itercomp}, as they present no direct correlation with the actual
+speedup obtained by the optimization sequence being evaluated.
+
+In the remaining of this paper, we develop a work efficiency metric, suitable
 for guiding online {\itercomp}, which can be profiled with a single execution
 of the program with the optimization sequence being evaluated.
 
