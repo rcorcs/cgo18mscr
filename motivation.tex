@@ -1,52 +1,74 @@
 \section{Motivation}
 
-%As a motivation example, consider...
+Offline \itercomp can be very sensitive on having representative inputs for the program under optimization. If the
+developers cannot predict what will be the typical usage of the application or that typical usage changes over time,
+then \itercomp might fail making the application faster for the user.
 
-%Here we give an example to motivate our work. E.g. assuming we have a zero-cost profiling based work metric,
-%how can we use it to perform iterative compilation across runs? Then we talk about while it is impossible to
-%build a zero-overhead metric, we can develop one with low overhead.
+To show this, we randomly generated multiple
+input subsets out of the full set of XXX inputs. Working with each subset, \itercomp found a ``best'' optimization
+sequence which maximized the speedup for the given input subset. We evaluated the true quality of each such sequence
+by measuring the average speedup against \texttt{-O3} for all the XXX inputs. The green bars in
+Figure~\ref{fig:motivation-online} show the histogram of those speedups. Depending on the selection of inputs,
+performance can degrade by 18\% compared to \texttt{-O3}, improve by 46\%, or anything in between. Overall, almost half
+of the optimization sequences discovered fail to improve performance. This means that without intelligent selection of
+inputs, offline \itercomp might be a waste of time.
 
-This section provides a comparison between the offline and online approaches for
-{\itercomp}.
-The goal is to motivate the need for an online {\itercomp}, highlighting
-weaknesses of using offline {\itercomp}.
+The blue bars in Figure~\ref{fig:motivation-online} show a different approach where during \itercomp the speedup of
+each optimization sequence is again measured on a small input subset but this subset changes for every optimization
+sequence. This is similar to how online \itercomp would have to work, using each input only once. This might introduce
+errors, since the speedups we measure for each optimization sequence are not strictly comparable, they are measured on
+different workloads. But in the end the histogram shows that being able to test more inputs allows us to make better
+informed decisions. This approach never degrades performance compared to \textt{-O3}, performance varies less, and on
+average is 13\% better than the offline approach. 
 
-%In the offline approach, a fixed set of inputs is selected for which the best
-%optimization sequence is selected during the development time (pre-shipping) of
-%a program.
-%Although this fixed set of inputs is expected to be representative of the user's
-%workload,
-%in most cases, it might be infeasible to identify and collect representative
-%workloads for every group of users.
-%Furthermore, a user can dynamically change its workload pattern, rendering
-%a fixed optimization sequence innapropriate for his performance requirements.
 
-%In the online approach, the program is shipped with an initial optimization
-%sequence and different optimization sequences are evaluated as the end-user
-%executes the program.
-%This approach frees developers from the need to collect representative
-%workloads for every group of users so that the program can be optimized
-%accordingly.
-%More importantly, even in scenarios where the user's workload can dynamically
-%change its pattern, the online {\itercomp} would still be able to optimize the
-%program accordingly.
-
-In the offline approach, a small fixed set of inputs is selected for which all
-optimization sequences are evaluated.
-In the online approach, each optimization sequence is evaluated based on a,
-dynamically selected, distinct set of inputs.
-In both cases, the optimization sequences are ranked based on their average
-speedup, and the best optimization sequence is selected.
-
-In order to assess the quality of the optimization sequence selected by each
-approach, we evaluate both optimization sequences against all available inputs
-in our dataset.
-Figure~\ref{fig:motivation-online} shows this comparison between both the offline
-and online approaches for {\itercomp}.
-It shows the performance gains of both optimization sequences compared with the
-standard compiler's optimization (i.e.,\texttt{-O3}).
-The online {\itercomp} achieves an average speedup which is about 13\% better
-than the solution selected by the offline approach.
+% %As a motivation example, consider...
+% 
+% %Here we give an example to motivate our work. E.g. assuming we have a zero-cost profiling based work metric,
+% %how can we use it to perform iterative compilation across runs? Then we talk about while it is impossible to
+% %build a zero-overhead metric, we can develop one with low overhead.
+% 
+% This section provides a comparison between the offline and online approaches for
+% {\itercomp}.
+% The goal is to motivate the need for an online {\itercomp}, highlighting
+% weaknesses of using offline {\itercomp}.
+% 
+% %In the offline approach, a fixed set of inputs is selected for which the best
+% %optimization sequence is selected during the development time (pre-shipping) of
+% %a program.
+% %Although this fixed set of inputs is expected to be representative of the user's
+% %workload,
+% %in most cases, it might be infeasible to identify and collect representative
+% %workloads for every group of users.
+% %Furthermore, a user can dynamically change its workload pattern, rendering
+% %a fixed optimization sequence innapropriate for his performance requirements.
+% 
+% %In the online approach, the program is shipped with an initial optimization
+% %sequence and different optimization sequences are evaluated as the end-user
+% %executes the program.
+% %This approach frees developers from the need to collect representative
+% %workloads for every group of users so that the program can be optimized
+% %accordingly.
+% %More importantly, even in scenarios where the user's workload can dynamically
+% %change its pattern, the online {\itercomp} would still be able to optimize the
+% %program accordingly.
+% 
+% In the offline approach, a small fixed set of inputs is selected for which all
+% optimization sequences are evaluated.
+% In the online approach, each optimization sequence is evaluated based on a,
+% dynamically selected, distinct set of inputs.
+% In both cases, the optimization sequences are ranked based on their average
+% speedup, and the best optimization sequence is selected.
+% 
+% In order to assess the quality of the optimization sequence selected by each
+% approach, we evaluate both optimization sequences against all available inputs
+% in our dataset.
+% Figure~\ref{fig:motivation-online} shows this comparison between both the offline
+% and online approaches for {\itercomp}.
+% It shows the performance gains of both optimization sequences compared with the
+% standard compiler's optimization (i.e.,\texttt{-O3}).
+% The online {\itercomp} achieves an average speedup which is about 13\% better
+% than the solution selected by the offline approach.
 
 \begin{figure}[t!]
     \centering
@@ -57,10 +79,10 @@ than the solution selected by the offline approach.
     \label{fig:motivation-online}
 \end{figure}
 
-It is worth mentioning that our goal is to improve the average performance
-across the user's workload, and not only for a specific input.
-This means that the online {\itercomp} is better informed throughout the search,
-as it compares optimization sequences across different sets inputs.
+% It is worth mentioning that our goal is to improve the average performance
+% across the user's workload, and not only for a specific input.
+% This means that the online {\itercomp} is better informed throughout the search,
+% as it compares optimization sequences across different sets inputs.
 
 However, because of the restriction of having a single execution per input,
 it is not possible to measure speedup in a real-world online scenario.
