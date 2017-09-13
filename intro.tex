@@ -2,13 +2,13 @@
 
     Selecting good optimization settings is very hard in modern compilers due to the huge number of parameters and the difficulty
     predicting their interaction with each other, a given program, and the platform. As a result, the default heuristics usually fail to
-    choose the best settings. Programs compiled at \texttt{-O3} might be 50\% slower or worse than those compiled with the best
-    settings~\cite{??}. Iterative, or adaptive, compilation searches for the best compilation settings. Program versions are run on a set
-    of representative inputs and compared by their runtimes. This simple technique is highly successful in improving the performance of
-    programs. However, selecting a representative input set is difficult because users may not use the program as the developer expects and
-    their usage patterns may change unpredictably over time. An optimization which is good for one set of inputs, may not be good from
-    another. So, if the developer guesses the input set wrong, then the wrong optimizations may be chosen, degrading performance and energy
-    consumption.
+    choose the best settings. Programs compiled at \texttt{-O3} might be \FIXME{50\%} slower or worse than those compiled with the best
+    settings~\FIXME{\cite{??}}. Iterative, or adaptive, compilation searches for the best compilation settings. Program versions are run
+    on a set of representative inputs and compared by their runtimes. This simple technique is highly successful in improving the
+    performance of programs. However, selecting a representative input set is difficult because users may not use the program as the
+    developer expects and their usage patterns may change unpredictably over time. An optimization which is good for one set of inputs, may
+    not be good from another. So, if the developer guesses the input set wrong, then the wrong optimizations may be chosen, degrading
+    performance and energy consumption.
 
     An adaptive, online technique would solve this problem as the search would use actual, live inputs and the developer is no longer
     responsible for predicting usage patterns. Unfortunately, we cannot compare two different program versions by runtime when each
@@ -24,12 +24,12 @@
     unoptimized runtime. However, the instrumentation overheads must be kept low to avoid irritating the user and to reduce the risk of
     changing how optimizations behave relative to each other.
 
-    To reduce the overhead we infer the execution of many basic blocks by probes in only a few, following similar work in \cite{??}. Using
-    this metric for online iterative compilation and running each input only once is nearly as good as using an oracle which can cheat and
-    get the true runtime of the unoptimized program version for any input. We can further reduce the overhead because all probes are not
-    created equal and the iterative compilation can tolerate small errors in the work estimation. Each probe has an expected cost, based on
-    its execution frequency, and we can calculate the error removing it will cause in the work metric. We solve an optimization problem,
-    maximizing the savings from removed probes constrained by a threshold for the relative induced error.
+    To reduce the overhead we infer the execution of many basic blocks by probes in only a few, following similar work in
+    \FIXME{\cite{??}}. Using this metric for online iterative compilation and running each input only once is nearly as good as using an
+    oracle which can cheat and get the true runtime of the unoptimized program version for any input. We can further reduce the overhead
+    because all probes are not created equal and the iterative compilation can tolerate small errors in the work estimation. Each probe has
+    an expected cost, based on its execution frequency, and we can calculate the error removing it will cause in the work metric. We solve
+    an optimization problem, maximizing the savings from removed probes constrained by a threshold for the relative induced error.
 
     We have two versions of probe relaxation. The first is conservative and calculates induced error from removing a probe by considering
     the worst case of any execution path through the program. This gives strong guarantees about the maximum error, but is sometimes so
