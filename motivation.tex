@@ -1,24 +1,21 @@
 \section{Motivation}
 
-Offline \itercomp can be very sensitive on having representative inputs for the program under optimization. If the
-developers cannot predict what will be the typical usage of the application or that typical usage changes over time,
-then \itercomp might fail making the application faster for the user.
+Offline \itercomp can be very sensitive on having representative inputs for the program under optimization. If the developers cannot
+predict what will be the typical usage of the application or that typical usage changes over time, then \itercomp might fail making the
+application faster for the user.
 
-To show this, we randomly generated multiple
-input subsets out of the full set of XXX inputs. Working with each subset, \itercomp found a ``best'' optimization
-sequence which maximized the speedup for the given input subset. We evaluated the true quality of each such sequence
-by measuring the average speedup against \texttt{-O3} for all the XXX inputs. The green bars in
-Figure~\ref{fig:motivation-online} show the histogram of those speedups. Depending on the selection of inputs,
-performance can degrade by 18\% compared to \texttt{-O3}, improve by 46\%, or anything in between. Overall, almost half
-of the optimization sequences discovered fail to improve performance. This means that without intelligent selection of
-inputs, offline \itercomp might be a waste of time.
+To show this, we performed offline \itercomp on XXX using a small subset of its inputs and we identified the optimization sequence that
+maximizes performance. In Figure~\ref{fig:motivation-online}, the green bars are the histogram of speedups compared to \texttt{-O3} for
+every individual input, while the dark green line shows the speedup averaged over all inputs. Despite the selected optimization sequence
+being the best for some inputs, we see that on average it improves performance by only 6\% and hurts performance for almost half the
+inputs. Just randomly choosing an input set for offline \itercomp can be counterproductive.
 
 The blue bars in Figure~\ref{fig:motivation-online} show a different approach where during \itercomp the speedup of each optimization
 sequence is again measured on a small input subset but this subset changes for every optimization sequence. This is similar to how online
 \itercomp would have to work, using each input only once. This might introduce errors, since the speedups we measure for each optimization
 sequence are not strictly comparable, they are measured on different workloads. But in the end the histogram shows that being able to test
-more inputs allows us to make better informed decisions. This approach never degrades performance compared to \texttt{-O3}, performance
-varies less, and on average is 13\% better than the offline approach.
+more inputs allows us to make better informed decisions. The optimization sequence we selected never degrades performance compared to
+\texttt{-O3} and is on average 13\% better than the offline approach.
 
 
 % %As a motivation example, consider...
