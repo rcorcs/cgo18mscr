@@ -529,38 +529,47 @@ result in a long compilation time.
 
 \subsection{Whole Program Relaxation}
 
-In some cases, the proposed relaxation can be very conservative, because it
-considers the static error of removing probe $P_i$ relative to the minimum work
-possible of a DAG, in order to be able to guarantee that the dynamic error will
-be bounded by a given threshold.
+In this section we go one step even further.
+In some cases, even the proposed relaxation strategy can still be conservative.
 This conservatism can be overly restrictive in some cases, resulting in a
 negligible overhead reduction but also causing just a negligible dynamic error
 to the work profiling.
+For these cases, we propose an adapted version of the relaxation algorithm that
+operates on the whole program.
+Traditionally, compiler optimizations are performed on the function-level, or at
+best on a per module basis.
+Whole program optimization (WPO) means that the compiler considers all
+compilation units of the program and optimizes them using the combined knowledge
+of how they are used together.
 
-In some cases, this overly restrictive conservatism may be unnecessary.
-For these cases, we propose an adapted version of the relaxation algorithm that operates on the whole program.
-Traditionally, compilers optimizations are performed on the function-level, or at best on a per module basis.
-Whole program optimization (WPO) means that the compiler considers all compilation units of the program and optimizes them using the combined knowledge of how they are used together.
+The \textit{whole program relaxation} works by using block-frequency profiling
+from previous executions.
+By having this profiling information, the whole program relaxation is able to
+compute the error of removing a given probe in terms of the whole program's execution,
+and then select a subset of all the probes to be removed.
 
-The whole program relaxation works by using block-frequency profiling from previous executions.
-By having this profiling information, the \textit{whole program relaxation} is able to compute the error of removing a given probe in terms of the whole program's execution,
-and then use this error values for selecting a subset of all the probes to be removed.
-
-For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the whole program the relaxation as the following 0-1 Knapsack problem:
+For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the
+whole program relaxation as the following 0-1 Knapsack problem:
 \begin{gather*}
 \textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
 \textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
 x_i\in\{0,1\}, i\in\{0,\ldots,k\}
 \end{gather*}
-where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $x_i$ denotes the probes selected for removal, $M$ is the error threshold, and $\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to the profiled global work, i.e.,
-if $\Delta W$ is the work value for the whole program's execution, computed from the basic block frequencies profiled from previous executions, the error for a given probe $P_i$ is
+where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$,
+$x_i$ denotes the probes selected for removal, $M$ is the error threshold, and
+$\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to
+the profiled global work, i.e.,
+if $\Delta W$ is the work value for the whole program's execution, computed from
+the basic block frequencies profiled from previous executions, the error for a
+given probe $P_i$ is
 \[
 \varepsilon(P_i) = \frac{\omega(P_i)f(P_i)}{\Delta W}.
 \]
 
-Contrary to the per DAG relaxation, the whole program relaxation is not guaranteed to be bounded by the error threshold $M$,
+Contrary to the per DAG relaxation, the whole program relaxation is not
+guaranteed to be bounded by the error threshold $M$,
 as it depends on the representativity % representativeness
- of the profiling information provided to the whole program relaxation.
+of the profiling information provided to the whole program relaxation.
 
 
 \input{setup}
