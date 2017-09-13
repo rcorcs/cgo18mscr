@@ -298,10 +298,10 @@ Figure~\ref{fig:cfg-example} shows an example of a CFG with a maximum spanning t
      \begin{minipage}{0.5\textwidth}
      Instrumented value for each probe $P_i$:
      \begin{align*}
-     w(P_0) &= w(B_0) + w(B_1) + w(B_4) + w(B_6) + w(B_7) + w(B_8) + w(B_9)\\
-     w(P_1) &= w(B_2) - w(B_1) - w(B_4) - w(B_6) - w(B_7) - w(B_8)\\
-     w(P_2) &= w(B_5) - w(B_6)\\
-     w(P_3) &= w(B_3) - w(B_4) - w(B_6) - w(B_7)
+     \omega(P_0) &= w(B_0) + w(B_1) + w(B_4) + w(B_6) + w(B_7) + w(B_8) + w(B_9)\\
+     \omega(P_1) &= w(B_2) - w(B_1) - w(B_4) - w(B_6) - w(B_7) - w(B_8)\\
+     \omega(P_2) &= w(B_5) - w(B_6)\\
+     \omega(P_3) &= w(B_3) - w(B_4) - w(B_6) - w(B_7)
      \end{align*}
      \end{minipage}
   }
@@ -344,16 +344,17 @@ then at any leaf of the spanning tree there is only one unknown edge flow.
 This unknown edge flow can be calculated by Kirchhoff's first law.
 This process repeats as a bottom-up propagation until all the unknown edge flows
 have been calculated.
+Let $G$ be the CFG.
 This algorithm first initializes the edge information $D_{(u,v)}$, for each edge
 $(u,v)$ in the CFG, as follows:
 \[
 D_{(u,v)} \gets
 \begin{cases}
-    P_{u,v} & \quad \text{if edge $(u,v)$ has a probe}\\
+    P_{(u,v)} & \quad \text{if edge $(u,v)$ has a probe $P_{(u,v)}$}\\
     0       & \quad \text{otherwise}
 \end{cases}
 \]
-Afetwards, for each vertex $u$, in post-order traversal of the spanning tree,
+Afetwards, for each vertex $u\in G$, in post-order traversal of the spanning tree,
 we can use the Kirchhoff's first law and apply the following operations
 in a symbolic fashion:
 \[
@@ -378,12 +379,13 @@ in a symbolic fashion:
 \]
 
 \noindent\textbf{Composing the aggregated value of the probes:}
-Let $x$ be a symbolic expression, and $\kappa_P(x)$ be the coefficient of the
-term $P$ in $x$.
-In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
+If $x$ is a symbolic expression, then $\kappa_P(x)$ represents the coefficient
+of the term $P$ in $x$.
+In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$, i.e.,
+
 Then, for all probes $P$, we have that
 \[
-w(P) = \sum_u \kappa_P(\Sigma^+_u)w(u)
+\omega(P) = \sum_{u\in G} \kappa_P(\Sigma^+_u)w(u)
 \]
 
 \subsection{Relaxed Instrumentation}
@@ -409,7 +411,6 @@ By constraining the relaxation within each DAG by a maximum allowed static error
 
 The relaxation starts by extracting DAGs (directed acyclic graphs) from the CFG, as illustrated in Figure~\ref{fig:cfg-relax-example}.
 First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
-Section~\ref{sec:natural-loops} explains how loops can be identified in the CFG.
 Afterwards, these subgraphs are transformed into DAGs by ignoring the backedge and also by considering that any loop within the subgraph is never executed, i.e., only the headers of the inner loops are actually included into the DAG.
 Figure~\ref{fig:cfg-relax-example} shows a CFG partitioned into two DAGs (consider only basic blocks and edges completely inside the yellow and green boundaries).
 
