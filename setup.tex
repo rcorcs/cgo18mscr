@@ -1,71 +1,175 @@
 \section{Experimental Setup}
-We implemented our approach in LLVM 4.0. The evaluation platform has a \red{xx-core} 3.4 GHz Intel Core i7 CPU WITH 16 GB RAM. The
+\paragraph{Compiler and Hardware} We implemented our approach in LLVM 4.0. Our evaluation platform has a \red{xx-core} 3.4 GHz Intel Core i7 CPU with 16 GB of RAM. The
 operating system is \red{Ubuntu 14.02} with Linux kernel 4.4.27.
 
 %The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz Skylake~CPU with 16~GiB RAM.
 
-\subsection{Benchmarks}
+\paragraph{Benchmarks}
+We use the \textit{KDataSets} benchmark suit~\cite{chen10,chen12a}. This suit provides 1,000 different inputs per benchmark. The inputs
+have different sizes and often lead to different program execution path. A summary of the benchmarks and their datasets is given in
+Table~\ref{tab:kdatasets}. This benchmark suit allows us to evaluate our approach on a large number of inputs provided by independent
+developers.
 
-For the experimental evaluation we have used a subset of the \textit{KDataSets} benchmark suit, which is the same benchmark and dataset suit used by Chen~\etal~\cite{chen10,chen12a}.
-The KDataSets contains 1000 different inputs for each one of its benchmark programs.
-These benchmarks cover a broad spectrum of application scenarios, ranging from simple embedded signal-processing tasks to common mobile-phone and desktop tasks.
-The different inputs try to capture distinct characteristics in terms of workload sizes and how these workloads exercise different control flow paths.
-A summary of the benchmarks and dataset suit is shown in Table~\ref{tab:kdatasets}.
-
-\begin{table}[h]
+\begin{table*}[t]
 \centering
+\scriptsize
 \scalebox{.8}{
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Program} & \textbf{LOC}    & \textbf{Input file size}            & \textbf{Input description}              \\ \hline % Domain
-qsort         & 154    & 32K-1.8M                   & 3D coordinates                 \\ \hline
-jpeg\_d       & 13501  & 3.6K-1.5M                  & JPEG images                    \\ \hline
-jpeg\_c       & 14014  & 16K-137M                   & PPM images                     \\ \hline
-tiff2bw       & 15477  & \multirow{4}{*}{9K-137M}   & \multirow{4}{*}{TIFF images}   \\ \cline{1-2}
-tiff2rgba     & 15424  &                            &                                \\ \cline{1-2}
-tiffdither    & 15399  &                            &                                \\ \cline{1-2}
-tiffmedian    & 15870  &                            &                                \\ \hline
-susan\_c      & 1376   & \multirow{3}{*}{12K-46M}   & \multirow{3}{*}{PGM images}    \\ \cline{1-2}
-susan\_e      & 1376   &                            &                                \\ \cline{1-2}
-susan\_s      & 1376   &                            &                                \\ \hline
-adpcm\_c      & 210    & 167K-36M                   & WAVE audios                    \\ \hline
-adpcm\_d      & 211    & 21K-8.8M                   & ADPCM audios                   \\ \hline
-lame          & 14491  & 167K-36M                   & WAVE audios                    \\ \hline
-rsynth        & 4111   & 0.1K-42M                   &  Text files                    \\ \hline
-sha           & 197    & 0.6K-35M                   & Files of any format            \\ \hline
-\rowcolor{gray!20}
-bitcount      & 460    &  -                         & Numbers: random                \\ \hline
-\rowcolor{gray!20}
-dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             \\ \hline
-\rowcolor{gray!20}
-patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\ \hline
-\rowcolor{gray!20}
-mad           & 2358   & 28K-27M                    & MP3 audios                     \\ \hline
-\rowcolor{gray!20}
-%gsm           & 3806   & 83K-18M                    & Sun/NeXT audios                \\ \hline
-ghostscript   & 99869  & 11K-43M                    & Postscript files               \\ \hline
-\rowcolor{gray!20}
-%ispell        & 6522   & \multirow{3}{*}{0.1K-42M}  & \multirow{3}{*}{Text files}    \\ \cline{1-2}
-%rsynth        & 4111   &                            &                                \\ \cline{1-2}
-stringsearch  & 338    &  0.1K-42M                 &  Text files                     \\ \hline
-\rowcolor{gray!20}
-%blowfish\_e   & 863    & 0.6K-35M                   & Files of any format            \\ \hline
-%blowfish\_d   & 863    & 0.6K-35M                   & Encrypted files                \\ \hline
-%pgp\_e        & 19575  & 0.6K-35M                   & Files of any format            \\ \hline
-%pgp\_d        & 19575  & 0.4K-18M                   & Encrypted files                \\ \hline
-%rijndael\_e   & 952    & 0.6K-35M                   & Files of any format            \\ \hline
-%rijndael\_d   & 952    & 0.7K-35M                   & Encrypted files                \\ \hline
-CRC32         & 130    & 0.6K-35M                   & Files of any format            \\ \hline
-\rowcolor{gray!20}
-bzip2e        & 5125   & 0.7K-57M                   & Files of any format            \\ \hline
-\rowcolor{gray!20}
-bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\ \hline
+\begin{tabular}{lrlllrlllrll}
+\toprule
+\textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.}   & \textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.} & \textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.}\\
+\midrule
+\rowcolor{Gray} bitcount      & 460    &  -                         & Numbers: random                &
+dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             &
+patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\
+mad           & 2358   & 28K-27M                    & MP3 audio      &
+ghostscript   & 99869  & 11K-43M                    & Postscript file               &
+stringsearch  & 338    &  0.1K-42M                 &  Text files                     \\
+\rowcolor{Gray}CRC32         & 130    & 0.6K-35M                   & Files                         &
+bzip2e        & 5125   & 0.7K-57M                   & Files                         &
+bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\
+\bottomrule
 \end{tabular}
 }
-\caption{Description of the KDataSets with 1000 inputs for each benchmark (Chen~\etal~\cite{chen10,chen12a}).}
-\label{tab:kdatasets}
-\end{table}
+\caption{Training benchmarks and their inputs}
+\label{tab:kdatasets:training}
+\end{table*}
 
-The shaded (grey) benchmarks in Table~\ref{tab:kdatasets} represent the benchmarks used for training the cost model used for computing the weight of the instructions for the work metric.
-These same training benchmarks were also used for collecting a fixed set of optimizations for the {\itercomp}.
-The remaining (white) benchmarks are used for the experimental evaluation.
+\begin{table*}[t]
+\centering
+\scriptsize
+\scalebox{.8}{
+\begin{tabular}{lrlllrlllrll}
+\toprule
+\textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.}   & \textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.} & \textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.}\\
+\midrule
+\rowcolor{Gray} qsort         & 154    & 32K-1.8M                   & 3D coordinations                     &
+jpeg\_d       & 13501  & 3.6K-1.5M                  & JPEG images                    &
+jpeg\_c       & 14014  & 16K-137M                   & PPM images                     \\
+tiff2bw       & 15477  & 9K-137M                    & TIFF images                    &
+tiff2rgba     & 15424  & 9K-137M                    & TIFF images                    &
+tiffdither    & 15399  & 9K-137M                    & TIFF images                    \\
+\rowcolor{Gray}tiffmedian    & 15870  & 9K-137M                    & TIFF images                    &
+susan\_c      & 1376   & 12K-46M                    & PGM images                     &
+susan\_e      & 1376   & 12K-46M                    & PGM images                     \\
+susan\_s      & 1376   & 12K-46M                    & PGM images                     &
+adpcm\_c      & 210    & 167K-36M                   & WAVE audio                    &
+adpcm\_d      & 211    & 21K-8.8M                   & ADPCM audio                   \\
+\rowcolor{Gray} lame          & 14491  & 167K-36M                   & WAVE audio                    &
+rsynth        & 4111   & 0.1K-42M                   &  Text files                    &
+sha           & 197    & 0.6K-35M                   & Files of any format            \\
+\bottomrule
+\end{tabular}
+}
+\caption{Test benchmarks and their inputs}
+\label{tab:kdatasets:test}
+\end{table*}
+
+%\begin{table}[h]
+%\centering
+%\scalebox{.8}{
+%\begin{tabular}{|c|c|c|c|}
+%\hline
+%\textbf{Program} & \textbf{LOC}    & \textbf{Input file size}            & \textbf{Input description}              \\ \hline % Domain
+%qsort         & 154    & 32K-1.8M                   & 3D coordinates                 \\ \hline
+%jpeg\_d       & 13501  & 3.6K-1.5M                  & JPEG images                    \\ \hline
+%jpeg\_c       & 14014  & 16K-137M                   & PPM images                     \\ \hline
+%tiff2bw       & 15477  & \multirow{4}{*}{9K-137M}   & \multirow{4}{*}{TIFF images}   \\ \cline{1-2}
+%tiff2rgba     & 15424  &                            &                                \\ \cline{1-2}
+%tiffdither    & 15399  &                            &                                \\ \cline{1-2}
+%tiffmedian    & 15870  &                            &                                \\ \hline
+%susan\_c      & 1376   & \multirow{3}{*}{12K-46M}   & \multirow{3}{*}{PGM images}    \\ \cline{1-2}
+%susan\_e      & 1376   &                            &                                \\ \cline{1-2}
+%susan\_s      & 1376   &                            &                                \\ \hline
+%adpcm\_c      & 210    & 167K-36M                   & WAVE audios                    \\ \hline
+%adpcm\_d      & 211    & 21K-8.8M                   & ADPCM audios                   \\ \hline
+%lame          & 14491  & 167K-36M                   & WAVE audios                    \\ \hline
+%rsynth        & 4111   & 0.1K-42M                   &  Text files                    \\ \hline
+%sha           & 197    & 0.6K-35M                   & Files of any format            \\ \hline
+%\rowcolor{gray!20}
+%bitcount      & 460    &  -                         & Numbers: random                \\ \hline
+%\rowcolor{gray!20}
+%dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             \\ \hline
+%\rowcolor{gray!20}
+%patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\ \hline
+%\rowcolor{gray!20}
+%mad           & 2358   & 28K-27M                    & MP3 audios                     \\ \hline
+%\rowcolor{gray!20}
+%%gsm           & 3806   & 83K-18M                    & Sun/NeXT audios                \\ \hline
+%ghostscript   & 99869  & 11K-43M                    & Postscript files               \\ \hline
+%\rowcolor{gray!20}
+%%ispell        & 6522   & \multirow{3}{*}{0.1K-42M}  & \multirow{3}{*}{Text files}    \\ \cline{1-2}
+%%rsynth        & 4111   &                            &                                \\ \cline{1-2}
+%stringsearch  & 338    &  0.1K-42M                 &  Text files                     \\ \hline
+%\rowcolor{gray!20}
+%%blowfish\_e   & 863    & 0.6K-35M                   & Files of any format            \\ \hline
+%%blowfish\_d   & 863    & 0.6K-35M                   & Encrypted files                \\ \hline
+%%pgp\_e        & 19575  & 0.6K-35M                   & Files of any format            \\ \hline
+%%pgp\_d        & 19575  & 0.4K-18M                   & Encrypted files                \\ \hline
+%%rijndael\_e   & 952    & 0.6K-35M                   & Files of any format            \\ \hline
+%%rijndael\_d   & 952    & 0.7K-35M                   & Encrypted files                \\ \hline
+%CRC32         & 130    & 0.6K-35M                   & Files of any format            \\ \hline
+%\rowcolor{gray!20}
+%bzip2e        & 5125   & 0.7K-57M                   & Files of any format            \\ \hline
+%\rowcolor{gray!20}
+%bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\ \hline
+%\end{tabular}
+%}
+%\caption{Description of the KDataSets with 1000 inputs for each benchmark (Chen~\etal~\cite{chen10,chen12a}).}
+%\label{tab:kdatasets}
+%\end{table}
+
+
+%\begin{table*}[t]
+%\centering
+%\scriptsize
+%\scalebox{.8}{
+%\begin{tabular}{lrlllrlllrll}
+%\toprule
+%\textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.}   & \textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.} & \textbf{Program} & \textbf{LOC}    & \textbf{Input size}            & \textbf{Input desc.}\\          \\
+%\midrule
+%qsort         & 154    & 32K-1.8M                   & 3D coord.                     &
+%jpeg\_d       & 13501  & 3.6K-1.5M                  & JPEG imag.                    &
+%jpeg\_c       & 14014  & 16K-137M                   & PPM imag.                     \\
+%tiff2bw       & 15477  & 9K-137M                    & TIFF imag.                    &
+%tiff2rgba     & 15424  & 9K-137M                    & TIFF imag.                    &
+%tiffdither    & 15399  & 9K-137M                    & TIFF imag.                    \\
+%tiffmedian    & 15870  & 9K-137M                    & TIFF imag.                    &
+%susan\_c      & 1376   & \multirow{3}{*}{12K-46M}   & \multirow{3}{*}{PGM images}    &
+%susan\_e      & 1376   &                            &                                \\
+%susan\_s      & 1376   &                            &                                &
+%adpcm\_c      & 210    & 167K-36M                   & WAVE audios                    &
+%adpcm\_d      & 211    & 21K-8.8M                   & ADPCM audios                   \\
+%lame          & 14491  & 167K-36M                   & WAVE audios                    &
+%rsynth        & 4111   & 0.1K-42M                   &  Text files                    &
+%sha           & 197    & 0.6K-35M                   & Files of any format            \\
+%bitcount      & 460    &  -                         & Numbers: random                &
+%dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             &
+%patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\
+%mad           & 2358   & 28K-27M                    & MP3 audios                     &
+%%gsm           & 3806   & 83K-18M                    & Sun/NeXT audios                \\ \hline
+%ghostscript   & 99869  & 11K-43M                    & Postscript files               &
+%%ispell        & 6522   & \multirow{3}{*}{0.1K-42M}  & \multirow{3}{*}{Text files}    \\ \cline{1-2}
+%%rsynth        & 4111   &                            &                                \\ \cline{1-2}
+%stringsearch  & 338    &  0.1K-42M                 &  Text files                     \\
+%%blowfish\_e   & 863    & 0.6K-35M                   & Files of any format            \\ \hline
+%%blowfish\_d   & 863    & 0.6K-35M                   & Encrypted files                \\ \hline
+%%pgp\_e        & 19575  & 0.6K-35M                   & Files of any format            \\ \hline
+%%pgp\_d        & 19575  & 0.4K-18M                   & Encrypted files                \\ \hline
+%%rijndael\_e   & 952    & 0.6K-35M                   & Files of any format            \\ \hline
+%%rijndael\_d   & 952    & 0.7K-35M                   & Encrypted files                \\ \hline
+%CRC32         & 130    & 0.6K-35M                   & Files of any format            &
+%bzip2e        & 5125   & 0.7K-57M                   & Files of any format            &
+%bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\
+%\bottomrule
+%\end{tabular}
+%}
+
+Table~\ref{tab:kdatasets:training} gives the benchmarks used for training the cost model used for computing the weight of the instructions
+for the work metric. These same training benchmarks were also used for collecting a fixed set of optimizations for the {\itercomp}.
+Table~~\ref{tab:kdatasets:test} lists the benchmarks used to evaluate our approach.
+
+
+\paragraph{Performance Report}
+We execute each benchmark with an input a number of times until the gap of the upper and lower confidence bounds is smaller than 5\% under
+a 95\% confidence interval setting. We report the geometric mean performance across runs and inputs per benchmark, and provide a min-max
+bar to show the variance across inputs.
