@@ -16,7 +16,7 @@
     Instead, we can prefer programs which do more work per unit of time. 
     This work metric could be developer provided, e.g. number of database rows processed per second. 
     However, it might not be a simple linear relationship or so easy to reason about, and would be better if humans were not involved at all.    
-    This paper contributes just such an automated system to estimate work.
+    This paper contributes just such an automated system to estimate work and applies it to online iterative compilation.
     
     We take the simple view that work is proportional to the time it takes for the unoptimised program version to process the input.
     We instrument the program, before optimisation, to record how much work it does. 
