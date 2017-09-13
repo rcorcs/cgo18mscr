@@ -1,123 +1,218 @@
 \section{Introduction}
 
-Modern optimising compilers have reached a high level of sophistication,
-providing a large number of optimisations, where the correct choice of
-optimisations and their ordering can have a significant impact on the
-performance of the code being optimised.
-Although compilers offer a set of prearranged optimisation sequences that are
-expected to yield reasonable improvements in many programs, there is still the
-potential for performance degradation for certain programs, as these
-optimisation sequences do not include all possible optimisations and are always
-applied in the same pre-defined order, without regard the code being
-optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
-A well-known compilation technique that addresses this challenge is {\itercomp},
-which has the ability to adapt to new platforms, program and workload while
-still having a systematic and simple optimisation process~\cite{kisuki99,fursin07,chen10}.
-%It works by repeatedly evaluating a large number of optimisation sequences until
-%the best combination is found for a particular
-%program~\cite{kisuki99,fursin07,chen10}.
+    Selecting good optimisation settings is very hard in modern compilers due to the huge number of parameters and the difficulty predicting their interaction with each other, a given program, and the platform. 
+    As a result, the default heuristics usually fail to choose the best settings. 
+    Programs compiled at \texttt{-O3} might be 50\% slower or worse than those compiled with the best settings~\cite{??}.
+    Iterative, or adaptive, compilation searches for the best compilation settings. 
+    Program versions are run on a set of representative inputs and compared by their runtimes.
+    This simple technique is highly successful in improving the performance of programs.    
+    However, selecting a representative input set is difficult because users may not use the program as the developer expects and their usage patterns may change unpredictably over time.
+    An optimisation which is good for one set of inputs, may not be good from another. 
+    So, if the developer guesses the input set wrong, then the wrong optimisations may be chosen, degrading performance and energy consumption.
 
-%{\Itercomp} is a well-known compilation technique that addresses the problem of
-%efficiently selecting the best optimisation sequence for a given program.
+    An adaptive, online technique would solve this problem as the search would use actual, live inputs and the developer is no longer responsible for predicting usage patterns. 
+    Unfortunately, we cannot compare two different program versions by runtime when each executes a different input entailing different amounts of work.
+    Nor can we run the inputs through both versions due to side effects. Repeating a bank transfer, for example, is undesirable.
+    Instead, we can prefer programs which do more work per unit of time. 
+    This work metric could be developer provided, e.g. number of database rows processed per second. 
+    However, it might not be a simple linear relationship or so easy to reason about, and would be better if humans were not involved at all.    
+    This paper contributes just such an automated system to estimate work.
+    
+    We take the simple view that work is proportional to the time it takes for the unoptimised program version to process the input.
+    We instrument the program, before optimisation, to record how much work it does. 
+    The work done for each basic block is calculated by a linear regression model of the expected, unoptimised time for each instruction.
+    This simple method rather effectively estimates the unoptimised runtime.
+    However, the instrumentation overheads must be kept low to avoid irritating the user and to reduce the risk of changing how optimisations behave relative to each other.
+
+    To reduce the overhead we infer the execution of many basic blocks by probes in only a few, following similar work in \cite{??}. 
+    Using this metric for online iterative compilation and running each input only once is nearly as good as using an oracle which can cheat and get the true runtime of the unoptimised program version for any input.
+    We can further reduce the overhead because all probes are not created equal and the iterative compilation can tolerate small errors in the work estimation.
+    Each probe has an expected cost, based on its execution frequency, and we can calculate the error removing it will cause in the work metric.
+    We solve an optimisation problem, maximising the savings from removed probes constrained by a threshold for the relative induced error. 
+
+    We have two versions of probe relaxation.
+    The first is conservative and calculates induced error from removing a probe by considering the worst case of any execution path through the program.
+    This gives strong guarantees about the maximum error, but is sometimes so conservative that few probes are actually removed and the observed errors are far below the threshold.
+    The second is more liberal and computes induced error based on the relative change in work measurement removing the probe would have had for some profiling runs.
+    This approach removes more probes and still seems to keep the error below the threshold although it is no longer guaranteed to do so.
+    In both cases, the user sees reduced overhead, but the iterative compilation still performs well.
+    
+    Our evaluation shows that performing online iterative compilation guided by work efficiency achieves about 80\% of the performance of an offline oracle, with improvements of up to about 20\% over the compiler's standard optimisation. While our solution executes each input a single time to measure the work efficiency metric, the offline oracle is allowed to execute multiple times to have a statistically sound measurement of the actual speedup. Regarding the two relaxation algorithms, our results show an average reduction in overhead of 43\% and $2.1\times$ over the optimal work profiling, observing up to about $5\times$ of overhead reduction, while often incurring in much less than 1\% of dynamic error in the measurement of work.
+    
+    Our main contributions are:
+
+    \begin{itemize}[leftmargin=3mm]
+
+        \item We propose a work efficiency profiling that measures a performance rank of an optimised program using a single execution.
+
+        \item We show the effectiveness of the work efficiency for guiding {\itercomp} in an online scenario, where the program is expected
+        to execute only once for distinct inputs.
+
+        \item A conservative relaxation algorithm is proposed for reducing the overhead of the work profiling, with a guaranteed bound for
+        the error.
+
+        \item A more aggressive relaxation algorithm is proposed, which works on the whole program, in order to further reduce the overhead
+        of the work profiling.
+
+    \end{itemize}
+
+%    Selecting the best optimisation settings is very hard in modern compilers. On the one hand, the compiler has a large number of optimisation passes to choose from. Those passes may be used in different orders, even repeatedly, and many of those passes have tuneable parameters. On the other hand, the interaction of the program with today's multicore architectures, the operating system, and other programs is often difficult to predict. The result is that the compilers standard optimisation heuristics usually fail to choose the best settings. The performance difference between the best optimisation settings and the default optimisation settings can be significant. Good choices can sometimes make a program 50\% faster or more compared to the programme being compiled at \texttt{-O3}.
+%
+%    Iterative, or adaptive, compilation searches for the best compilation settings. Many different versions of a program are created with different compilation settings. A set of representative inputs is selected ahead of time and every program version is compared against the others based on how long it takes to run those inputs. The search returns the fastest version. This simple technique has many variants and is highly successful in improving the performance of programs.
+%    
+%    However, iterative compilation suffers from a significant drawback, which is the difficulty of selecting a representative set of inputs. The developer may not know what type of inputs users will present, they may not predict the typical path through an interactive program, and may not appreciate the architectures and system states in which their users will be running their program. An optimisation which is good for one set of inputs, may not be good from another. If the developer then searches for the best optimisation across their guessed set of inputs, but real user inputs are actually different or change over time, then the developer may tune for the wrong environment, degrading performance and energy consumption.
+%    
+%    An adaptive, online technique would solve this problem. The iterative compilation search would use actual inputs as the program runs them. The developer is no longer responsible for predicting how the users will use the program and programs would be optimised for the true environments and workloads that occur. Unfortunately, the online scenario presents a challenge: to compare to program versions by their runtimes, the inputs they execute must either be identical or do the same amount of work. For example, a program version which reverses a ten element list in one second is not as good as a version which does one trillion elements in 2 seconds, but appears that way if only the runtime, not the work involved, is taken into to account. Insuring that inputs contain the same amount of work is not feasible, and an input cannot be run twice. Consider the user's displeasure if an adaptive system automatically re-ran a bank transfer. 
+%    
+%    The answer to how to compare program versions run with different inputs is somewhat straightforward: prefer not the most performant program, but rather the one that completes the most work per unit of time. In previous offline works these two distinctions amount to the same thing, since with fixed, repeatable inputs the work is always constant so runtime suffices. Now, since we can already measure time, we need to estimate how much work a program performs while processing an input. The meaning of work could be subjective for each programmer and program.  In the previous list reversal example the developer may say that the inputs entailed ten and one trillion units of work, respectively. However, this type of metric is undesirable since it would need to be specified by developers for each program.
+%    
+%    We take a simpler view, which is that the work a program version does on an input is proportional to the time it takes for the unoptimised program version to process the input. Thus, if the developer writes a na\"{i}ve recursive Fibonacci implementation, it will involve more work for each input than if he had made an iterative implementation. If the compiler optimises the recursive form into an iterative implementation, then the amount of work it does remains constant, but the runtime will be much reduced so that program version will be seen as highly work efficient.  We must now determine the unoptimised runtime of the program on an input when we have only run an optimised version and cannot run the unoptimised version on the same input.
+%    
+%    Early in the compilation process, before any optimisations, we instrument the program to record an estimate of how much work the program does. We do this by modelling the expected, unoptimised time for each instruction in each basic block and incrementing a work counter as blocks are executed. Optimisations then work on the instrumented program. This simple method is rather effective at estimating the unoptimised runtime, but a counter increment in each basic block introduces unacceptable overheads. The overheads will first of all irritate the user, whose program we are trying to accelerate, and the additional code may also change how well the optimisations appear to behave relative to each other. We must take pains to reduce the number of instrumentation probes to a minimum.
+%    
+%    To reduce the overhead we first take an approach similar to \cite{??} which records control flow edge frequencies. That work noted that many probes are unnecessary and can be inferred. Given two sequential blocks with no other flow, for example, we know that if one block is executed then the other is also. We use the same minimum spanning tree (MST) approach they use to determine the minimum probe placement. This brings our overheads down to a mostly manageable level and when we use this work metric for online iterative compilation, it is almost as good as using an oracle which can cheat and get the true runtime of the unoptimised program version for any input.
+%    
+%    Since we use the work metric as a means to an end, however, we hypothesised that the iterative compilation might be able to tolerate small errors in the work estimation. Capitalising on this, we can further reduce the probes, deleting high cost probes in frequently executed control paths which contribute little to the work metric. We phrase this as an optimisation problem, maximising the expected savings from removed probes within a constrained threshold for the induced error. We have two versions of this probe relaxation. The first is conservative and guarantees that no input will ever cause the relaxed metric to deviate from the true value by more than the error threshold. The second is more liberal and keeps the error down assuming inputs exercise similar code paths to what has been seen before, but cannot guarantee that there is no input which will have higher error. The user sees reduced overhead but the iterative compilation still performs well.
+%    
+%    Our evaluation shows that performing online iterative compilation guided by work efficiency achieves about 80\% of the performance of an offline oracle, with improvements of up to about 20\% over the compiler's standard optimisation. While our solution executes each input a single time to measure the work efficiency metric, the offline oracle is allowed to execute multiple times to have a statistically sound measurement of the actual speedup. Regarding the two relaxation algorithms, our results show an average reduction in overhead of 43\% and $2.1\times$ over the optimal work profiling, observing up to about $5\times$ of overhead reduction, while often incurring in much less than 1\% of dynamic error in the measurement of work.
+%    
+%    To summarise, the main contributions of this paper are the following:
+%
+%    \begin{itemize}
+%
+%        \item We propose a work efficiency profiling that measures a performance rank of an optimised program using a single execution.
+%
+%        \item We show the effectiveness of the work efficiency for guiding {\itercomp} in an online scenario, where the program is expected
+%        to execute only once for distinct inputs.
+%
+%        \item A conservative relaxation algorithm is proposed for reducing the overhead of the work profiling, with a guaranteed bound for
+%        the error.
+%
+%        \item A more aggressive relaxation algorithm is proposed, which works on the whole program, in order to further reduce the overhead
+%        of the work profiling.
+%
+%    \end{itemize}
+      
+
+%Modern optimising compilers have reached a high level of sophistication,
+%providing a large number of optimisations, where the correct choice of
+%optimisations and their ordering can have a significant impact on the
+%performance of the code being optimised.
 %Although compilers offer a set of prearranged optimisation sequences that are
 %expected to yield reasonable improvements in many programs, there is still the
 %potential for performance degradation for certain programs, as these
 %optimisation sequences do not include all possible optimisations and are always
 %applied in the same pre-defined order, without regard the code being
 %optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
-%{\Itercomp} have a systematic and simple optimisation process, where it works
-%by repeatedly evaluating a large number of optimisation sequences until the best
-%combination is found for a particular program~\cite{kisuki99,fursin07,chen10}.
-
-However, until recently, most of the existing work in {\itercomp} had been focusing on
-finding the best optimisation through repeated runs using a single input.
-Although they demonstrate the potential of {\itercomp}, in real-world
-\textit{online} scenarios the user rarely executes a program with the same input
-multiple times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
-Furthermore, most of real-world programs are complex enough so that a single
-input case does not capture the whole range of possible scenarios and program
-behaviours~\cite{haneda06,fursin07,chen10,chen12a}.
-Because programs can exhibit behaviours that differ greatly depending on the
-input, using a single input for {\itercomp} may not result in a good performance
-when executing the optimised code with different inputs.
-
-The main goal of this paper is to enable {\itercomp} in online scenarios.
-We define the online scenario as having the restriction that programs execute
-multiple inputs and distinct inputs are executed only once.
-This online aspect is usually found in mobile and data centre
-platforms~\citep{chen12b,fang15,mpeis16}, where the goal is to optimise programs
-to consume less resources based on the workload of a particular user or group of
-users.
-
-Because of the restriction of having a single execution per input, it is not
-possible to measure speedup for comparing optimisations.
-Moreover, measuring just execution time, for example, is also not viable since
-different inputs often mean different amounts of work,
-rendering it meaningless to compare optimisations only by execution time.
-%amount of work is often expected to differ between 
-%useful only if the
-%amount of work is constant between executions with different inputs.
-Similarly, although previous works have suggested using
-\textit{instructions per cycle} (IPC) for performing {\itercomp} in online
-scenarios, IPC also have no correlation with speedup~\citep{fursin07}.
-
-In order to tackle this problem, we propose the a work-efficiency metric that
-enables to compare the performance of different optimisations using executions
-of the program with distinct inputs.
-It works by instrumenting the program, in optimally selected places, using a
-single global counter which measures the amount of work the program performed
-during its execution.
-Equiped with this work metric, we are able to compute the work-efficiency
-performance using a single execution of an optimised version of the program,
-which can then be used to guide online {\itercomp}.
-
-We acknowledge that having a low-overhead profiling for the work-efficiency
-metric is essential in this online scenario for two main reasons:
-$(i)$ the user is directly affected by large overheads;
-$(ii)$ a highly intrusive instrumentation can have significant impacts on the
-effect of optimisations, due to complex and unpredictable decisions taken by
-many of the compiler's heuristics.
-With the purpose of reducing the profiling's overhead, we propose two relaxation
-algorithms which provide a trade-off between measurement accuracy and overhead.
-%The first is a relaxation algorithm that operates on the level of regions of
-%functions, while the second performs the relaxation considering the whole
-%program at the same time.
-These relaxation algorithms are able to reduce the overhead by incurring very
-small and bounded percenage errors in the measurement of work.
-The benefits of reducing the overhead often outweighs the inaccuracy introduced,
-because of the two aforementioned drawbacks of large overheads.
-
-Our evaluation shows that performing online {\itercomp} guided by work efficiency
-achieves about 80\% of the performance of an offline oracle, with improvements
-of up to about 20\% over the compiler's standard optimisation.
-While our solution executes each input a single time to measure the work
-efficiency metric, the offline oracle is allowed to execute multiple times to
-have a statistically sound measurement of the actual speedup.
-Regarding the two relaxation algorithms, our results show an average reduction
-in overhead of 43\% and $2.1\times$ over the optimal work profiling, observing
-up to about $5\times$ of overhead reduction, while often incurring in much less
-than 1\% of dynamic error in the measurement of work.
-
-%Our experimental evaluation shows that performing online {\itercomp} guided by the work-based performance (WP) metric good results compared to the oracle, which is allowed to execute each input multiple times in order to use the actual speedup for guiding the {\itercomp}.
-%Online {\itercomp} guided by the WP metric is able to achieve an average of 7.5\% and a maximum of 33\% improvement over the standard {\flagstype -O3} optimisation.
-%Moreover, the experiments regarding the work profiling show that both relaxation algorithms are able to significantly reduce the profiling overhead while incurring a dynamic error of less than 5\% in the work measurement.
-%The whole program relaxation achieves an average of $2\times$ reduction in the overhead compared with the optimal profiling technique, while the more conservative relaxation that operates per region achieves an average improvement of 40\% over the optimal profiling.
-
-%Our main contributions are the following:
+%A well-known compilation technique that addresses this challenge is {\itercomp},
+%which has the ability to adapt to new platforms, program and workload while
+%still having a systematic and simple optimisation process~\cite{kisuki99,fursin07,chen10}.
+%%It works by repeatedly evaluating a large number of optimisation sequences until
+%%the best combination is found for a particular
+%%program~\cite{kisuki99,fursin07,chen10}.
+%
+%%{\Itercomp} is a well-known compilation technique that addresses the problem of
+%%efficiently selecting the best optimisation sequence for a given program.
+%%Although compilers offer a set of prearranged optimisation sequences that are
+%%expected to yield reasonable improvements in many programs, there is still the
+%%potential for performance degradation for certain programs, as these
+%%optimisation sequences do not include all possible optimisations and are always
+%%applied in the same pre-defined order, without regard the code being
+%%optimised~\cite{pan06,cavazos07,zhou12,kulkarni12}.
+%%{\Itercomp} have a systematic and simple optimisation process, where it works
+%%by repeatedly evaluating a large number of optimisation sequences until the best
+%%combination is found for a particular program~\cite{kisuki99,fursin07,chen10}.
+%
+%However, until recently, most of the existing work in {\itercomp} had been focusing on
+%finding the best optimisation through repeated runs using a single input.
+%Although they demonstrate the potential of {\itercomp}, in real-world
+%\textit{online} scenarios the user rarely executes a program with the same input
+%multiple times~\cite{bodin98,kisuki99,stephenson03,kulkarni04,agakov06}.
+%Furthermore, most of real-world programs are complex enough so that a single
+%input case does not capture the whole range of possible scenarios and program
+%behaviours~\cite{haneda06,fursin07,chen10,chen12a}.
+%Because programs can exhibit behaviours that differ greatly depending on the
+%input, using a single input for {\itercomp} may not result in a good performance
+%when executing the optimised code with different inputs.
+%
+%The main goal of this paper is to enable {\itercomp} in online scenarios.
+%We define the online scenario as having the restriction that programs execute
+%multiple inputs and distinct inputs are executed only once.
+%This online aspect is usually found in mobile and data centre
+%platforms~\citep{chen12b,fang15,mpeis16}, where the goal is to optimise programs
+%to consume less resources based on the workload of a particular user or group of
+%users.
+%
+%Because of the restriction of having a single execution per input, it is not
+%possible to measure speedup for comparing optimisations.
+%Moreover, measuring just execution time, for example, is also not viable since
+%different inputs often mean different amounts of work,
+%rendering it meaningless to compare optimisations only by execution time.
+%%amount of work is often expected to differ between 
+%%useful only if the
+%%amount of work is constant between executions with different inputs.
+%Similarly, although previous works have suggested using
+%\textit{instructions per cycle} (IPC) for performing {\itercomp} in online
+%scenarios, IPC also have no correlation with speedup~\citep{fursin07}.
+%
+%In order to tackle this problem, we propose the a work-efficiency metric that
+%enables to compare the performance of different optimisations using executions
+%of the program with distinct inputs.
+%It works by instrumenting the program, in optimally selected places, using a
+%single global counter which measures the amount of work the program performed
+%during its execution.
+%Equiped with this work metric, we are able to compute the work-efficiency
+%performance using a single execution of an optimised version of the program,
+%which can then be used to guide online {\itercomp}.
+%
+%We acknowledge that having a low-overhead profiling for the work-efficiency
+%metric is essential in this online scenario for two main reasons:
+%$(i)$ the user is directly affected by large overheads;
+%$(ii)$ a highly intrusive instrumentation can have significant impacts on the
+%effect of optimisations, due to complex and unpredictable decisions taken by
+%many of the compiler's heuristics.
+%With the purpose of reducing the profiling's overhead, we propose two relaxation
+%algorithms which provide a trade-off between measurement accuracy and overhead.
+%%The first is a relaxation algorithm that operates on the level of regions of
+%%functions, while the second performs the relaxation considering the whole
+%%program at the same time.
+%These relaxation algorithms are able to reduce the overhead by incurring very
+%small and bounded percenage errors in the measurement of work.
+%The benefits of reducing the overhead often outweighs the inaccuracy introduced,
+%because of the two aforementioned drawbacks of large overheads.
+%
+%Our evaluation shows that performing online {\itercomp} guided by work efficiency
+%achieves about 80\% of the performance of an offline oracle, with improvements
+%of up to about 20\% over the compiler's standard optimisation.
+%While our solution executes each input a single time to measure the work
+%efficiency metric, the offline oracle is allowed to execute multiple times to
+%have a statistically sound measurement of the actual speedup.
+%Regarding the two relaxation algorithms, our results show an average reduction
+%in overhead of 43\% and $2.1\times$ over the optimal work profiling, observing
+%up to about $5\times$ of overhead reduction, while often incurring in much less
+%than 1\% of dynamic error in the measurement of work.
+%
+%%Our experimental evaluation shows that performing online {\itercomp} guided by the work-based performance (WP) metric good results compared to the oracle, which is allowed to execute each input multiple times in order to use the actual speedup for guiding the {\itercomp}.
+%%Online {\itercomp} guided by the WP metric is able to achieve an average of 7.5\% and a maximum of 33\% improvement over the standard {\flagstype -O3} optimisation.
+%%Moreover, the experiments regarding the work profiling show that both relaxation algorithms are able to significantly reduce the profiling overhead while incurring a dynamic error of less than 5\% in the work measurement.
+%%The whole program relaxation achieves an average of $2\times$ reduction in the overhead compared with the optimal profiling technique, while the more conservative relaxation that operates per region achieves an average improvement of 40\% over the optimal profiling.
+%
+%%Our main contributions are the following:
+%%\begin{itemize}
+%%\item The use of a work-based performance metric in order to enable \textit{online} {\itercomp} by comparing different combination of compiler optimisations even when executed with distinct inputs.
+%%\item We propose a relaxed instrumentation for low overhead profiling, with a controlled trade-off between accuracy and overhead.
+%%\end{itemize}
+%
+%To summarise, the main contributions of this paper are the following:
 %\begin{itemize}
-%\item The use of a work-based performance metric in order to enable \textit{online} {\itercomp} by comparing different combination of compiler optimisations even when executed with distinct inputs.
-%\item We propose a relaxed instrumentation for low overhead profiling, with a controlled trade-off between accuracy and overhead.
+%\item We propose a work efficiency profiling that measures a performance rank
+%of an optimised program using a single execution.
+%\item We show the effectiveness of the work efficiency for guiding {\itercomp} in an
+%online scenario, where the program is expected to execute only once for distinct
+%inputs.
+%%\item Contrary to what previous work has suggested, we show that instructions per cycle (IPC) is not a good metric for online {\itercomp}.
+%%\item We adapt the block frequency profiling in order to measure the WP metric.
+%\item A conservative relaxation algorithm is proposed for reducing the overhead of the work profiling, with a guaranteed bound for the error.
+%\item A more aggressive relaxation algorithm is proposed, which works on the whole program, in order to further reduce the overhead of the work profiling.
 %\end{itemize}
-
-To summarise, the main contributions of this paper are the following:
-\begin{itemize}
-\item We propose a work efficiency profiling that measures a performance rank
-of an optimised program using a single execution.
-\item We show the effectiveness of the work efficiency for guiding {\itercomp} in an
-online scenario, where the program is expected to execute only once for distinct
-inputs.
-%\item Contrary to what previous work has suggested, we show that instructions per cycle (IPC) is not a good metric for online {\itercomp}.
-%\item We adapt the block frequency profiling in order to measure the WP metric.
-\item A conservative relaxation algorithm is proposed for reducing the overhead of the work profiling, with a guaranteed bound for the error.
-\item A more aggressive relaxation algorithm is proposed, which works on the whole program, in order to further reduce the overhead of the work profiling.
-\end{itemize}
+%
