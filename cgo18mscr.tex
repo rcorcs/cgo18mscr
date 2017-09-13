@@ -385,7 +385,7 @@ in a symbolic fashion:
 If $x$ is a symbolic expression, then $\kappa_P(x)$ represents the coefficient
 of the term $P$ in $x$.
 In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
-Then, for all probes $P$, we have that
+Then, for all probes $P$:
 \[
 \omega(P) = \sum_{u\in G} \kappa_P(\Sigma^+_u)w(u)
 \]
@@ -398,8 +398,8 @@ of 79\% to 13\%, in some critical cases, even the optimal instrumentation can
 result in overheads of up to 60\% (see benchmark \texttt{adpcm\_d} in Figure~\ref{fig:overhead-O3}).
 In order to further reduce the overhead in these critical cases, we propose a
 relaxation strategy that offers a trade-off between accuracy and overhead.
-While the optimal placement of probes tries to place probes in edges that are
-less likely to be executed, the relaxation focus on removing probes that are
+While the optimal instrumentation places probes in edges that are
+less likely to be executed, the relaxation removes probes that are
 more likely to be executed but add little to the final work metric.
 
 % \begin{figure}[h]
@@ -418,7 +418,7 @@ the relaxation algorithm applies a constrained post-processing on a per DAG (dir
 By constraining the relaxation within each DAG by a maximum allowed static error,
 it guarantees that the overall relaxation will also be constrained by the same bound.
 
-The relaxation starts by extracting DAGs from the CFG, as illustrated in Figure~\ref{fig:cfg-relax-example}.
+The relaxation starts by extracting DAGs from the CFG.
 First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
 Afterwards, these subgraphs are transformed into DAGs by ignoring the backedge
 and also by considering that any loop within the subgraph is never executed,
@@ -429,7 +429,7 @@ only basic blocks and edges completely inside the yellow and green boundaries).
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.75]{figs/cfg-relax-example.pdf}
-  \caption{Example of a CFG containing a loop and its decomposition into DAGs when applying the relaxation.
+  \caption{Example of a CFG containing a loop and its decomposition into DAGs.
            The DAGs are the subgraphs within the dashed boundaries.}
   \label{fig:cfg-relax-example}
 \end{figure}
@@ -445,10 +445,10 @@ only basic blocks and edges completely inside the yellow and green boundaries).
 %}
 %\end{lstlisting}
 
-For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we relax the
-profiling accuracy by selecting a subset of the probes to be removed, subject to
+For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$,
+we select a subset of the probes to be removed, subject to
 the maximum allowed percentage error, $M$.
-We model the relaxation as a 0-1 Knapsack problem:
+This strategy can be modeled as a 0-1 Knapsack problem:
 \begin{gather*}
 \textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
 \textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
@@ -529,8 +529,13 @@ result in a long compilation time.
 
 \subsection{Whole Program Relaxation}
 
-In some cases, the proposed relaxation can be very conservative, because it considers the static error of removing probe $P_i$ relative to the minimum work possible of a DAG, in order to be able to guarantee that the dynamic error will be bounded by a given threshold.
-This conservatism can be overly restrictive in some cases, resulting in a negligible overhead reduction but also causing just a negligible dynamic error to the work profiling.
+In some cases, the proposed relaxation can be very conservative, because it
+considers the static error of removing probe $P_i$ relative to the minimum work
+possible of a DAG, in order to be able to guarantee that the dynamic error will
+be bounded by a given threshold.
+This conservatism can be overly restrictive in some cases, resulting in a
+negligible overhead reduction but also causing just a negligible dynamic error
+to the work profiling.
 
 In some cases, this overly restrictive conservatism may be unnecessary.
 For these cases, we propose an adapted version of the relaxation algorithm that operates on the whole program.
