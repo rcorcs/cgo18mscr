@@ -48,7 +48,7 @@ standard compiler's optimization (i.e.,\texttt{-O3}).
 The online {\itercomp} achieves an average speedup which is about 13\% better
 than the solution selected by the offline approach.
 
-\begin{figure}[ht]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=0.5\textwidth]{figs/motivation-online.pdf}
     \caption{Comparison between the offline and online {\itercomp}.
@@ -75,7 +75,7 @@ In a case where we have two distinct versions of the program, due to different
 optimizations, which is also executed with distinct inputs, higher IPC does not
 necessarily mean lower execution time (higher performance).
 
-\begin{figure}[ht]
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
     \caption{Comparison among different performance metrics for performing
@@ -86,9 +86,9 @@ necessarily mean lower execution time (higher performance).
 
 Figure~\ref{fig:motivation-metric} shows a comparison between execution time and IPC,
 and their correlation with the actual speedup.
-Each point in the figure corresponds to each metric averaged over 
+Each point in the figure corresponds to each metric averaged over
 a set of inputs, collected during the {\itercomp}.
-The vertical lines correspond to the optimization sequence 
+The vertical lines correspond to the optimization sequence
 with the best score for each one of the metrics.
 This figure shows that both execution time and IPC are unsuitable for
 online {\itercomp}, as they present no direct correlation with the actual
@@ -97,4 +97,3 @@ speedup obtained by the optimization sequence being evaluated.
 In the remaining of this paper, we develop a work efficiency metric, suitable
 for guiding online {\itercomp}, which can be profiled with a single execution
 of the program with the optimization sequence being evaluated.
-
