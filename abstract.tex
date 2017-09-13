@@ -1,32 +1,28 @@
 \begin{abstract}
     
-    Iterative or adaptive compilation can dramatically improve the performance of a program by searching for the best optimisation
-    settings. However, it relies upon repeatedly evaluating and comparing optimisations off-line on predefined
+    Iterative or adaptive compilation can dramatically improve the performance of a program by searching for the best optimization
+    settings. However, it relies upon repeatedly evaluating and comparing optimizations off-line on predefined
     representative inputs. If the developers fail to guess what is a representative input or usage patterns change over time, 
-    then the wrong optimisations may be selected. 
-    Searching the optimisation space with actual user inputs, during deployment, has previously seemed infeasible. 
+    then the wrong optimizations may be selected. 
+    Searching the optimization space with actual user inputs, during deployment, has previously seemed infeasible. 
     Program side effects, interactivity and difficulties capturing the system state mean that any given input can 
     only be executed once. Since each input may entail a different amount of work, the search cannot use runtime to compare 
-    optimisations, and there is no baseline against which to define speedup.
-    Unless we find a way to compare optimisations even when inputs are executed only once, we will be unable to use real user 
-    input for iterative compilation, users will not have the best optimised programs, and performance and energy efficiency will suffer.
+    optimizations, and there is no baseline against which to define speedup.
+    Unless we find a way to compare optimizations even when inputs are executed only once, we will be unable to use real user 
+    input for iterative compilation, users will not have the best optimized programs, and performance and energy efficiency will suffer.
     
     We present metrics and techniques which, for the first time,  enable the use of true {\em online iterative compilation}.
-    %Until this paper, it has been impossible to search online over actual user inputs. Program side effects, interactivity and
-    %difficulties capturing the system state prevent repeated execution. Since each input may be executed only once and each input may
-    %entail a different amount of work, the search cannot use runtime to compare optimisations. 
-    %This paper demonstrates online iterative compilation. 
-    We compare optimisations by a new work efficiency metric, which requires only a single execution with any one input.
-    We develop an instrumented, low overhead, mechanism for gather the requireed data, using optimal probe placement in the source
+    We compare optimizations by a new work efficiency metric, which requires only a single execution with any one input.
+    We develop an instrumented, low overhead, mechanism for gathering the required data, using optimal probe placement in the source
     code. We show that overhead can be further reduced by removing high-cost probes whose absence introduces only small errors to the 
     work metric, without significantly affecting the outcome of the iterative compilation. 
-    We give two variants for probe removal optimisation: the first offers strong
+    We give two variants for probe removal optimization: the first offers strong
     guarantees about the maximum possible error, while the second targets the average, whole program error.
     
     Our online iterative compilation method yields programs that get 80\% of the speedup achievable by an offline oracle, 
     but without executing any input more than once, which the oracle cannot do. 
     Through probe removal we bring the instrumentation overhead down to only 4\% on average, making our
     approach suitable for regular use. We show practical online iterative compilation for the first time, 
-    optimising programs according to the range of inputs users actually present.
+    optimizing programs according to the range of inputs users actually present.
     
 \end{abstract}
