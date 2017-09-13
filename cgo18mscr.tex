@@ -262,23 +262,33 @@ while periods of idleness or underutilisation could be leveraged to use the prof
 
 \section{Instrumentation}
 
-In this section we describe how the computation of the work-metric can be performed during runtime by means of instrumenting the code.
-In particular, we adapt the optimal algorithm proposed originally for profiling block frequency~\cite{knuth73,ball94}.
-Afterwards, we propose a relaxed instrumentation that focus on further reducing the overhead by considering the trade-off between profiling accuracy and instrumentation overhead.
+In this section, we describe how the computation of the work metric can be performed during runtime by means of instrumenting the code.
+%In particular, we adapt the optimal algorithm proposed originally for block-frequency profiling~\citep{nahapetian73,knuth73,ball94}.
+Because we define work as a linear equation on the block-frequency counters, it is possible to embed its computation into the execution of the program.
+A naive instrumentation would consist basically of having a global counter that starts with the interception value, $\varepsilon$, and each basic block increments its own cost into the global counter.
+Although this instrumentation is easily implemented, it imposes a significant overhead on the instrumented program.
+However, it is possible to insert fewer probes by carefully placing the probes in a way that is possible to reconstruct the complete profiling information~\citep{knuth73,ball94}.
 
-Because we define work as a linear equation on the block frequency counters, it is possible to embed its computation into the execution of the program.
-A naive instrumentation would consists basically of having a global counter that starts with the interception value, $\varepsilon$, and each basic block increments its own cost into the global counter.
-Although this instrumentation is easily implemented, it inserts a large amount of overhead into the program.
-However, it is possible to insert fewer probes by carefully placing the probes in a way that is possible to reconstruct the complete profiling information~\cite{knuth73,ball94}.
+We adapt the optimal block-frequency instrumentation in order to perform the work profiling efficiently.
+The proposed work instrumentation differs from the optimal block-frequency instrumentation as the latter occurs in two stages:
+\textit{(i.) Before execution:} The code is instrumented with counters for each probe.
+\textit{(ii.) After execution:} The information from the recorded probes is propagated in the CFGs of the program.
+In contrast, our work instrumentation has a single counter, and it only requires the instrumentation before execution, without any post-processing of the recorded profiling.
 
-Ball and Larus~\cite{ball94} show that a set of edges represents the minimum number of probes for profiling block frequency if and only if the complementary set of edges forms a spanning tree.
-The instrumentation optimizes the placement of the probes with respect to a weighing that assigns a non-negative value to each edge in the CFG.
-The cost of profiling a set of edges is proportional to the sum of the weights of the edges.
-These weights can be obtained either by empirical measurements or heuristic estimations.
-In order to minimize the profiling cost, the instrumentation computes the maximum spanning tree for avoiding probing in frequently executed edges.
-Although this instrumentation algorithm is proved to produce the optimal placement of probes for well-structured CFGs, it may produce sub-optimal placement for some unstructured CFGs.
+The instrumented code is assumed to be generated before optimising the code.
+This assumption is based on three key points:
+\textit{(i.)} it guarantees that the work metric is independent of optimisation, i.e., the same input is always mapped to the same amount of work, regardless of the optimisation;
+\textit{(ii.)} it simplifies the code generator;
+\textit{(iii.)} it leverages from the optimisations to further improve the instrumentation code.
+Having a work metric that is independent of optimisation is the most important reason for which we instrument the code before optimisations.
 
-Once we have the maximum spanning tree, probes are placed on any edge not in the spanning tree. Figure~\ref{fig:cfg-example} shows an example of a CFG with a maximum spanning tree represented by the black edges, while the edges highlighted in red represent the placement of the probes.
+The optimal placement of the probes works by first computing the maximum spanning
+tree based on a weighing that assigns a non-negative value to each edge in the CFG.
+These weights can be obtained either by empirical measurements or heuristic estimations,
+and their goal is to avoid probing in frequently executed edges.
+Once we have the maximum spanning tree, probes are placed on every edge not in the spanning tree.
+Figure~\ref{fig:cfg-example} shows an example of a CFG with a maximum spanning tree.
+%represented by the black edges, while the edges highlighted in red represent the placement of the probes.
 
 \begin{figure}[t]
 \centering {
@@ -302,118 +312,74 @@ Once we have the maximum spanning tree, probes are placed on any edge not in the
   \label{fig:cfg-example}
 \end{figure}
 
-In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling, the instrumented basic blocks need to record an aggregated value of work that represents a path in the CFG.
-These values are constructed with some instrumented basic blocks speculatively assuming some paths while other probes correct when these assumptions are wrong (see for example $w(P_0)$ and $w(P_1)$ in Figure~\ref{fig:cfg-example}).
+In contrast to the naive instrumentation where each basic block records only its
+own amount of work, with the optimal profiling, the instrumented basic blocks need
+to record an aggregated value of work that represents a path in the CFG.
+These values are constructed with some instrumented basic blocks speculatively
+assuming some paths while other probes correct when these assumptions are wrong
+(see for example $w(P_0)$ and $w(P_1)$ in Figure~\ref{fig:cfg-example}).
 
-\begin{lstlisting}[caption={Pseudocode of the data-flow analysis necessary for assigning the values computed in each probe.},
-label={lst:populateEdgeInfo}, float]
-// Inputs: CFG with the known edges flows from
-//         the cotree (collected probes).
-// Output: Updated CFG with all edge flows.
-populateEdgeFlows(G) {
-  changed = true
-  while changed:
-    changed = false
-    for B in G.vertices():
-      unIN = count( G.unknownIncomingEdges(B) )
-      unOUT = count( G.unknownOutgoingEdges(B) )
-      if unIN==0 and unOUT==1:
-        //sum known incoming and outgoing edges
-        sIN = sum( G.incomingEdges(B) )
-        sOUT = sum( G.outgoingEdges(B) )
-        //update unknown outgoing edge in B
-        //with (sIN-sOUT)
-        G.setUnknownOutgoingEdge(B, (sIN-sOUT))
-        changed = true
-      if unIN==1 and unOUT==0:
-        //sum known incoming and outgoing edges
-        sIN = sum( G.incomingEdges(B) )
-        sOUT = sum( G.outgoingEdges(B) )
-        //update unknown incoming edge in B
-        //with (sOUT-sIN)
-        G.setUnknownIncomingEdge(B, (sOUT-sIN))
-        changed = true
-}
-\end{lstlisting}
+We compute the aggregated value of work for each probe in two steps:
+\textit{(i.)} we propagate information about the probes through the edges of the CFG,
+as symbolic expressions, and then \textit{(ii.)} we use this edge information
+to compose the aggregated value of the probes.
 
-Because the algorithm for the optimal placement of the probes is proved to uniquely compute the block frequencies by propagating the probe counts, we adapt this algorithm (see \lstlistingname~\ref{lst:populateEdgeFlows}) in order to compose the aggregated values that will be instrumented in each probe, based on our model of computational work, $\Delta W$, derived from the basic block frequencies (see Section~\ref{sec:metric}).
-We perform a similar propagation of the probes in a symbolic fashion, as illustrated in Figure~\ref{fig:cfg-example}.
-This symbolic propagation of the probes is implemented by the data-flow analysis described in \lstlistingname~\ref{lst:populateEdgeInfo}, and the final aggregated values are extracted from the edge information as described by \lstlistingname~\ref{lst:instrValue}.
+The symbolic expressions in the edges can then be used to compose the aggregated
+value of the probes.
+These edge expressions describe the probes that are in the same path of each
+basic block (positive terms) and those that are in complementary paths (negative
+terms).
+Therefore, the positive terms in the edge expression of a basic block indicate
+that the amount of work of this basic block will be incremented in the probes
+represented by these positive terms.
+Similarly, the negative terms indicate that the amount of work of this basic block
+will be decremented in the probes represented by these negative terms.
+For example, because the edge expression for the basic block $B_8$ is $P_0 - P_1$,
+the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$
+and decremented in $P_1$.
 
-The data-flow analysis in \lstlistingname~\ref{lst:populateEdgeInfo} keeps two sets for each edge, namely, the increment and the decrement sets.
-We consider that both sets represent the \textit{edge expressions} shown in Figure~\ref{fig:cfg-example}, for which we define a \textit{symbolic sum} by computing the union of the increment and decrement sets, respectively, with the appropriate cancellation of common elements.
-This data-flow analysis is based on the invariant that the symbolic sum of all the incoming edges must equals the symbolic sum of the outgoing edges.
-For example, the symbolic sum of the incoming edges of the basic block $B_8$ is $P_0 - P_1$, where $P_3$ is cancelled out.
-
-We first initialize the edge information $D_{u,v}$, for each edge $(u,v)$ in the CFG.
+\noindent\textbf{Populating the edge information:}
+Intuitively, if all the edge flows are known for the complement of a spanning tree
+then at any leaf of the spanning tree there is only one unknown edge flow.
+This unknown edge flow can be calculated by Kirchhoff's first law.
+This process repeats as a bottom-up propagation until all the unknown edge flows
+have been calculated.
+This algorithm first initializes the edge information $D_{(u,v)}$, for each edge
+$(u,v)$ in the CFG, as follows:
 \[
-D_{u,v} \gets
+D_{(u,v)} \gets
 \begin{cases}
     P_{u,v} & \quad \text{if edge $(u,v)$ has a probe}\\
     0       & \quad \text{otherwise}
 \end{cases}
 \]
-Afetwards, for each vertex $u$, in post-order of the spanning tree, we apply the following operations:
+Afetwards, for each vertex $u$, in post-order traversal of the spanning tree,
+we can use the Kirchhoff's first law and apply the following operations
+in a symbolic fashion:
 \[
-\Sigma^+_u = \sum_{v\in N^+(u)} D_{u,v}
+\Sigma^+_u = \sum_{v\in N^+(u)} D_{(u,v)}
 \]
 \[
-\Sigma^-_u = \sum_{v\in N^-(u)} D_{v,u}
+\Sigma^-_u = \sum_{v\in N^-(u)} D_{(v,u)}
 \]
 \[
-\forall v\in N^+(u):  D_{u,v} \gets
+\forall v\in N^+(u):  D_{(u,v)} \gets
 \begin{cases}
-    D_{u,v} & \quad \text{if $D_{u,v}\neq 0$}\\
+    D_{(u,v)} & \quad \text{if $D_{(u,v)}\neq 0$}\\
     \Sigma^-_u - \Sigma^+_u       & \quad \text{otherwise}
 \end{cases}
 \]
 \[
-\forall v\in N^-(u):  D_{v,u} \gets
+\forall v\in N^-(u):  D_{(v,u)} \gets
 \begin{cases}
-    D_{v,u} & \quad \text{if $D_{v,u}\neq 0$}\\
+    D_{(v,u)} & \quad \text{if $D_{(v,u)}\neq 0$}\\
     \Sigma^+_u - \Sigma^-_u       & \quad \text{otherwise}
 \end{cases}
 \]
 
-%By construction, the \textit{symbolic experssions} of a basic block, i.e., the \textit{symbolic sum} of the incoming edges (or outgoing edges) of a basic block, has the following properties:
-%\begin{enumerate}
-%\item Probes in the increment set either (post-)dominates or is (post-)dominated by the given basic block;
-%\item Probes in the decrement set are (post-)dominated by the probes in the increment set;
-%\item Probes in the decrement set and the given basic block are in exclusive paths from the virtual node of the CFG to the (post-)dominators in the increment set;
-%\end{enumerate}
-%From property (1) it follows that whenever the given basic block is executed, exactly one of the probes in the increment set is executed.
-%From properties (2) and (3), it follows that whenever a probe in the decrement set is executed, although the given basic block is not executed, one of the probes in the decrement set is executed.
-
-\lstlistingname~\ref{lst:instrValue} reads the edge information for each basic block by computing the symbolic sum of their respective incoming edges (or outgoing edges).
-From these \textit{edge expressions}, we are able to compose the aggregated value of the probes.
-The positive terms in the edge expression of a basic block indicate that the amount of work of this basic block will be incremented in the probes represented by these positive terms. Similarly, the negative terms indicate that the amount of work of this basic block will be decremented in the probes represented by these negative terms.
-For example, because the edge expression for the basic block $B_8$ is $P_0 - P_1$, the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$ and decremented in $P_1$.
-
-
-%Let $V$ be a vector of $\{-1,0,1\}$ with the sum of the edge information from the incoming edges of a given basic block.
-%Let $W$ be the
-%\[
-%\mathrm{reduce}\,\,(+)\,\,(\mathrm{map}\,\,(\times W)\,\,E^+(B))
-%\]
-
-\begin{lstlisting}[caption={Pseudocode that describes how the edge information is used in order to extract the value that will be computed in a given instrumented basic block $B_I$. This algorithm could equally be implemented based on the outgoing edges.}, label={lst:instrValue}, float]
-// Inputs: 1) CFG with the known edges flows
-//            of the chords.
-//         2) Probe to be instrumented.
-// Output: Work value to be incremented by the
-//         given probe P.
-instrValue(G, P) {
-  value = 0
-  for B in G.vertices():
-    expr = sum( G.incomingEdges(B) )
-    //coef(P,expr) is the coefficient
-    //-1,0, or 1 of P in expr
-    value = value + coef(P, expr)*w(B)
-  return value
-}
-\end{lstlisting}
-
-Let $x$ be a symbolic expression, and $\kappa_P(x)$ be the coefficient of the term $P$ in $x$.
+\noindent\textbf{Composing the aggregated value of the probes:}
+Let $x$ be a symbolic expression, and $\kappa_P(x)$ be the coefficient of the
+term $P$ in $x$.
 In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
 Then, for all probes $P$, we have that
 \[
