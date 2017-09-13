@@ -4,6 +4,15 @@ Offline \itercomp can be very sensitive on having representative inputs for the 
 predict what will be the typical usage of the application or that typical usage changes over time, then \itercomp might fail making the
 application faster for the user.
 
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/motivation-online.pdf}
+    \caption{Histograms of speedup over \texttt{-O3} for each of the 1,000 inputs of XXX. The green histogram shows the speedup when using
+    the optimization sequence selected by offline \itercomp, the blue one is the speedup using the optimization sequence selected by an
+    online-like approach.}
+    \label{fig:motivation-online}
+\end{figure}
+
 To show this, we performed offline \itercomp on XXX using a small subset of its inputs and we identified the optimization sequence that
 maximizes performance. In Figure~\ref{fig:motivation-online}, the green bars are the histogram of speedups compared to \texttt{-O3} for
 every individual input, while the dark green line shows the speedup averaged over all inputs. Despite the selected optimization sequence
@@ -17,6 +26,27 @@ sequence are not strictly comparable, they are measured on different workloads. 
 more inputs allows us to make better informed decisions. The optimization sequence we selected never degrades performance compared to
 \texttt{-O3} and is on average 13\% better than the offline approach.
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
+    \caption{Relationship between IPC and execution time vs optimization speedup for XXX different binaries of XXX. Each point represents
+	averages over all inputs.}
+    \label{fig:motivation-metric}
+\end{figure}
+
+This is not an entirely surprising result. Evaluating our optimization decisions on more inputs decreases the chances of optimizing for an
+unrepresentative input. Despite that offline \itercomp is still the preferred way. Measuring the speedup caused by an optimization requires
+running the same input \textit{at least twice}, one of the optimized and one for the baseline binary. This is either infeasible or
+undesirable in a realistic online \itercomp scenario. There are two existing workarounds to this problem: directly comparing the
+\textit{execution time} of each run against previous runs or directly comparing the \textit{instructions per cycle}~(IPC)~\citep{fursin07}.
+Neither metric is a good proxy for speedup. Figure~\ref{fig:motivation-metric} plots the measured IPC and execution time versus the real
+speedup for XXX different binaries of the XXX benchmark. IPC, execution time, and speedup are averaged over all inputs. Both metrics
+correlate little with speedup. Different inputs require a different amount of work which dominates the changes in execution time. IPC on
+the other hand might improve with a more efficient binary but the opposite can also be true. For example, inserting \texttt{NOP} statements
+will usually improve IPC. 
+
+In the remaining of this paper, we examine our work efficiency metric, a novel way for approximating optimization speedup through a single
+run which can be used to drive an online \itercomp methodology.
 
 % %As a motivation example, consider...
 %
@@ -66,52 +96,52 @@ more inputs allows us to make better informed decisions. The optimization sequen
 % The online {\itercomp} achieves an average speedup which is about 13\% better
 % than the solution selected by the offline approach.
 
-\begin{figure}[t!]
-    \centering
-    \includegraphics[width=0.5\textwidth]{figs/motivation-online.pdf}
-    \caption{Comparison between the offline and online {\itercomp}.
-             The vertical lines represent the average speedups over
-             all the 1,000 inputs.}
-    \label{fig:motivation-online}
-\end{figure}
+% \begin{figure}[t!]
+%     \centering
+%     \includegraphics[width=0.5\textwidth]{figs/motivation-online.pdf}
+%     \caption{Comparison between the offline and online {\itercomp}.
+%              The vertical lines represent the average speedups over
+%              all the 1,000 inputs.}
+%     \label{fig:motivation-online}
+% \end{figure}
 
 % It is worth mentioning that our goal is to improve the average performance
 % across the user's workload, and not only for a specific input.
 % This means that the online {\itercomp} is better informed throughout the search,
 % as it compares optimization sequences across different sets inputs.
 
-However, because of the restriction of having a single execution per input,
-it is not possible to measure speedup in a real-world online scenario.
-Moreover, measuring just execution time, for example, is also not viable since
-different inputs often mean different amounts of work,
-rendering it meaningless to compare optimizations only by execution time.
-Therefore, we need a performance metric which can be profiled from a single
-execution of the program.
-Although a previous work has suggested that \textit{instructions per cycle}~(IPC)
-could be used with that goal, IPC have no correlation with speedup~\citep{fursin07}.
-In a case where we have two distinct versions of the program, due to different
-optimizations, which is also executed with distinct inputs, higher IPC does not
-necessarily mean lower execution time (higher performance).
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
-    \caption{Comparison among different performance metrics for performing
-             online {\itercomp}.
-             The vertical lines represent the best score for each metric.}
-    \label{fig:motivation-metric}
-\end{figure}
-
-Figure~\ref{fig:motivation-metric} shows a comparison between execution time and IPC,
-and their correlation with the actual speedup.
-Each point in the figure corresponds to each metric averaged over
-a set of inputs, collected during the {\itercomp}.
-The vertical lines correspond to the optimization sequence
-with the best score for each one of the metrics.
-This figure shows that both execution time and IPC are unsuitable for
-online {\itercomp}, as they present no direct correlation with the actual
-speedup obtained by the optimization sequence being evaluated.
-
-In the remaining of this paper, we develop a work efficiency metric, suitable
-for guiding online {\itercomp}, which can be profiled with a single execution
-of the program with the optimization sequence being evaluated.
+% However, because of the restriction of having a single execution per input,
+% it is not possible to measure speedup in a real-world online scenario.
+% Moreover, measuring just execution time, for example, is also not viable since
+% different inputs often mean different amounts of work,
+% rendering it meaningless to compare optimizations only by execution time.
+% Therefore, we need a performance metric which can be profiled from a single
+% execution of the program.
+% Although a previous work has suggested that \textit{instructions per cycle}~(IPC)
+% could be used with that goal, IPC have no correlation with speedup~\citep{fursin07}.
+% In a case where we have two distinct versions of the program, due to different
+% optimizations, which is also executed with distinct inputs, higher IPC does not
+% necessarily mean lower execution time (higher performance).
+%
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
+%     \caption{Comparison among different performance metrics for performing
+%              online {\itercomp}.
+%              The vertical lines represent the best score for each metric.}
+%     \label{fig:motivation-metric}
+% \end{figure}
+%
+% Figure~\ref{fig:motivation-metric} shows a comparison between execution time and IPC,
+% and their correlation with the actual speedup.
+% Each point in the figure corresponds to each metric averaged over
+% a set of inputs, collected during the {\itercomp}.
+% The vertical lines correspond to the optimization sequence
+% with the best score for each one of the metrics.
+% This figure shows that both execution time and IPC are unsuitable for
+% online {\itercomp}, as they present no direct correlation with the actual
+% speedup obtained by the optimization sequence being evaluated.
+% 
+% In the remaining of this paper, we develop a work efficiency metric, suitable
+% for guiding online {\itercomp}, which can be profiled with a single execution
+% of the program with the optimization sequence being evaluated.
