@@ -15,10 +15,12 @@ SAMPLES=cgo18mscr.tex
 #PDF = $(PACKAGE).pdf ${SAMPLES:%.tex=%.pdf} acmguide.pdf
 PDF = ${SAMPLES:%.tex=%.pdf}
 
-all:  ${PDF}
+TEXSRCS = abstract.tex intro.tex motivation.tex overview.tex preamble.tex related.tex results.tex setup.tex cgo18mscr.tex
+
+all:  ${PDF} cgo18mscr.pdf
 
 
-%.pdf:  %.dtx   $(PACKAGE).cls 
+%.pdf:  %.dtx   $(PACKAGE).cls  $(TEXSRCS)
 	pdflatex $<
 	- bibtex $*
 	pdflatex $<
@@ -39,13 +41,11 @@ acmguide.pdf: $(PACKAGE).dtx $(PACKAGE).cls
 %.cls:   %.ins %.dtx  
 	pdflatex $<
 
-%.pdf:  %.tex   $(PACKAGE).cls ACM-Reference-Format.bst abstract.tex
-	pdflatex $<
-	- bibtex $*
-	pdflatex $<
-	pdflatex $<
-	while ( grep -q '^LaTeX Warning: Label(s) may have changed' $*.log) \
-	do pdflatex $<; done
+cgo18mscr.pdf:  $(PACKAGE).cls ACM-Reference-Format.bst $(TEXSRCS)
+	pdflatex cgo18mscr
+	- bibtex cgo18mscr
+	pdflatex cgo18mscr
+	pdflatex cgo18mscr
 
 #sample-manuscript.pdf \
 #sample-acmsmall.pdf \
