@@ -16,7 +16,7 @@
 
     We performed offline iterative compilation on \texttt{susan\_c} to find the optimization settings that maximize the average performance
     over \FIXME{five} randomly chosen inputs from a set of 1,000 provided by the \textit{KDataSets} benchmark
-	suite~\cite{chen10,chen12a}. The green histogram in Figure~\ref{fig:motivation-online} shows for each of the 1,0000 inputs the speedup versus \texttt{-O3}
+    suite~\cite{chen10,chen12a}. The green histogram in Figure~\ref{fig:motivation-online} shows for each of the 1,0000 inputs the speedup versus \texttt{-O3}
     of that chosen optimization setting. The dark green line shows the average speedup for all those inputs. The
     \FIXME{five} training inputs are all in the top \FIXME{twelve} performing inputs. On the other hand, the chosen optimization does
     poorly on other inputs, often causing a slowdown and yielding only a slight speedup of 6\% on average.
@@ -26,7 +26,7 @@
     knowledge about the unoptimized runtime for the inputs, giving a perfect speedup metric. The environment of the search constantly changes
     in the same way as for online iterative compilation. The best optimization for this case never degrades performance compared to
     \texttt{-O3} and is on average 13\% better than the offline approach. The online case, considering truly representative inputs, leads
-	to superior performance, if the speedup caused by optimizing can be estimated. 
+    to superior performance, if the speedup caused by optimizing can be estimated. 
 
     \begin{figure}[t]
         \centering
