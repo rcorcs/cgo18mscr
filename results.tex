@@ -1,16 +1,13 @@
 \section{Experimental Results}
 
-In this section we discuss our experimental evaluation.
-First we describe the benchmarks with datasets used in the experiments.
-Afterwards, we discuss our results concerning the instrumentations for profiling our work metric.
-Finally we present the results of the online {\itercomp}.
+%In this section we discuss our experimental evaluation. Afterwards, we discuss our results concerning the instrumentations for profiling
+%our work metric. Finally we present the results of the online {\itercomp}.
 
 \subsection{Evaluation of the Instrumentation}
 
-We first compare static aspects of the instrumentation algorithms.
-The naive instrumentation always has 100\% of the basic blocks instrumented, by definition.
-First, we evaluate the optimal work profiling compared to the relaxation algorithm applied per DAG.
-Afterwards, we compare these profiling techniques with the whole program relaxation.
+We first compare static aspects of the instrumentation algorithms. The naive instrumentation instrument all basic blocks, by definition.
+First, we evaluate the optimal work profiling compared to the relaxation algorithm applied per DAG. Afterwards, we compare these profiling
+techniques with the whole program relaxation.
 
 Figure~\ref{fig:num-probes} shows the percentage of instrumented basic blocks for the optimal and the relaxed instrumentation with different relaxation thresholds.
 While Figure~\ref{fig:num-probes} compares the various instrumentation algorithms in respect of the naive instrumentation, Figure~\ref{fig:num-probes-improvement} shows the improvement of the relaxation algorithm  over the optimal instrumentation.

@@ -7,7 +7,7 @@ When the user starts the application, we load and execute one of these binaries 
 mechanism operates on the application's Intermediate Representation (IR) produced by LLVM. This saves us the effort of repeatedly parsing
 the code through the frontend and removes the need for shipping the full application code.
 
-\begin{figure}[htb]
+\begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figs/infra-diagram}
     \caption{Overview of the online \itercomp mechanism.}
@@ -43,4 +43,3 @@ context of data centers~\citep{armbrust10,chen12b}. The proposed \itercomp infra
 particular, we can use periods of idleness or underutilization to select the next few optimization sequences to try and compile the
 corresponding binaries. This approach effectively hides the compilation overhead from the user. During peak periods, we only have to select
 which of the existing binaries to evaluate which introduces almost no overhead.
-

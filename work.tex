@@ -7,9 +7,9 @@ inputs. We define it as the ratio between the amount of \textit{work}, $\Delta W
    P = \nicefrac{\Delta W}{\Delta t}
 \]
 
-The main challenge is to precisely define what represents \textit{work}. 
+The main challenge is to precisely define what represents \textit{work}.
 We define the work done by a program on an input to be the time taken by the unoptimized program to process that input.
-We estimate the runtime of each instruction type via a linear regression and then define the work done by a program as the sum of the 
+We estimate the runtime of each instruction type via a linear regression and then define the work done by a program as the sum of the
 
 We adopt a work metric that takes into account the
 computational cost within each basic block.
@@ -34,15 +34,21 @@ since $f(B)$ is both program and execution dependent as the execution frequency 
 
 \subsection{Estimating a Cost Model of the Instructions}
 
-Similarly to previous work~\citep{giusto01,powell09,brandolese11}, we derive the cost model of the instruction set by modelling the problem as a multi-variable linear regression, where the \textit{regression coefficients} are the costs of the instructions and the \textit{regressors} are computed as $\sum_B N_B(i)f(B)$ for each instruction.
+Similarly to previous work~\citep{giusto01,powell09,brandolese11}, we derive the cost model of the instruction set by modeling the problem
+as a multi-variable linear regression. The \textit{regression coefficients} are the costs of the instructions and the \textit{regressors}
+are computed as $\sum_B N_B(i)f(B)$ for each instruction.
 \begin{equation}\label{eq:linear-work-expression}
 \Delta W = \varepsilon + \sum_{i} \left(w_i \sum_{B} N_B(i)f(B)\right)
 \end{equation}
-By having some empirical data after executing several benchmarks with different inputs, we can fit the linear model with this empirical data in order to obtain estimate costs of the instructions.
-In order to fit the linear model, we measure the wall-clock time when executing the training benchmarks described in Section\ref{sec:benchmarks} with their respective 1000 input datasets.
-For these measurements, the training benchmarks are compiled without optimization.
-The reason for using no optimization, as discussed in Section\ref{sec:oic-infra}, is because the amount of work must be only input dependent and consistent between different optimization sequences.
-This aspect is crucial for the work-based performance metric to enable a consistent comparison between the various optimization sequences when executing with distinct inputs.
+
+We use a set of training programs to construct the regression model. Our training program set is given in
+Table~\ref{tab:kdatasets:training}. To determine the model coefficients, we profile each training benchmark with 1000 input datasets
+provided by the benchmark suite, and we measure the wall-clock time. It is to note that we turn off all compiler optimisations during this
+training stage, to ensure that the amount of work we measured only depends on the program input but not compiler optimization. This aspect
+is crucial for the work-based performance metric to allow a consistent comparison between the various optimization sequences when executing
+with distinct inputs.
+
+
 %it allows to use the estimated cost model for computing a work metric which is independent of optimizations, as we explained in Section~\ref{}.
 
 Our cost model has a total of 52 LLVM instructions\footnote{We do not model all LLVM instructions because some instructions are more common in optimized programs, such as the vector instructions.}.
