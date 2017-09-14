@@ -1,0 +1,61 @@
+
+\begin{table}[h]
+\centering
+\begin{subtable}{0.5\textwidth}
+\scalebox{.8}{
+\begin{tabular}{c|c|c|c}
+\hline
+\textbf{Program} & \textbf{LOC}    & \textbf{Input file size}            & \textbf{Input description}              \\ \hline % Domain
+\rowcolor{gray!20}
+bitcount      & 460    &  -                         & Numbers: random                \\ \hline
+bzip2d        & 5125   & 0.2K-25M                   & Compressed files               \\ \hline
+\rowcolor{gray!20}
+bzip2e        & 5125   & 0.7K-57M                   & Files of any format            \\ \hline
+crc32         & 130    & 0.6K-35M                   & Files of any format            \\ \hline
+\rowcolor{gray!20}
+dijkstra      & 163    & 0.06K-4.3M                 & Adjacency matrices             \\ \hline
+ghostscript   & 99869  & 11K-43M                    & Postscript files               \\ \hline
+\rowcolor{gray!20}
+lame          & 14491  & 167K-36M                   & WAVE audios                    \\ \hline
+mad           & 2358   & 28K-27M                    & MP3 audios                     \\ \hline
+\rowcolor{gray!20}
+patricia      & 290    & 0.6K-1.9M                  & IP and mask pairs              \\ \hline
+stringsearch  & 338    &  0.1K-42M                 &  Text files                     \\ \hline
+\end{tabular}
+}
+\end{subtable}
+\caption{Training benchmarks and inputs.}
+\label{tab:kdatasets:training}
+
+\begin{subtable}{0.5\textwidth}
+\scalebox{.8}{
+\begin{tabular}{c|c|c|c}
+\hline
+\textbf{Program} & \textbf{LOC}    & \textbf{Input file size}            & \textbf{Input description}              \\ \hline % Domain
+\rowcolor{gray!20}
+adpcm\_c      & 210    & 167K-36M                   & WAVE audios                    \\ \hline
+adpcm\_d      & 211    & 21K-8.8M                   & ADPCM audios                   \\ \hline
+\rowcolor{gray!20}
+jpeg\_c       & 14014  & 16K-137M                   & PPM images                     \\ \hline
+jpeg\_d       & 13501  & 3.6K-1.5M                  & JPEG images                    \\ \hline
+\rowcolor{gray!20}
+qsort         & 154    & 32K-1.8M                   & 3D coordinates                 \\ \hline
+rsynth        & 4111   & 0.1K-42M                   &  Text files                    \\ \hline
+\rowcolor{gray!20}
+sha           & 197    & 0.6K-35M                   & Files of any format            \\ \hline
+susan\_c      & 1376   & 12K-46M                    & PGM images                     \\ \hline
+\rowcolor{gray!20}
+susan\_e      & 1376   & 12K-46M                    & PGM images                     \\ \hline
+susan\_s      & 1376   & 12K-46M                    & PGM images                     \\ \hline
+\rowcolor{gray!20}
+tiff2bw       & 15477  & 9K-137M                    & TIFF images                    \\ \hline
+tiffdither    & 15399  & 9K-137M                    & TIFF images                    \\ \hline
+\rowcolor{gray!20}
+tiffmedian    & 15870  & 9K-137M                    & TIFF images                    \\ \hline
+tiff2rgba     & 15424  & 9K-137M                    & TIFF images                    \\ \hline
+\end{tabular}
+}
+\end{subtable}
+\caption{Test benchmarks and inputs.}
+\label{tab:kdatasets:test}
+\end{table}
