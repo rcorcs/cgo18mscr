@@ -39,23 +39,14 @@ maximum spanning tree and they will not be instrumented, allowing us to minimize
 
 In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling the work
 counter increments needs to take other basic blocks into account. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented
-blocks are marked with red. In this example, executing block $B_3$ implies also executing $B_1$ and not executing $B_4$. We compute the
-aggregated value of work for each probe in two steps: \textit{(i.)} we propagate information about the probes through the edges of the CFG,
-as symbolic expressions, and then \textit{(ii.)} we use these edge flows to compose the aggregated value of the probes.
-
-The symbolic expressions in the edges can then be used to compose the aggregated
-value of the probes.
-These symbolic expressions describe the probes that are in the same path of the
-edge (positive terms) and those that are in complementary paths (negative
-terms).
-Therefore, the positive terms in the summed symbolic expression of a
-basic block indicate that the amount of work of this basic block will be
-incremented in the probes represented by these positive terms.
-Similarly, the negative terms indicate that the amount of work of this basic block
-will be decremented in the probes represented by these negative terms.
-For example, because the symbolic expression for the basic block $B_8$ is $P_0 - P_1$,
-the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$
-and decremented in $P_1$.
+blocks are marked with red. In this example, executing block $B_5$ implies not executing $B_6$. To compute the amount of work associated
+with each instrumentation probe, we first need to determine how reaching a probe relates with executing or not a basic block. Starting from
+instrumented edges, we build symbolic expressions for each edge of their frequency counts as a linear function of probe counts, as seen in
+Figure~\ref{fig:cfg-example}. If a symbolic expression for an edge and the corresponding block contains a positive term for a probe, this
+means that the block is executed when we reach the probe, so the block's cost should be added at that probe. Conversely, if the expression
+contains a negative term for a probe, then the block is executed when we do not reach the probe, so the block's cost should be subtracted.
+In our example CFG, the symbolic expression for the basic block $B_8$ is $P_0 - P_1$, so the amount of work of $B_8$, denoted by $w(B_8)$,
+is incremented in probe $P_0$ and decremented in $P_1$.
 
 \paragraph{Populating the edge flows:}
 Intuitively, if all the edge flows are known for the complement of a spanning tree then at any leaf of the spanning tree there is only one
@@ -105,27 +96,21 @@ Then, for all probes $P$:
 
 \subsection{Relaxed Instrumentation}
 
-Although the optimal instrumentation significantly reduces the profiling
-overhead when compared to the naive instrumentation, from an average overhead
-of 79\% to 13\%, in some critical cases, even the optimal instrumentation can
-result in overheads of up to 60\% (see benchmark \texttt{adpcm\_d} in Figure~\ref{fig:overhead-O3}).
-In order to further reduce the overhead in these critical cases, we propose a
-relaxation strategy that offers a trade-off between accuracy and overhead.
-While the optimal instrumentation places probes in edges that are
-less likely to be executed, the relaxation removes probes that are
-more likely to be executed but add little to the final work metric.
+Optimal instrumentation significantly reduces the profiling overhead when compared to naive instrumentation, from an average overhead of
+79\% to 13\%. In some extreme cases though optimal instrumentation can result in overheads of up to 60\% (see benchmark \texttt{adpcm\_d}
+in Figure~\ref{fig:overhead-O3}). To further reduce the overhead in these cases, we propose a relaxation strategy that offers a trade-off
+between accuracy and overhead. While in traditional basic block profiling the aim is to accurately measure the frequency counts of every
+single block, in our case we only care about the total amount of work. Our insight was that if the work associated with a probe is small,
+then ignoring the probe will have little effect on the total work estimation. By removing such probes, especially if they are frequently
+executed, we can reduce the instrumentation overhead dramatically. 
 
-% \begin{figure}[h]
-%   \centering
-%   \includegraphics[scale=0.85]{figs/relax-instr-diagram.pdf}
-%   \caption{Overview of the work instrumentation algorithm, including the relaxation technique.}
-%   \label{fig:relax-instr-diagram}
-% \end{figure}
+Our relaxation strategy starts from the probes and their weights as decided by the optimal algorithm. Removing low weight probes is easy,
+but we need a way to guarantee that the error in our work estimation will not grow too big. Our conservative approach, decides on an upper
+bound for the error and applies it on every recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
+representing loops and transforms them into DAGs (Directed Acyclic Graphs) by removing the backedge and moving inner loops into separate
+DAGs. \FIXME{PP: NOT DONE....}
 
-%Figure~\ref{fig:relax-instr-diagram} shows an overview of the relaxed instrumentation algorithm.
-%The highlighted step is introduced by the relaxed instrumentation on top of the previously defined optimal profiling.
-The relaxation strategy performs a post processing on the resulting instrumentation of the optimal algorithm.
-This post processing identifies probes that add little to the work metric, and removes their instrumentation.
+
 In order to guarantee an upper bound for the dynamic error in the profiling measurement,
 the relaxation algorithm applies a constrained post-processing on a per DAG (directed acyclic graph) basis.
 By constraining the relaxation within each DAG by a maximum allowed static error,
