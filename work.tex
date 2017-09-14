@@ -64,7 +64,19 @@ Figure~\ref{fig:cost-model} compare the work metric with the corresponding execu
 Notice how the fitted model has a higher relative error for the instances with very short execution time, namely those that run for less than one tenth of a second.
 The mean absolute error (MAE) for the fitted curve is seven milliseconds.
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figs/motivation-work-efficiency.pdf}
+    \caption{Relationship between work efficiency vs speedup for 500 different binaries of \texttt{susan\_c}.
+            Each point represents averages over a subset of all inputs.}
+    \label{fig:motivation-work-efficiency}
+\end{figure}
+
+\FIXME{Rodrigo: I think we could show how the work efficiency metric performs compared with speedup, the same way we showed the other metrics does not work well.}
+
 \subsection{Comparison with Instructions Per Cycle} \label{sec:ipc-vs-work-metric}
+
+\FIXME{Rodrigo: Perhaps we could remove this section, since we have already discussed the IPC in the Motivation.}
 
 The IPC metric has been widely used for studying performance benefits of hardware optimizations.
 Although previous work has suggested the use of IPC for guiding {\itercomp}, in this section we argue in favour of the WP metric over IPC.

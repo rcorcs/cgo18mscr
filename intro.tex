@@ -2,8 +2,8 @@
 
     Selecting good optimization settings is very hard in modern compilers due to the huge number of parameters and the difficulty
     predicting their interaction with each other, a given program, and the platform. As a result, the default heuristics usually fail to
-    choose the best settings. Programs compiled at \texttt{-O3} might be \FIXME{50\%} slower or worse than those compiled with the best
-    settings~\FIXME{\cite{??}}. Iterative, or adaptive, compilation searches for the best compilation settings. Program versions are run
+    choose the best settings. Programs compiled at \texttt{-O3} might be 50\% slower or worse than those compiled with the best
+    settings~\cite{fursin07,chen12b}. Iterative, or adaptive, compilation searches for the best compilation settings. Program versions are run
     on a set of representative inputs and compared by their runtimes. This simple technique is highly successful in improving the
     performance of programs. However, selecting a representative input set is difficult because users may not use the program as the
     developer expects and their usage patterns may change unpredictably over time. An optimization which is good for one set of inputs, may
