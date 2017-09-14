@@ -64,7 +64,7 @@ Although it is not guaranteed by the algorithm, profiling representative inputs 
 
 \subsection{Evaluation of the Online {\IterComp}}
 
-For comparison, we use four configurations\footnote{A configuration using the WPO relaxation was not used due to the time necessary for executing the experiments.}.
+For comparison, we use five configurations.
 In all configurations, the same optimization sequence is used for multiple inputs, using a dynamic input-window size, as explained in Section~\ref{sec:oic-infra}.
 The average performance over the input window provides an estimate for the overall performance of the optimization sequence across distinct inputs.
 The optimization sequences are ranked based on their average performance, and the best optimization sequence is selected.
@@ -84,15 +84,15 @@ The optimization sequences are ranked based on their average performance, and th
 \end{itemize}
 The comparison between Oracle-RM and Oracle-PP is useful for validating the use of the WP metric for guiding {\itercomp}, while the other configurations demonstrate the viability of applying the online {\itercomp} in a real scenario.
 
-Figure~\ref{fig:window-size} shows the average input-window size for each benchmark and configuration.
-It shows that we can have a statistically sound measurement of the performance metric using just a small number of inputs.
+%Figure~\ref{fig:window-size} shows the average input-window size for each benchmark and configuration.
+%It shows that we can have a statistically sound measurement of the performance metric using just a small number of inputs.
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figs/window-size.pdf}
-    \caption{Average input-window sizes observed during the online {\itercomp}.}
-    \label{fig:window-size}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%    \includegraphics[width=\textwidth]{figs/window-size.pdf}
+%    \caption{Average input-window sizes observed during the online {\itercomp}.}
+%    \label{fig:window-size}
+%\end{figure*}
 
 \subsection{The Set of Optimization Sequences}
 
@@ -138,6 +138,14 @@ This process was repeated until we obtained all the 500 distinct optimization se
 
 \subsection{Performance Evaluation}
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figs/speedups.pdf}
+    \caption{Speedups obtained from the final optimization sequence selected by the online {\itercomp}.
+	         The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
+    \label{fig:speedups}
+\end{figure*}
+
 In order to evaluate the quality of the final optimization sequences selected by the {\itercomp} search, we compare their speedup by measuring wall-clock time of the benchmarks when compiled with the standard {\flagstype -O3} optimization.
 For each benchmark, after selecting the final optimization sequence, we compute the average speedup over all the 1000 input dataset.
 When measuring the wall-clock time for each input, to reduce noise, we execute the same input until we have a statistically sound measurement, i.e. we execute until we have an interval no larger than 1\% with 99\% confidence.
@@ -147,14 +155,6 @@ This result is important for demonstrating that a work-based metric has the pote
 Moreover, the evaluation also indicates that the use of relaxation algorithms does not degrade the optimization search,
 it might even benefit the {\itercomp} as it tends to insert smaller interferences in the performance measurement.
 %Finally, Figure~\ref{fig:speedups} also presents the results of {\itercomp} guided by IPC, which is futher discussed in Figure~\ref{fig:ipc-vs-work}.
-
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figs/speedups.pdf}
-    \caption{Speedups obtained from the final optimization sequence selected by the online {\itercomp}.
-	         The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
-    \label{fig:speedups}
-\end{figure*}
 
 %\begin{figure*}[h]
 %    \centering
