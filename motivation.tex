@@ -13,11 +13,11 @@ faster for the user.
     \label{fig:motivation-online}
 \end{figure}
 
-To show this, we performed offline \itercomp on \texttt{susan\_c} from the \textit{KDataSets} benchmark suit~\cite{chen10,chen12a} using a
+To show this, we performed offline \itercomp on \texttt{susan\_c} from the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a} using a
 small subset of its inputs to identify the best-performing optimization sequence. In Figure~\ref{fig:motivation-online}, the green bars are
-the histogram of speedups compared to \red{LLVM?} \texttt{-O3} for each individual input, while the dark green line shows the speedup
+the histogram of speedups over LLVM \texttt{-O3} for each individual input, when using this ``best'' optimization sequence. The dark green line shows the same speedup
 averaged over all inputs. Despite the selected optimization sequence being the best for some inputs, we see that it delivers, on average,
-6\% of performance improvement, but gives slows down performance for nearly of the inputs. This example shows that randomly choosing an
+only 6\% performance improvement and slows down performance for nearly half of the inputs. This example shows that randomly choosing an
 input set to use for offline \itercomp can be counterproductive.
 
 The blue bars \red{zw: the reviewer won't be able to see the difference if the paper is printed in black and white.} in
@@ -31,9 +31,9 @@ is on average 13\% better than the offline approach.
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
-    \caption{Relationship between IPC and execution time vs optimization speedup for 500 different binaries of \texttt{susan\_c}. The binaries are compiled using different optimization sequences. Each point represents
-	averages over a distinct subsets of its inputs.}
-    \red{ZW: Perhaps take out the blue line (execution time). It is rather confusing. }
+    \caption{Relationship between IPC and execution time vs optimization speedup for 500 different binaries of \texttt{susan\_c}. The
+    binaries are compiled using different optimization sequences. Each point represents averages over a distinct subset of its inputs.}
+    \red{ZW: Perhaps take out the blue line (execution time). It is rather confusing.}
     \label{fig:motivation-metric}
 \end{figure}
 
@@ -43,11 +43,11 @@ running the same input \textit{at least twice}, one of the optimized and one for
 undesirable in a realistic online \itercomp scenario. There are two existing workarounds to this problem: directly comparing the
 \textit{execution time} of each run against previous runs or directly comparing the \textit{instructions per cycle}~(IPC)~\citep{fursin07}.
 Neither metric is a good proxy for speedup. Figure~\ref{fig:motivation-metric} plots the measured IPC and execution time versus the real
-speedup for 500 different binaries of the \texttt{susan\_c} benchmark. IPC, execution time, and speedup are averaged over distinct subsets of its inputs.
+speedup for 500 different binaries of the \texttt{susan\_c} benchmark. IPC, execution time, and speedup are averages over distinct subsets of its inputs.
 Both metrics have no direct correlation with speedup. Different inputs require a different amount of work which dominates the changes in execution time. IPC on
 the other hand might improve with a more efficient binary but the opposite can also be true. For example,
-replacing many one-cycle instructions by fewer multi-cycle instructions.
-%inserting \texttt{NOP} statements will usually improve IPC.
+% replacing many one-cycle instructions by fewer multi-cycle instructions.
+inserting \texttt{NOP} statements will usually improve IPC but hurt performance.
 
 In the remaining of this paper, we describe our work efficiency metric, which provides a new way for approximating optimization speedup
 through a single run. We show that by utilizing this metric, a highly effective online \itercomp methodology can be built.
