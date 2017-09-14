@@ -15,7 +15,7 @@ SAMPLES=cgo18mscr.tex
 #PDF = $(PACKAGE).pdf ${SAMPLES:%.tex=%.pdf} acmguide.pdf
 PDF = ${SAMPLES:%.tex=%.pdf}
 
-TEXSRCS = abstract.tex intro.tex motivation.tex overview.tex premable.tex related.tex results.tex setup.tex cgo18mscr.tex
+TEXSRCS = abstract.tex infra.tex intro.tex motivation.tex overview.tex premable.tex prof.tex related.tex results.tex setup.tex work.tex cgo18mscr.tex
 
 all:  ${PDF} cgo18mscr.pdf
 
