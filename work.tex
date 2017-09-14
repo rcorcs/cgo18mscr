@@ -14,14 +14,14 @@
     
     \[ \Delta W = \sum_i w_i.n_i \]
     
-    Where $i$ is the instruction type, $w_i$ is the estimated runtime for instruction type $i$, and $n_i$ is the number of observed
+    Where $i$ is the instruction type; $w_i$ is the estimated runtime for instruction type $i$; and $n_i$ is the number of observed
     executions of instruction type $i$.
 
     Similarly to previous work~\citep{giusto01,powell09,brandolese11}, the coefficients, $w_i$, are found by linear regression. We create
-    one data point for the regressor for a set of program and input pairs. The programs are given in Table~\ref{tab:kdatasets:training},
+    one regressor data point for each of a set of program and input pairs. The programs are given in Table~\ref{tab:kdatasets:training},
     and each has 1,000 inputs. The response variable is the runtime of the unoptimized program as it processes the input. To ensure
     statistically sound results, the runtime is measured by repeated execution until the 99\% confidence interval is no larger than 1\% of
-    the mean. The explanatory variables are the dynamic instruction counts for each program and input. They are recorded by a separate,
+    the mean. The explanatory variables are the dynamic instruction counts for each program and input pair. They are recorded by a separate,
     instrumented run of the program on the input.
 
     Figure~\ref{fig:cost-model} shows the correlation of the model with runtime on instances of test benchmarks. The correlation
