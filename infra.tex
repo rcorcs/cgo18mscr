@@ -10,7 +10,7 @@ the code through the frontend and removes the need for shipping the full applica
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figs/infra-diagram}
-    \caption{Overview of the online \itercomp mechanism.}
+    \caption{Overview of the online \itercomp mechanism. \red{zw: mark the boundary of online and offline.}}
     \label{fig:infra-diagram}
 \end{figure}
 
@@ -21,25 +21,25 @@ application, we measure the work and the execution time. We accumulate multiple 
 metric P of this optimization sequence with high confidence. Finally, we use this information to help us select the next optimization
 sequence.
 
-This work focuses on the highlighted components of Figure~\ref{fig:infra-diagram}. The first one, \textit{Work Instrumentation} allows
-measuring the amount of work performed. Conceptually, we use the cost model of Section~\ref{sec:metric} to estimate a cost for each basic
-block of the IR and then add instrumentation to increase a global work counter by that cost every time a basic block is executed. The
-measured work should depend only on the program and the input, not the applied optimizations, so we instrument the unoptimized IR before
-any optimizations modify it. We present a detailed description of work instrumentation and how to keep it lightweight in
-Section~\ref{chap:instr}.
+This work focuses on the highlighted components of Figure~\ref{fig:infra-diagram}. The first one, \textit{Work Instrumentation} \blue{is
+performed once at offline compile time}. It allows measuring the amount of work performed. Conceptually, we use the cost model of
+Section~\ref{sec:metric} to estimate a cost for each basic block of the IR and then add instrumentation to increase a global work counter
+by that cost every time a basic block is executed. The measured work should depend only on the program and the input, not the applied
+optimizations, so we instrument the unoptimized IR before any optimizations modify it. We present a detailed description of work
+instrumentation and how to keep it lightweight in Section~\ref{chap:instr}.
 
 \textit{Optimization Selector} is responsible for selecting which optimization sequence to use for the next execution of the program. Each
 sequence is used for multiple executions of the program in order to gather enough work efficiency measurements. When we are able to
 estimate this work efficiency with a confidence interval narrower than a certain threshold, we can start evaluating a different
 optimization sequence. We call the number of executions performed using the same optimization sequence the \textit{Input-Window Size}.
 
-\FIXME{WHAT IS THE OPTIMIZATION EVALUATOR? WHY IS IT HIGHLIGHTED? DO WE HAVE ANYTHING TO SAY ABOUT IT?}
+%\FIXME{WHAT IS THE OPTIMIZATION EVALUATOR? WHY IS IT HIGHLIGHTED? DO WE HAVE ANYTHING TO SAY ABOUT IT?}
 
 \subsection{Efficient Optimization Selection and Compilation}
 
 Most devices have distinct idle and peak usage periods. For example, mobile devices are used intensely during the day and not at all while
-the user is sleeping and the battery is charging~\citep{mpeis16}. Many authors have identified similar idle and peak usage periods in the
-context of data centers~\citep{armbrust10,chen12b}. The proposed \itercomp infrastructure is very well suited to such scenarios. In
+the user is sleeping and the battery is charging~\citep{mpeis16}. Many researchers have identified similar idle and peak usage periods in
+the context of data centers~\citep{armbrust10,chen12b}. The proposed \itercomp infrastructure is very well suited to such scenarios. In
 particular, we can use periods of idleness or underutilization to select the next few optimization sequences to try and compile the
 corresponding binaries. This approach effectively hides the compilation overhead from the user. During peak periods, we only have to select
 which of the existing binaries to evaluate which introduces almost no overhead.

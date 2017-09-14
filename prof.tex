@@ -1,20 +1,20 @@
 \section{Work Profiling}
 
 In this section, we describe how to measure work online. Total work is just the sum of the costs of all executed basic blocks, so it is
-possible to embed its computation into the execution of the program. A naive instrumentation would use a global counter initialized at the
-interception value, $\varepsilon$. Each basic block would then have only to increment this counter with the total cost of its instructions
-every time it is executed. Although easy to implement, the naive approach introduces a significant overhead.
+possible to embed its computation into the execution of the program. A na\"{\i}ve instrumentation would use a global counter initialized at
+the interception value, $\varepsilon$. Each basic block would then have only to increment this counter with the total cost of its
+instructions every time it is executed. Although easy to implement, the na\"{\i}ve approach introduces a significant overhead.
 
 Previous work on basic block profiling has proposed optimal ways for instrumenting the code with as little overhead as possible without
 losing any profiling information~\citep{knuth73,ball94}. The underlying idea is to instrument only a subset of the basic blocks of a
-function and use the function's CFG to calculate execution counts for the rest. We can use the same idea for our purposes. Work profiling
-and basic block profiling are similar, both need to count how many times each basic block was executed. The only important difference is
-that we do not have to store the execution count of each basic block, only the total work. 
+function and use the function's control flow graph (CFG) to calculate execution counts for the rest. We can use the same idea for our
+purposes. Work profiling and basic block profiling are similar, both need to count how many times each basic block was executed. The only
+important difference is that we do not have to store the execution count of each basic block, only the total work.
 
 Graph theory shows that we can calculate precisely the frequencies of all edges between basic blocks if we choose a spanning tree of the
 function CFG and instrument the edges not in the tree. To make the instrumentation probe placement optimal, we choose the maximum spanning
-tree, with the edge weights representing edge frequency estimates. As many high frequency edges as possible will be in the maximum spanning
-tree and they will not be instrumented. 
+tree, with the edge weights representing edge frequency estimates. By doing so, we leave as many high frequency edges as possible in the
+maximum spanning tree and they will not be instrumented, allowing us to minimize the instrumentation overhead.
 
 \begin{figure}[t]
 \centering {
@@ -58,16 +58,11 @@ the amount of work of $B_8$, denoted by $w(B_8)$, is incremented in probe $P_0$
 and decremented in $P_1$.
 
 \paragraph{Populating the edge flows:}
-Intuitively, if all the edge flows are known for the complement of a spanning tree
-then at any leaf of the spanning tree there is only one unknown edge flow.
-This unknown edge flow can be calculated by Kirchhoff's first law.
-This process repeats as a bottom-up propagation until all the unknown edge flows
-have been calculated.
-This algorithm can be formally defined as a post-order traversal on the spanning
-tree.
-Let $G$ be the CFG.
-This algorithm first initializes the edge flows $D_{(u,v)}$, for each edge
-$(u,v)$ in the CFG, as follows:
+Intuitively, if all the edge flows are known for the complement of a spanning tree then at any leaf of the spanning tree there is only one
+unknown edge flow. This unknown edge flow can be calculated by Kirchhoff's first law\FIXME{\cite{}}. This process repeats as a bottom-up
+propagation until all the unknown edge flows have been calculated. This algorithm can be formally defined as a post-order traversal on the
+spanning tree. Let $G$ be the CFG. This algorithm first initializes the edge flows $D_{(u,v)}$, for each edge $(u,v)$ in the CFG, as
+follows:
 \[
 D_{(u,v)} \gets
 \begin{cases}
@@ -247,18 +242,12 @@ result in a long compilation time.
 
 \subsection{Whole Program Relaxation}
 
-In this section we go one step even further.
-In some cases, even the proposed relaxation strategy can still be conservative.
-This conservatism can be overly restrictive in some cases, resulting in a
-negligible overhead reduction but also causing just a negligible dynamic error
-to the work profiling.
-For these cases, we propose an adapted version of the relaxation algorithm that
-operates on the whole program.
-Traditionally, compiler optimizations are performed on the function-level, or at
-best on a per module basis.
-Whole program optimization (WPO) means that the compiler considers all
-compilation units of the program and optimizes them using the combined knowledge
-of how they are used together.
+In this section we go one step further. In some cases, even the proposed relaxation strategy can still be conservative. This conservatism
+can be overly restrictive in some cases, resulting in a negligible overhead reduction but also causing just a negligible dynamic error to
+the work profiling. For these cases, we propose an adapted version of the relaxation algorithm that operates on the whole program.
+Traditionally, compiler optimizations are performed on the function-level, or at best on a per module basis. Whole program optimization
+(WPO) means that the compiler considers all compilation units of the program and optimizes them using the combined knowledge of how they
+are used together.
 
 The \textit{whole program relaxation} works by using block-frequency profiling
 from previous executions.
