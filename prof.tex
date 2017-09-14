@@ -1,32 +1,20 @@
 \section{Work Profiling}
 
-In this section, we describe how the computation of the work metric can be performed during runtime by means of instrumenting the code.
-%In particular, we adapt the optimal algorithm proposed originally for block-frequency profiling~\citep{nahapetian73,knuth73,ball94}.
-Because we define work as a linear equation on the block-frequency counters, it is possible to embed its computation into the execution of the program.
-A naive instrumentation would consist basically of having a global counter that starts with the interception value, $\varepsilon$, and each basic block increments its own cost into the global counter.
-Although this instrumentation is easily implemented, it imposes a significant overhead on the instrumented program.
-However, it is possible to insert fewer probes by carefully placing the probes in a way that is possible to reconstruct the complete profiling information~\citep{knuth73,ball94}.
+In this section, we describe how to measure work online. Total work is just the sum of the costs of all executed basic blocks, so it is
+possible to embed its computation into the execution of the program. A naive instrumentation would use a global counter initialized at the
+interception value, $\varepsilon$. Each basic block would then have only to increment this counter with the total cost of its instructions
+every time it is executed. Although easy to implement, the naive approach introduces a significant overhead.
 
-We adapt the optimal block-frequency profiling in order to perform the work profiling efficiently.
-The proposed work profiling differs from the optimal block-frequency profiling as the latter occurs in two stages:
-\textit{(i.) Before execution:} The code is instrumented with counters for each probe.
-\textit{(ii.) After execution:} The information from the recorded probes is propagated in the CFGs of the program.
-In contrast, our work profiling has a single counter, and it only requires the instrumentation before execution, without any post-processing of the recorded profiling.
+Previous work on basic block profiling has proposed optimal ways for instrumenting the code with as little overhead as possible without
+losing any profiling information~\citep{knuth73,ball94}. The underlying idea is to instrument only a subset of the basic blocks of a
+function and use the function's CFG to calculate execution counts for the rest. We can use the same idea for our purposes. Work profiling
+and basic block profiling are similar, both need to count how many times each basic block was executed. The only important difference is
+that we do not have to store the execution count of each basic block, only the total work. 
 
-The instrumented code is assumed to be generated before optimising the code.
-This assumption is based on three key points:
-\textit{(i.)} it guarantees that the work metric is independent of optimisation, i.e., the same input is always mapped to the same amount of work, regardless of the optimisation;
-\textit{(ii.)} it simplifies the code generator;
-\textit{(iii.)} it leverages from the optimisations to further improve the instrumentation code.
-Having a work metric that is independent of optimisation is the most important reason for which we instrument the code before optimisations.
-
-The optimal placement of the probes works by first computing the maximum spanning
-tree based on a weighing that assigns a value to each edge in the CFG.
-These weights can be obtained either by empirical measurements or heuristic estimations,
-and their goal is to avoid probing in frequently executed edges.
-Once we have the maximum spanning tree, probes are placed on every edge not in the spanning tree.
-Figure~\ref{fig:cfg-example} shows an example of a CFG with a maximum spanning tree.
-%represented by the black edges, while the edges highlighted in red represent the placement of the probes.
+Graph theory shows that we can calculate precisely the frequencies of all edges between basic blocks if we choose a spanning tree of the
+function CFG and instrument the edges not in the tree. To make the instrumentation probe placement optimal, we choose the maximum spanning
+tree, with the edge weights representing edge frequency estimates. As many high frequency edges as possible will be in the maximum spanning
+tree and they will not be instrumented. 
 
 \begin{figure}[t]
 \centering {
@@ -44,24 +32,16 @@ Figure~\ref{fig:cfg-example} shows an example of a CFG with a maximum spanning t
      \end{minipage}
   }
 }
-  \caption{Example of a CFG with its minimum spanning tree in black and the
-   basic blocks highlighted in red represent the instrumented basic blocks with
-   the placement of the probes.}
+  \caption{Example of a CFG with its maximum spanning tree in black. Basic blocks and edges highlighted in red are instrumented.
+    Instrumenting them is enough for calculating the total work performed by the whole CFG.}
   \label{fig:cfg-example}
 \end{figure}
 
-In contrast to the naive instrumentation where each basic block records only its
-own amount of work, with the optimal profiling, the instrumented basic blocks need
-to record an aggregated value of work that also takes other basic blocks into
-account.
-Some probes speculatively assume a path of execution,
-while other probes correct when these assumptions are wrong
-(see for example $w(P_0)$ and $w(P_1)$ in Figure~\ref{fig:cfg-example}).
-
-We compute the aggregated value of work for each probe in two steps:
-\textit{(i.)} we propagate information about the probes through the edges of the CFG,
-as symbolic expressions, and then \textit{(ii.)} we use this edge flows
-to compose the aggregated value of the probes.
+In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling the work
+counter increments needs to take other basic blocks into account. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented
+blocks are marked with red. In this example, executing block $B_3$ implies also executing $B_1$ and not executing $B_4$. We compute the
+aggregated value of work for each probe in two steps: \textit{(i.)} we propagate information about the probes through the edges of the CFG,
+as symbolic expressions, and then \textit{(ii.)} we use these edge flows to compose the aggregated value of the probes.
 
 The symbolic expressions in the edges can then be used to compose the aggregated
 value of the probes.
