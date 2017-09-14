@@ -104,25 +104,19 @@ single block, in our case we only care about the total amount of work. Our insig
 then ignoring the probe will have little effect on the total work estimation. By removing such probes, especially if they are frequently
 executed, we can reduce the instrumentation overhead dramatically. 
 
-Our relaxation strategy starts from the probes and their weights as decided by the optimal algorithm. Removing low weight probes is easy,
-but we need a way to guarantee that the error in our work estimation will not grow too big. Our conservative approach, decides on an upper
-bound for the error and applies it on every recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
+Our relaxation strategy operates on selection of probes and weights as decided by the optimal algorithm. Removing low weight probes is
+easy, but we need a way to guarantee that the error in our work estimation will not grow too big. Our conservative approach, decides on an
+upper bound for the error and applies it recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
 representing loops and transforms them into DAGs (Directed Acyclic Graphs) by removing the backedge and moving inner loops into separate
-DAGs. \FIXME{PP: NOT DONE....}
+DAGs. An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG is partitioned into two DAGs. 
 
-
-In order to guarantee an upper bound for the dynamic error in the profiling measurement,
-the relaxation algorithm applies a constrained post-processing on a per DAG (directed acyclic graph) basis.
-By constraining the relaxation within each DAG by a maximum allowed static error,
-it guarantees that the overall relaxation will also be constrained by the same bound.
-
-The relaxation starts by extracting DAGs from the CFG.
-First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
-Afterwards, these subgraphs are transformed into DAGs by ignoring the backedge
-and also by considering that any loop within the subgraph is never executed,
-i.e., only the headers of the inner loops are actually included into the DAG.
-Figure~\ref{fig:cfg-relax-example} shows a CFG partitioned into two DAGs (consider
-only basic blocks and edges completely inside the yellow and green boundaries).
+%The relaxation starts by extracting DAGs from the CFG.
+%First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
+%Afterwards, these subgraphs are transformed into DAGs by ignoring the backedge
+%and also by considering that any loop within the subgraph is never executed,
+%i.e., only the headers of the inner loops are actually included into the DAG.
+%Figure~\ref{fig:cfg-relax-example} shows a CFG partitioned into two DAGs (consider
+%only basic blocks and edges completely inside the yellow and green boundaries).
 
 \begin{figure}[t]
   \centering
@@ -143,26 +137,18 @@ only basic blocks and edges completely inside the yellow and green boundaries).
 %}
 %\end{lstlisting}
 
-For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$,
-we select a subset of the probes to be removed, subject to
-the maximum allowed percentage error, $M$.
-This strategy can be modeled as a 0-1 Knapsack problem:
+For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we calculate $m$, the minimum amount of work that can be performed in the
+DAG. Given this, the worst case relative error caused by removing a probe $P_i$ is $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$. Reducing the
+instrumentation overhead as much as possible while keeping the total worst case error below a threshold can be modeled as a 0-1 Knapsack
+problem:
 \begin{gather*}
 \textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
 \textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
 x_i\in\{0,1\}, i\in\{0,\ldots,k\}
 \end{gather*}
-where $f(P_i)$ is the execution frequency of probe $P_i$, $x_i$ denotes the
-probes selected for removal, and $\varepsilon(P_i)$ is the percentage error of
-removing probe $P_i$ relative to the minimum work value possible to compute in
-the DAG, i.e., if $m$ is the minimum amount of work possible to be computed when
-executing the DAG, then $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$.
-Because the percentage error is computed based on the path with the minimum
-amount of work, $\varepsilon(P_i)$ represents the maximum error possible that
-would be incurred when removing probe $P_i$.
-Furthermore, by constraining the percentage error of every DAG below a given
-threshold, we guarantee that the final error of the relaxation will always be
-bounded by the threshold.
+where $f(P_i)$ is the execution frequency of probe $P_i$ and $x_i$ denotes the probes selected for removal. By constraining the worst case
+relative error in every single DAG of the CFG, we guarantee that the final error introduced by relaxation will always be below the chosen
+threshold.
 % Furthermore, by constraining the percentage error of every DAG below a given threshold, we guarantee that the final error of the relaxation will always be bounded by the threshold, as demonstrated by Proposition~\ref{prop:relax-bound}.
 %
 % \begin{prop}\label{prop:relax-bound}
@@ -217,48 +203,38 @@ bounded by the threshold.
 %probes can be acquired from profiles of previous executions of the program or by
 %a static heuristic of the CFG during compilation.
 
-For our experiments, we implemented two solvers for the 0-1 Knapsack problem:
-the optimal brute-force solver and
-the greedy heuristic based on sorting the items~\citep{dantzig57}.
-We use the brute-force solver for DAGs with a small number of probes and the
-greedy heuristic when the number of probes is greater than a threshold.
-Some of the benchmarks have DAGs with several hundreds of probes, which could
-result in a long compilation time.
+For our experiments, we implemented two solvers for the 0-1 Knapsack problem: an optimal but potentially slow brute-force solver and a
+greedy heuristic based on sorting the items~\citep{dantzig57}. We use the brute-force solver for DAGs with a small number of probes, the
+greedy heuristic otherwise. 
 
 \subsection{Whole Program Relaxation}
 
-In this section we go one step further. In some cases, even the proposed relaxation strategy can still be conservative. This conservatism
-can be overly restrictive in some cases, resulting in a negligible overhead reduction but also causing just a negligible dynamic error to
-the work profiling. For these cases, we propose an adapted version of the relaxation algorithm that operates on the whole program.
-Traditionally, compiler optimizations are performed on the function-level, or at best on a per module basis. Whole program optimization
-(WPO) means that the compiler considers all compilation units of the program and optimizes them using the combined knowledge of how they
-are used together.
+The proposed relaxation strategy provides hard guarantees that error will remain below the chosen threshold but in many cases these
+guarantees are too conservative. Our worst case scenario approach assumes that each loop will always perform the minimum amount of work
+possible which might be orders of magnitude less than the work actually performed. In such cases, we remove too few probes and have little
+effect on the instrumentation overhead, while the actual relative error in our work estimation is negligible. To avoid this problem, we
+propose an adapted version of the relaxation algorithm that operates on the whole program. 
 
-The \textit{whole program relaxation} works by using block-frequency profiling
-from previous executions.
-By having this profiling information, the whole program relaxation is able to
-compute the error of removing a given probe in terms of the whole program's execution,
-and then select a subset of all the probes to be removed.
+\textit{Whole program relaxation} works by using block-frequency profiling from previous executions. With this information, we are able to
+compute the error of removing a given probe in terms of the whole program's execution, and then select a subset of all the probes to be
+removed.
 
-For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the
-whole program relaxation as the following 0-1 Knapsack problem:
+For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the whole program relaxation as the following 0-1 Knapsack
+problem:
 \begin{gather*}
 \textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
 \textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
 x_i\in\{0,1\}, i\in\{0,\ldots,k\}
 \end{gather*}
-where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$,
-$x_i$ denotes the probes selected for removal, $M$ is the error threshold, and
-$\varepsilon(P_i)$ is the percentage error of removing probe $P_i$ relative to
-the profiled global work, i.e.,
-if $\Delta W$ is the work value for the whole program's execution, computed from
-the basic block frequencies profiled from previous executions, the error for a
-given probe $P_i$ is
-\[
-\varepsilon(P_i) = \frac{\omega(P_i)f(P_i)}{\Delta W}.
-\]
+where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $x_i$ denotes the probes selected for removal, $M$ is the
+error threshold, and $\varepsilon(P_i)$ is the error of removing probe $P_i$ relative to the total work. 
+%if $\Delta W$ is the work
+%value for the whole program's execution, computed from the basic block frequencies profiled from previous executions, the error for a
+%given probe $P_i$ is
+%\[
+%\varepsilon(P_i) = \frac{\omega(P_i)f(P_i)}{\Delta W}.
+%\]
 
-Contrary to the per DAG relaxation, the whole program relaxation is not
-guaranteed to be bounded by the error threshold $M$,
-as it depends on the representativity % representativeness
-of the profiling information provided to the whole program relaxation.
+Contrary to the per DAG relaxation, the error introduced by whole program relaxation is not guaranteed to be bounded by the error threshold
+$M$. Still, we expect it to remain close to the threshold as long as the program's behavior does not deviate significantly from the
+behavior captured in profile we used.
