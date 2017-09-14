@@ -69,7 +69,7 @@ In all configurations, the same optimization sequence is used for multiple input
 The average performance over the input window provides an estimate for the overall performance of the optimization sequence across distinct inputs.
 The optimization sequences are ranked based on their average performance, and the best optimization sequence is selected.
 %When selecting the best optimization sequence, they are ranked by the average of their performance measurement, using the WP metric, except for the Oracle-RM which uses the real speedup over \texttt{-O0}.
-\begin{itemize}
+\begin{itemize}[leftmargin=3mm]
 \item \textbf{Oracle-RM} executes the program twice for each input, measuring the real speedup for each optimization sequence, and then uses the real speedup over {\flagstype -O0} for guiding online {\itercomp}. This oracle provides a reference results for assessing the effectiveness work-efficiency metric.
 \item \textbf{Oracle-PP} represents an oracle with a \textit{perfect} non-intrusive profiling.
   It uses the work-efficiency metric for guiding online {\itercomp}.
