@@ -1,3 +1,18 @@
-\section{Conclusion and Future Work}
+\section{Conclusions}
+This paper has presented a novel work efficiency metric to enable one to compare the performance of any two different compiled versions of
+a program without executing a given input more than once. This ability allows us to implement, for the first time, a true online iterative
+compilation  to search for the best compilation options  based on actual user inputs seen in the deployment environment.
 
-Our proposed technique for relaxed instrumentation can also be applied for similar profiling scenarios, such as profiling empirical computational complexity~\cite{goldsmith07,zaparanuks12,coppa14}. 
+We develop a compiler-based, low-overhead instrumentation mechanism to gather the require data to evaluate the work metric. Our mechanism
+does this without any human involvement. We show that by carefully selecting where to place the probes in the source code, the
+instrumentation overhead can be negligible. We give two probe optimization strategies, allowing developers to balance the instrumentation
+overhead and the performance error.
+
+
+We  evaluate our approach using the KDataSets benchmark suit. Experimental results show that our approach delivers \red{80\%} of the
+speedup achieved by an offline  oracle, but without executing any input more than once. We show that our probe optimization strategy is
+highly effective, which brings the instrumentation overhead down to only \red{4\%} on average, making our approach practical for regular
+use.
+
+%Our proposed technique for relaxed instrumentation can also be applied for similar profiling scenarios, such as profiling empirical
+%computational complexity~\cite{goldsmith07,zaparanuks12,coppa14}.
