@@ -121,7 +121,7 @@ while the optimal placement of probes tries to reduce overhead by placing probes
 the relaxation strategies focus on removing probes that are more likely to be executed but add little to the work metric.
 
 Our relaxation strategy operates on selection of probes and weights as decided by the optimal algorithm. Removing low weight probes is
-easy, but we need a way to guarantee that the error in our work estimation will not grow too big.
+easy, but we need a way to guarantee that the error in our work estimation will not grow too large.
 To this end, we first propose a more conservative approach that
 calculates induced error from removing a probe by considering
     the worst case of any execution path through the program,
@@ -244,8 +244,10 @@ The \WPRelaxLower relaxation works by using block-frequency profiling from previ
 compute the error of removing a given probe in terms of the whole program's execution, and then select a subset of all the probes to be
 removed.
 
-For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, similar to the \WCRelaxLower relaxation,
-we model the \WPRelaxLower relaxation as the following 0-1 Knapsack problem:
+For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$,
+we also model the \WPRelaxLower relaxation as a 0-1 Knapsack problem,
+very similar to the \WCRelaxLower relaxation but with a different definition for the relative error,
+that is:
 \begin{gather*}
 \textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
 \textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\

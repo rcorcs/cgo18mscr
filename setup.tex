@@ -1,7 +1,9 @@
 \section{Experimental Setup}\label{sec:setup}
 
-\paragraph{Compiler and Hardware} We implemented our approach in LLVM 4.0\footnote{Download URL hide for anonymous review.}. Our evaluation platform has a \red{xx-core} 3.4 GHz Intel Core i7 CPU with 16 GB of RAM. The
-operating system is \red{Ubuntu 14.02} with Linux kernel 4.4.27.
+\paragraph{Compiler and Hardware} We implemented our approach in LLVM 4.0.
+We have made it available for download\footnote{Download URL hide for anonymous review.}.
+Our evaluation platform has a quad-core 3.4 GHz Intel Core i7 CPU with 16 GB of RAM.
+The operating system is openSUSE 42.2 with Linux kernel 4.4.27.
 
 %The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz Skylake~CPU with 16~GiB RAM.
 
@@ -37,7 +39,7 @@ This set contains 500 optimization sequences collected in a random search using 
 These optimization sequences contain an average of 40 individual optimization passes,
 including repetitions, with a maximum of 119 optimization passes, but it also contains
 optimization sequences which consist of a single flag, such as the default optimizations
-{\flagstype -O1}, {\flagstype -O2}, {\flagstype -O3}, {\flagstype -Os}, and {\flagstype -Oz}.
+\texttt{-O1}, \texttt{-O2}, \texttt{-O3}, \texttt{-Os}, and \texttt{-Oz}.
 
 All optimization sequences in the set of optimizations were generated completely
 at random, without using any knowledge of individual transformations.
@@ -45,7 +47,7 @@ Each optimization sequence was generated in two steps: \textit{(1)} randomly
 selects the number of flags; \textit{(2)} randomly selects the flags, allowing repetitions.
 Afterwards, this randomly generated optimization sequence would be included in
 the set of optimization sequences only if it was able to improve the performance
-of a training benchmark, also selected at random, in respect of the {\flagstype -O3}
+of a training benchmark, also selected at random, in respect of the \texttt{-O3}
 default optimization.
 This process was repeated until we obtained all the 500 distinct optimization sequences.
 
