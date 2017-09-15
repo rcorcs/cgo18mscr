@@ -130,7 +130,7 @@ where the set of probes in the region being considered is $\{P_0, P_1, \ldots, P
 
 For our experiments, we implemented two solvers for the 0-1 Knapsack problems: an optimal but potentially slow brute-force solver and a
 greedy heuristic based on sorting the items~\citep{dantzig57}. We use the brute-force solver with a small number of probes, less than
-\FIXME{30}, and the greedy heuristic otherwise.
+20, and the greedy heuristic otherwise.
 
 We have two relaxation strategies which differ in the control flow regions they tackle and how they calculate the error terms. The first is
 a more conservative approach that calculates induced error from removing a probe by considering the worst case of any execution path
