@@ -1,8 +1,8 @@
 \section{Introduction}
 
     Selecting good optimization settings is very hard in modern compilers due to the huge number of parameters and the difficulty
-    predicting their interaction with each other, a given program, and the platform. As a result, the default heuristics usually fail to
-    choose the best settings. Programs compiled at \texttt{-O3} might be 50\% slower or worse than those compiled with the best
+    of predicting their interaction with each other, a given program, and the platform. As a result, the default heuristics usually fail to
+    choose the best settings. Programs compiled with \texttt{-O3} might be 50\% slower or worse than those compiled with the best
     settings~\cite{fursin07,chen12b}. Iterative, or adaptive, compilation searches for the best compilation settings. Program versions are run
     on a set of representative inputs and compared by their runtimes. This simple technique is highly successful in improving the
     performance of programs. However, selecting a representative input set is difficult because users may not use the program as the
@@ -12,24 +12,31 @@
 
     An adaptive, online technique would solve this problem as the search would use actual, live inputs and the developer is no longer
     responsible for predicting usage patterns. Unfortunately, we cannot compare two different program versions by runtime when each
-    executes a different input entailing different amounts of work. Nor can we run the inputs through both versions due to side effects.
+    one executes a different input entailing different amounts of work.
+    It also may not always be possible to run the inputs through both versions due to possible side effects or overheads for replaying
+    executions.
     Repeating a bank transfer, for example, is undesirable. Instead, we can prefer programs which do more work per unit of time. This work
-    metric could be developer provided, e.g. number of database rows processed per second. However, it might not be a simple linear
-    relationship or so easy to reason about, and would be better if humans were not involved at all. This paper contributes just such an
-    automated system to estimate work and applies it to online iterative compilation.
-    
-    We take the simple view that work is proportional to the time it takes for the unoptimized program version to process the input. We
-    instrument the program, before optimization, to record how much work it does. The work done for each basic block is calculated by a
-    linear regression model of the expected, unoptimized time for each instruction. This simple method rather effectively estimates the
-    unoptimized runtime. However, the instrumentation overheads must be kept low to avoid irritating the user and to reduce the risk of
-    changing how optimizations behave relative to each other.
+    metric could be program specific~\cite{alameldeen06,coppa14}, e.g. number of database rows processed.
+    However, if the developer is left with the burden of manually choosing the best work metric, it might not always be so easy to reason
+    about, and would be better if it could be computed automatically and in a more general way.
+    This paper contributes with such automated system to estimate the amount of work, and then applies it to online {\itercomp}.
 
-    To reduce the overhead we infer the execution of many basic blocks by probes in only a few, following similar work in
-    \FIXME{\cite{??}}. Using this metric for online iterative compilation and running each input only once is nearly as good as using an
-    oracle which can cheat and get the true runtime of the unoptimized program version for any input. We can further reduce the overhead
-    because all probes are not created equal and the iterative compilation can tolerate small errors in the work estimation. Each probe has
-    an expected cost, based on its execution frequency, and we can calculate the error removing it will cause in the work metric. We solve
-    an optimization problem, maximizing the savings from removed probes constrained by a threshold for the relative induced error.
+    We take the simple view that work is proportional to the time it takes for the unoptimized program to process the input. We
+    instrument the program, before optimization, to record how much computational work it does. The work done for each basic block in the
+    program is calculated by a cost model of the expected execution time for each instruction. This simple method rather effectively estimates
+    the unoptimized execution time. Using this metric for online {\itercomp}, and running each input, only once is nearly as good as using an
+    oracle which can cheat and get the true runtime of the unoptimized program version for any input.
+
+    However, the instrumentation overheads must be kept low to avoid upsetting the user and to reduce the risk
+    of changing how optimizations behave relative to each other~\cite{forman81,anderson97,duesterwald00}.
+    %To reduce the overhead we infer the execution of many basic blocks by probes in only a few, following similar work in
+    %\FIXME{\cite{??}}. Using this metric for online iterative compilation and running each input only once is nearly as good as using an
+    %oracle which can cheat and get the true runtime of the unoptimized program version for any input. We can further reduce the overhead
+    %because all probes are not created equal and the iterative compilation can tolerate small errors in the work estimation.
+    To reduce the profiling overhead, in addition to performing an optimal placement of the probes~\cite{knuth73,forman81,ball94}, we propose a novel
+    relaxation strategy that provides a trade-off between the measurement accuracy and overhead.
+    Each probe has an expected cost, based on its execution frequency, and we can calculate the error that removing it will cause in the work metric.
+    We solve an optimization problem, maximizing the savings from removed probes constrained by a threshold for the relative induced error.
 
     We have two versions of probe relaxation. The first is conservative and calculates induced error from removing a probe by considering
     the worst case of any execution path through the program. This gives strong guarantees about the maximum error, but is sometimes so
@@ -37,14 +44,14 @@
     computes induced error based on the relative change in work measurement removing the probe would have had for some profiling runs. This
     approach removes more probes and still seems to keep the error below the threshold although it is no longer guaranteed to do so. In
     both cases, the user sees reduced overhead, but the iterative compilation still performs well.
-    
+
     Our evaluation shows that performing online iterative compilation guided by work efficiency achieves about 80\% of the performance of
     an offline oracle, with improvements of up to about 20\% over the compiler's standard optimization. While our solution executes each
     input a single time to measure the work efficiency metric, the offline oracle is allowed to execute multiple times to have a
     statistically sound measurement of the actual speedup. Regarding the two relaxation algorithms, our results show an average reduction
     in overhead of 43\% and $2.1\times$ over the optimal work profiling, observing up to about $5\times$ of overhead reduction, while often
     incurring in much less than 1\% of dynamic error in the measurement of work.
-    
+
     Our main contributions are:
 
     \begin{itemize}[leftmargin=3mm]
