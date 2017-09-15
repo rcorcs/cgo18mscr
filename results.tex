@@ -68,15 +68,15 @@ We suggest some reasons for this abnormal regressions.
 By analysing these cases, we noticed that several of the frequently executed
 probes could not be removed by the relaxation.
 Moreover, another important aspect to point out is that we also observed
-differences among the final CFGs after applying the \texttt{-O3} optimisation.
+differences among the final CFGs after applying the \texttt{-O3} optimization.
 Although relaxation does not directly alter the CFG, it is worth mentioning that
-many optimisation passes make use of LLVM's built-in target-based cost model,
+many optimization passes make use of LLVM's built-in target-based cost model,
 which means that adding or removing instructions from basic blocks may affect
 decisions during transformations of the code.
 For example, some of the optimizations that make use of this built-in cost model
 and also alter the CFG are: loop-unrolling, function inlining, and
 simplifications of the CFG.
-These changes in the program's CFGs may affect other compiler optimisations and
+These changes in the program's CFGs may affect other compiler optimizations and
 also possibly in hardware performance, for example affecting the instruction
 caching.
 
@@ -137,8 +137,11 @@ they offered better overhead reductions for little dynamic error in the measurem
 
 In order to evaluate the quality of the final optimization sequences selected by
 each configuration of the online {\itercomp}, we compare their speedup over the
-{\flagstype -O3} optimization across all the 1,000 inputs of the benchmark
-being optimized.
+\texttt{-O3} optimization across all the 1,000 inputs of the benchmark being
+optimized.
+None of the configurations degrades the performance over \texttt{-O3} (with
+statistical significance).
+
 %When measuring the wall-clock time for each input, to reduce noise, we execute
 %the same input until we have a statistically sound measurement, i.e. we execute
 %until we have an interval no larger than 1\% with 99\% confidence.
@@ -146,31 +149,29 @@ Figure~\ref{fig:speedups} shows these average speedups for all test benchmarks.
 This figure shows that the best optimization sequence selected with the Oracle-PP
 is very close to the performance of the best optimization sequence selected with
 the Oracle-RM, where Oracle-PP achieves on average about 80\% of the performance
-improved obtained by Oracle-RM.
-This result is important for demonstrating that a work-based metric has the
-potential to produce good results in a real-world online scenario.
+improvement obtained by the Oracle-RM.
+This result is important for demonstrating that our work efficiency metric has
+the potential to produce good results in real-world online scenarios.
 
+The Real-OP achieves 4\% improvement on average, which represents 45\% of the
+performance improvement obtained by the Oracle-RM.
+This difference to Oracle-PP is explained by the real (intrusive) profiling used
+in the Real-OP configuration.
+The profiling affects the search in two key ways:
+\textit{(i.)} the overhead incurred by the profiling affects the execution time,
+and therefore also affects the work efficiency metric,
+\textit{(ii.)} the instrumentation code may affect many of the optimizations, e.g.,
+due to the use of a global variable or in decisions taken based on a cost-model
+for the instructions.
+However, even in the Real-OP configuration, which has a highly intrusive instrumentation,
+it is still possible to obtain performance improvements in a realistic online
+{\itercomp}.
 
-Moreover, the evaluation also indicates that the use of relaxation algorithms
-does not degrade the optimization search, it might even benefit the {\itercomp}
-as it tends to insert smaller interferences in the performance measurement.
-%Finally, Figure~\ref{fig:speedups} also presents the results of {\itercomp} guided by IPC, which is futher discussed in Figure~\ref{fig:ipc-vs-work}.
-
-%\begin{figure*}[h]
-%    \centering
-%    \includegraphics[width=\textwidth]{figs/ipc-vs-work.pdf}
-%    \caption{Comparison between {\itercomp} using IPC or the WP metric.}
-%    \label{fig:ipc-vs-work}
-%\end{figure*}
-
-%Figure~\ref{fig:ipc-vs-work} presents a comparison between IPC and the WP metric regarding their correlation with the actual speedup over \verb|-O0| observed during {\itercomp}.
-%Each point in the figure corresponds to each metric averaged over input windows collected during multiple executions of the {\itercomp}.
-%The vertical lines correspond to the optimization sequence selected by the {\itercomp} search, which either represents the highest IPC or the highest value of WP.
-%In all cases, the optimization sequence selected based on the WP is much closer to the best speedup than the optimization sequence selected based on IPC, which can be attributed to the fact that the WP has a stronger correlation with the speedup.
-%In all cases, IPC shows little to no correlation with the speedup, which corroborates the argument given in Section~\ref{sec:ipc-vs-work-metric}.
-
-%For some cases, namely for the tiff-related benchmarks, the WP shows a worse correlation with speedup.
-%We believe these cases could be improved by improving the cost model used to compute the work metric.
-%However, even in these cases, the optimization sequences selected based on the WP outperform those selected based on the IPC metric.
-
-%\textbf{ToDo: Include results using Genetic Algorithm search.}
+Finally, the evaluation also indicates that the use of relaxation algorithms
+is beneficial not only for its reduction in overhead, which is directly observed
+by the user, by it also tends to improve the quality of the search.
+This improvement has to do with the aforementioned effects of an intrusive
+instrumentation on the search.
+The relaxation has the potential to reduce both effects of the profiling.
+Both the Real-R5 and Real-WPO-R5 achieve about 60\% of the
+performance improvement obtained by the Oracle-RM.

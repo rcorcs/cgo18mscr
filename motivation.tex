@@ -15,14 +15,14 @@
     \end{figure}
 
     We performed offline iterative compilation on \texttt{susan\_c} to find the optimization settings that maximize the average performance
-    over \FIXME{five} randomly chosen inputs from a set of 1,000 provided by the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a}.
+    over five randomly chosen inputs from a set of 1,000 provided by the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a}.
     The green histogram in Figure~\ref{fig:motivation-online} shows for each of the 1,0000 inputs the speedup versus \texttt{-O3} of that
-    chosen optimization setting. The dark green line shows the average speedup for all those inputs. The \FIXME{five} training inputs are
-    all in the top \FIXME{twelve} performing inputs. On the other hand, the chosen optimization does poorly on other inputs, often causing
-    a slowdown and yielding only a slight speedup of 6\% on average.
+    chosen optimization setting. The dark green line shows the average speedup for all those inputs. The five training inputs are
+    all among the top performing inputs. On the other hand, the chosen optimization does poorly on other inputs, often causing
+    a slowdown and yielding only a slight speedup of 4\% on average.
 
     The blue bars in Figure~\ref{fig:motivation-online} show a different approach. Here the iterative compilation proceeds by evaluating
-    each optimization on \FIXME{five} inputs. Each input is evaluated only once during the search, but the search is provided with oracle
+    each optimization on five inputs. Each input is evaluated only once during the search, but the search is provided with oracle
     knowledge about the unoptimized runtime for the inputs, giving a perfect speedup metric. The environment of the search constantly
     changes in the same way as for online iterative compilation. The best optimization for this case never degrades performance compared to
     \texttt{-O3} and is on average 13\% better than the offline approach. The online case, considering truly representative inputs, leads
@@ -34,7 +34,7 @@
         \caption{
             Relationship between IPC and execution time vs optimization speedup for 500 different binaries of \texttt{susan\_c}.
             Each point represents averages over a subset of all inputs.
-            The IPC shows a Pearson correlation coefficient of $-0.14$.
+            The IPC shows a correlation coefficient of $-0.14$.
         }
         \label{fig:motivation-metric}
     \end{figure}

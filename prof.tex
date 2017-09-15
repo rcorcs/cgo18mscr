@@ -12,9 +12,10 @@ purposes. Work profiling and basic block profiling are similar, both need to cou
 important difference is that we do not have to store the execution count of each basic block, only the total work.
 
 Graph theory shows that we can calculate precisely the frequencies of all edges between basic blocks if we choose a spanning tree of the
-function CFG and instrument the edges not in the tree. To make the instrumentation probe placement optimal, we choose the maximum spanning
-tree, with the edge weights representing edge frequency estimates. By doing so, we leave as many high frequency edges as possible in the
-maximum spanning tree and they will not be instrumented, allowing us to minimize the instrumentation overhead.
+function CFG and instrument the edges in the complement of the spanning tree~\cite{nahapetian73,forman81}.
+To make the instrumentation probe placement optimal, we choose the maximum spanning tree,
+with the edge weights representing edge frequency estimates. By doing so, we leave as many high frequency edges as possible in the
+maximum spanning tree and they will not be instrumented, allowing us to minimize the instrumentation overhead~\cite{forman81,ball94}.
 
 \begin{figure}[t]
 \centering {
@@ -50,7 +51,7 @@ is incremented in probe $P_0$ and decremented in $P_1$.
 
 \paragraph{Populating the edge flows:}
 Intuitively, if all the edge flows are known for the complement of a spanning tree then at any leaf of the spanning tree there is only one
-unknown edge flow. This unknown edge flow can be calculated by Kirchhoff's first law\FIXME{\cite{}}. This process repeats as a bottom-up
+unknown edge flow. This unknown edge flow can be calculated by Kirchhoff's first law\cite{knuth73,ball94}. This process repeats as a bottom-up
 propagation until all the unknown edge flows have been calculated. This algorithm can be formally defined as a post-order traversal on the
 spanning tree. Let $G$ be the CFG. This algorithm first initializes the edge flows $D_{(u,v)}$, for each edge $(u,v)$ in the CFG, as
 follows:
@@ -102,13 +103,13 @@ in Figure~\ref{fig:overhead-O3}). To further reduce the overhead in these cases,
 between accuracy and overhead. While in traditional basic block profiling the aim is to accurately measure the frequency counts of every
 single block, in our case we only care about the total amount of work. Our insight was that if the work associated with a probe is small,
 then ignoring the probe will have little effect on the total work estimation. By removing such probes, especially if they are frequently
-executed, we can reduce the instrumentation overhead dramatically. 
+executed, we can reduce the instrumentation overhead dramatically.
 
 Our relaxation strategy operates on selection of probes and weights as decided by the optimal algorithm. Removing low weight probes is
 easy, but we need a way to guarantee that the error in our work estimation will not grow too big. Our conservative approach, decides on an
 upper bound for the error and applies it recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
 representing loops and transforms them into DAGs (Directed Acyclic Graphs) by removing the backedge and moving inner loops into separate
-DAGs. An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG is partitioned into two DAGs. 
+DAGs. An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG is partitioned into two DAGs.
 
 %The relaxation starts by extracting DAGs from the CFG.
 %First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
@@ -205,7 +206,7 @@ threshold.
 
 For our experiments, we implemented two solvers for the 0-1 Knapsack problem: an optimal but potentially slow brute-force solver and a
 greedy heuristic based on sorting the items~\citep{dantzig57}. We use the brute-force solver for DAGs with a small number of probes, the
-greedy heuristic otherwise. 
+greedy heuristic otherwise.
 
 \subsection{Whole Program Relaxation}
 
@@ -213,7 +214,7 @@ The proposed relaxation strategy provides hard guarantees that error will remain
 guarantees are too conservative. Our worst case scenario approach assumes that each loop will always perform the minimum amount of work
 possible which might be orders of magnitude less than the work actually performed. In such cases, we remove too few probes and have little
 effect on the instrumentation overhead, while the actual relative error in our work estimation is negligible. To avoid this problem, we
-propose an adapted version of the relaxation algorithm that operates on the whole program. 
+propose an adapted version of the relaxation algorithm that operates on the whole program.
 
 \textit{Whole program relaxation} works by using block-frequency profiling from previous executions. With this information, we are able to
 compute the error of removing a given probe in terms of the whole program's execution, and then select a subset of all the probes to be
@@ -227,7 +228,7 @@ problem:
 x_i\in\{0,1\}, i\in\{0,\ldots,k\}
 \end{gather*}
 where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $x_i$ denotes the probes selected for removal, $M$ is the
-error threshold, and $\varepsilon(P_i)$ is the error of removing probe $P_i$ relative to the total work. 
+error threshold, and $\varepsilon(P_i)$ is the error of removing probe $P_i$ relative to the total work.
 %if $\Delta W$ is the work
 %value for the whole program's execution, computed from the basic block frequencies profiled from previous executions, the error for a
 %given probe $P_i$ is

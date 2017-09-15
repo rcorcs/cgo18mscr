@@ -25,8 +25,11 @@
     instrumented run of the program on the input.
 
     Figure~\ref{fig:cost-model} shows the correlation of the model with runtime on instances of test benchmarks. The correlation
-    coefficient is \FIXME{XXX}, and the mean absolute percentage error (MAPE) is \FIXME{XXX}. Figure~\ref{fig:motivation-work-efficiency}
-    shows a similar plot to Figure~\FIXME{\ref{fig:???}}, of work efficiency versus speedup for 500 different binaries of \texttt{susan\_c}. Here the new metric correlates much better than either performance or IPC.
+    coefficient is $0.99$, and the mean absolute percentage error (MAPE) is about 24\%.
+    Figure~\ref{fig:motivation-work-efficiency} shows a similar plot to Figure~\FIXME{\ref{fig:motivation-metric}},
+    of work efficiency versus speedup for 500 different binaries of \texttt{susan\_c}.
+    Here the new metric correlates much better than either execution time or IPC,
+    exhibiting a correlation coefficient of $0.93$ with speedup.
 
     \begin{figure}[t]
         \centering
@@ -43,6 +46,6 @@
         \includegraphics[width=0.5\textwidth]{figs/motivation-work-efficiency.pdf}
         \caption{Relationship between work efficiency vs speedup for 500 different binaries of \texttt{susan\_c}.
                 Each point represents averages over a subset of all inputs.
-                Pearson correlation coefficient of $0.93$.}
+                Correlation coefficient of $0.93$.}
         \label{fig:motivation-work-efficiency}
     \end{figure}
