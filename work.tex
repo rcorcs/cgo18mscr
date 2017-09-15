@@ -5,15 +5,15 @@
     t$.
 
     \[
-       P = \nicefrac{\Delta W}{\Delta t}
+       \textrm{Work Efficiency} = \frac{\Delta W}{\Delta t}
     \]
 
     The main challenge is to precisely define what represents \textit{work}. We define the work done by a program on an input to be the
     time taken by the unoptimized program to process that input. We estimate the runtime of each instruction type and then work is the sum
     of the runtime for each instruction type multiplied by its dynamic count.
-    
+
     \[ \Delta W = \sum_i w_i.n_i \]
-    
+
     Where $i$ is the instruction type; $w_i$ is the estimated runtime for instruction type $i$; and $n_i$ is the number of observed
     executions of instruction type $i$.
 
@@ -42,7 +42,7 @@
         \centering
         \includegraphics[width=0.5\textwidth]{figs/motivation-work-efficiency.pdf}
         \caption{Relationship between work efficiency vs speedup for 500 different binaries of \texttt{susan\_c}.
-                Each point represents averages over a subset of all inputs.}
+                Each point represents averages over a subset of all inputs.
+                Pearson correlation coefficient of $0.93$.}
         \label{fig:motivation-work-efficiency}
     \end{figure}
-

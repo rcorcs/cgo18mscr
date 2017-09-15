@@ -25,10 +25,26 @@ bar to show the variance across inputs.
 
 
 \paragraph{The Set of Optimization Sequences}
-For the purpose of evaluating the use of the WP metric with {\itercomp}, we collected in advance a fixed set of optimization sequences.
-The reason for using this fixed set, as explained in Section~\ref{sec:oic-infra}, is because this paper is focused on other components of the infrastructure for performing {\itercomp} and we assume that a good generator of optimization sequences will be used in a real online scenario.
+For the purpose of evaluating the use of the work efficiency metric for guiding
+online {\itercomp}, we collected in advance a fixed set of optimization sequences.
+The reason for using this fixed set is to allow a direct comparison among the configurations.
+We assume that a good generator of optimization sequences will be used in a real online scenario.
+Having a better generator would only improve the whole process of the online {\itercomp}.
 This set contains 500 optimization sequences collected in a random search using the training benchmarks.
-These optimization sequences contain an average of 40 individual optimization passes, including repetitions, with a maximum of 119 optimization passes, but it also contains optimization sequences which consist of a single flag, such as the default optimizations {\flagstype -O1}, {\flagstype -O2}, {\flagstype -O3}, {\flagstype -Os}, and {\flagstype -Oz}.
+These optimization sequences contain an average of 40 individual optimization passes,
+including repetitions, with a maximum of 119 optimization passes, but it also contains
+optimization sequences which consist of a single flag, such as the default optimizations
+{\flagstype -O1}, {\flagstype -O2}, {\flagstype -O3}, {\flagstype -Os}, and {\flagstype -Oz}.
+
+All optimization sequences in the set of optimizations were generated completely
+at random, without using any knowledge of individual transformations.
+Each optimization sequence was generated in two steps: \textit{(1)} randomly
+selects the number of flags; \textit{(2)} randomly selects the flags, allowing repetitions.
+Afterwards, this randomly generated optimization sequence would be included in
+the set of optimization sequences only if it was able to improve the performance
+of a training benchmark, also selected at random, in respect of the {\flagstype -O3}
+default optimization.
+This process was repeated until we obtained all the 500 distinct optimization sequences.
 
   % \begin{minipage}{0.9\textwidth}
   %    \vspace{1em}
@@ -59,8 +75,3 @@ These optimization sequences contain an average of 40 individual optimization pa
 %However, many of the analysis required for identifying loop invariant also benefit from the transformations performed by the {\flagstype -mem2reg} pass.
 %These examples illustrate the importance of repeating optimization passes.
 %Moreover, they illustrate the intricate relation amongst several transformations.
-
-All optimization sequences in the set of optimizations were generated completely at random, without using any knowledge of individual transformations.
-Each optimization sequence was generated in two steps: \textit{(1)} randomly selects the number of flags; \textit{(2)} randomly selects the flags, allowing repetitions.
-Afterwards, this randomly generated optimization sequence would be included in the set of optimization sequences only if it was able to improve the performance of a training benchmark, also selected at random, in respect of the {\flagstype -O3} default optimization.
-This process was repeated until we obtained all the 500 distinct optimization sequences.
