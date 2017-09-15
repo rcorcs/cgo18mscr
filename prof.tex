@@ -39,8 +39,10 @@ maximum spanning tree and they will not be instrumented, allowing us to minimize
 \end{figure}
 
 In contrast to the na\"ive instrumentation where each basic block records only its own amount of work, with the optimal profiling the work
-counter increments needs to take other basic blocks into account. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented
-blocks are marked with red. In this example, executing block $B_5$ implies not executing $B_6$. To compute the amount of work associated
+counter increments need to take other basic blocks into account. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented
+blocks are marked with red. In this example, reaching probe $P_2$ implies not only executing block $B_5$ but also not executing $B_6$.
+
+To compute the amount of work associated
 with each instrumentation probe, we first need to determine how reaching a probe relates with executing or not a basic block. Starting from
 instrumented edges, we build symbolic expressions for each edge of their frequency counts as a linear function of probe counts, as seen in
 Figure~\ref{fig:cfg-example}. If a symbolic expression for an edge and the corresponding block contains a positive term for a probe, this
