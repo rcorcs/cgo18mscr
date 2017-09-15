@@ -131,9 +131,21 @@ We discuss each one of them in detail.
 
 \subsubsection{\WCRelaxTitle Relaxation}
 
-Our conservative approach, decides on an upper bound for the error and applies it recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
-representing loops and transforms them into DAGs (Directed Acyclic Graphs) by removing the backedge and moving inner loops into separate
-DAGs. An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG is partitioned into two DAGs.
+In order to guarantee the upper bound for the error, this conservative approach
+decomposes the CFGs of the program into \textit{directed acyclic graphs} (DAGs).
+Then, it remove probes within each DAG while
+keeping the total error per DAG bounded by the threshold.
+
+By constraining the percentage error of every DAG below a given threshold,
+it is guaranteed that the dynamic error of the work metric
+will always be bounded by the threshold.
+This constraint is ensured by computing the error of removing each probe relative
+to the path with the minimum amount of work possible.
+
+The \WCRelaxLower relaxation starts by extracting DAGs from the CFG.
+First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
+Afterwards, these subgraphs are transformed into DAGs by ignoring the backedge and also by considering that any loop within the subgraph is never executed, i.e., only the headers of the inner loops are actually included into the DAG
+An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG is partitioned into two DAGs.
 
 %The relaxation starts by extracting DAGs from the CFG.
 %First, the algorithm extracts all the subgraphs that represent a loop or the outer most region of the function.
@@ -161,7 +173,7 @@ DAGs. An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where t
 %  relaxInstrumentedDAG(DAG)
 %}
 %\end{lstlisting}
-
+Finally, the probe removal happens by solving an optimization model.
 For every DAG with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we calculate $m$, the minimum amount of work that can be performed in the
 DAG. Given this, the worst case relative error caused by removing a probe $P_i$ is $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$. Reducing the
 instrumentation overhead as much as possible while keeping the total worst case error below a threshold can be modeled as a 0-1 Knapsack
