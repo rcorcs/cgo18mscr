@@ -30,6 +30,7 @@ bar to show the variance across inputs.
 
 
 \paragraph{The Set of Optimization Sequences}
+
 For the purpose of evaluating the use of the work efficiency metric for guiding
 online {\itercomp}, we collected in advance a fixed set of optimization sequences.
 The reason for using this fixed set is to allow a direct comparison among the configurations.
@@ -41,15 +42,15 @@ including repetitions, with a maximum of 119 optimization passes, but it also co
 optimization sequences which consist of a single flag, such as the default optimizations
 \texttt{-O1}, \texttt{-O2}, \texttt{-O3}, \texttt{-Os}, and \texttt{-Oz}.
 
-All optimization sequences in the set of optimizations were generated completely
-at random, without using any knowledge of individual transformations.
-Each optimization sequence was generated in two steps: \textit{(1)} randomly
-selects the number of flags; \textit{(2)} randomly selects the flags, allowing repetitions.
-Afterwards, this randomly generated optimization sequence would be included in
-the set of optimization sequences only if it was able to improve the performance
-of a training benchmark, also selected at random, in respect of the \texttt{-O3}
-default optimization.
-This process was repeated until we obtained all the 500 distinct optimization sequences.
+%All optimization sequences in the set of optimizations were generated completely
+%at random, without using any knowledge of individual transformations.
+%Each optimization sequence was generated in two steps: \textit{(1)} randomly
+%selects the number of flags; \textit{(2)} randomly selects the flags, allowing repetitions.
+%Afterwards, this randomly generated optimization sequence would be included in
+%the set of optimization sequences only if it was able to improve the performance
+%of a training benchmark, also selected at random, in respect of the \texttt{-O3}
+%default optimization.
+%This process was repeated until we obtained all the 500 distinct optimization sequences.
 
   % \begin{minipage}{0.9\textwidth}
   %    \vspace{1em}
