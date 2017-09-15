@@ -3,6 +3,22 @@
 %In this section we discuss our experimental evaluation. Afterwards, we discuss our results concerning the instrumentations for profiling
 %our work metric. Finally we present the results of the online {\itercomp}.
 
+Profiling strategies used throughout this section 
+for measuring either the actual speedup or the work efficiency metric.
+\begin{itemize}[leftmargin=3mm]
+\item \textbf{\OracleRM} measures the actual speedup over the unoptimized version of the program for any given input.
+In our experiments, this oracle is allowed to execute each input at least twice so the speedup can be computed.
+\item \textbf{\OraclePP} measures the work efficiency metric with a \textit{magically perfect} non-intrusive profiling.
+  Because this version simulates a \textit{perfect} profiling, with zero overhead,
+  it allows us to isolate and evaluate the actual effectiveness of the work efficiency metric.
+\item \textbf{\OptProf} corresponds to the work profiling using the optimal placement of the probes.
+  This profiling strategy requires a single execution of the program for any given input.
+\item \textbf{\WCRelax-\textit{N}\%} measures the work efficiency metric using the work profiling with a \textit{N}\% thresheld for
+the \WCRelaxLower relaxation.
+  Similar to the \OptProf, this profiling strategy also requires a single execution of the program for any given input.
+\item \textbf{\WPRelax-\textit{N}\%} is similar to the \WCRelax, but it applies the \WPRelaxLower relaxation instead.
+\end{itemize}
+
 \subsection{Evaluation of the Instrumentation}
 
 In this experiment we evaluate the runtime overhead introduced by the work efficiency profiling. We compile the program using the
@@ -47,7 +63,7 @@ and the WPO relaxation by a factor of $4.8\times$.
 This benchmark has a single hot function
 which consists mainly of a single hot loop with several branches inside it. %, as depicted by Figure~\ref{fig:adpcm_d-cfg-instr}.
 Most of the improvement achieved by both strategies comes from removing only two probes from the hot loop. The two relaxed probes were
-placed in branches with a high probability of being taken (above 55\% probability), but with a small contribution to the total amount of
+placed in branches with a high probability of being taken, but with a small contribution to the total amount of
 work measured in DAG for this loop (both probes with an static error of about 1.3\%). Because these probes were placed in basic blocks with
 a considerable execution frequency, removing the probes resulted in a significant reduction in runtime overhead.
 
@@ -98,7 +114,7 @@ In this experiment, we use evaluate our \itercomp approach against an oracle. We
   It uses the work-efficiency metric for guiding online {\itercomp}.
   Because this version simulates a \textit{perfect} profiling, with zero overhead,
   it allows us isolate and evaluate the effectiveness work-efficiency metric.
-\item \textbf{Real-OP} corresponds to the online {\itercomp} as it would be applied in a real-world online scenario.
+\item \textbf{Opt-Prof} corresponds to the online {\itercomp} as it would be applied in a real-world online scenario.
   The program is executed only once with each input.
   It uses the optimal work profiling for computing the work efficiency.
 \item \textbf{Real-R5} is similar to the {Real-OP}, but with a relaxation of 5\% in the work profiling.

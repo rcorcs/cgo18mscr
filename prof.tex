@@ -38,7 +38,7 @@ maximum spanning tree and they will not be instrumented, allowing us to minimize
   \label{fig:cfg-example}
 \end{figure}
 
-In contrast to the naive instrumentation where each basic block records only its own amount of work, with the optimal profiling the work
+In contrast to the na\"ive instrumentation where each basic block records only its own amount of work, with the optimal profiling the work
 counter increments needs to take other basic blocks into account. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented
 blocks are marked with red. In this example, executing block $B_5$ implies not executing $B_6$. To compute the amount of work associated
 with each instrumentation probe, we first need to determine how reaching a probe relates with executing or not a basic block. Starting from
@@ -109,17 +109,29 @@ Then, for all probes $P$:
 
 \subsection{Relaxed Instrumentation}
 
-Optimal instrumentation significantly reduces the profiling overhead when compared to naive instrumentation, from an average overhead of
-79\% to 13\%. In some extreme cases though optimal instrumentation can result in overheads of up to 60\% (see benchmark \texttt{adpcm\_d}
-in Figure~\ref{fig:overhead-O3}). To further reduce the overhead in these cases, we propose a relaxation strategy that offers a trade-off
-between accuracy and overhead. While in traditional basic block profiling the aim is to accurately measure the frequency counts of every
-single block, in our case we only care about the total amount of work. Our insight was that if the work associated with a probe is small,
-then ignoring the probe will have little effect on the total work estimation. By removing such probes, especially if they are frequently
+Optimal instrumentation significantly reduces the profiling overhead when compared to na\"ive instrumentation, from an average overhead of
+79\% to 13\%. In some extreme cases, optimal instrumentation can result in overheads of up to 60\% (see benchmark \texttt{adpcm\_d}
+in Figure~\ref{fig:overhead-O3}). To further reduce the overhead in these cases, we propose two relaxation strategies that offer a trade-off
+between accuracy and overhead. Our insight was that if the work associated with a probe is small,
+then ignoring the probe will have little effect on the total work estimation.
+By removing such probes, especially if they are frequently
 executed, we can reduce the instrumentation overhead dramatically.
+To contrast with optimal profiling alone,
+while the optimal placement of probes tries to reduce overhead by placing probes in edges that are less likely to be executed,
+the relaxation strategies focus on removing probes that are more likely to be executed but add little to the work metric.
 
 Our relaxation strategy operates on selection of probes and weights as decided by the optimal algorithm. Removing low weight probes is
-easy, but we need a way to guarantee that the error in our work estimation will not grow too big. Our conservative approach, decides on an
-upper bound for the error and applies it recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
+easy, but we need a way to guarantee that the error in our work estimation will not grow too big.
+To this end, we first propose a more conservative approach that
+calculates induced error from removing a probe by considering
+    the worst case of any execution path through the program,
+and then we propose a more aggressive approach that
+    computes induced error based on the relative change of the work measurement that removing a probe would make to the total amount work for the whole program.
+We discuss each one of them in detail.
+
+\subsubsection{\WCRelaxTitle Relaxation}
+
+Our conservative approach, decides on an upper bound for the error and applies it recursively on every loop of the CFG. Specifically, our algorithm extracts all subgraphs
 representing loops and transforms them into DAGs (Directed Acyclic Graphs) by removing the backedge and moving inner loops into separate
 DAGs. An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG is partitioned into two DAGs.
 
@@ -220,20 +232,20 @@ For our experiments, we implemented two solvers for the 0-1 Knapsack problem: an
 greedy heuristic based on sorting the items~\citep{dantzig57}. We use the brute-force solver for DAGs with a small number of probes, the
 greedy heuristic otherwise.
 
-\subsection{Whole Program Relaxation}
+\subsubsection{\WPRelaxTitle Relaxation}
 
-The proposed relaxation strategy provides hard guarantees that error will remain below the chosen threshold but in many cases these
-guarantees are too conservative. Our worst case scenario approach assumes that each loop will always perform the minimum amount of work
-possible which might be orders of magnitude less than the work actually performed. In such cases, we remove too few probes and have little
-effect on the instrumentation overhead, while the actual relative error in our work estimation is negligible. To avoid this problem, we
-propose an adapted version of the relaxation algorithm that operates on the whole program.
+The \WCRelaxLower relaxation provides hard guarantees that error will remain below the chosen threshold but in many cases these
+guarantees are too conservative. It assumes that each loop will always execute the path with the minimum amount of work
+possible, which might be orders of magnitude less than the work actually performed. In such cases, we remove too few probes and have little
+effect on the profiling overhead, while the actual relative error in our work estimation is negligible. To avoid this problem, we
+propose a more aggressive approach that operates on the whole program.
 
-\textit{Whole program relaxation} works by using block-frequency profiling from previous executions. With this information, we are able to
+The \WPRelaxLower relaxation works by using block-frequency profiling from previous executions. With this information, we are able to
 compute the error of removing a given probe in terms of the whole program's execution, and then select a subset of all the probes to be
 removed.
 
-For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, we model the whole program relaxation as the following 0-1 Knapsack
-problem:
+For a program with a set of probes $\{P_0, P_1, \ldots, P_k\}$, similar to the \WCRelaxLower relaxation,
+we model the \WPRelaxLower relaxation as the following 0-1 Knapsack problem:
 \begin{gather*}
 \textrm{max.}\quad\sum_{i=0}^{k} f(P_i)x_i,\quad
 \textrm{s.t.}\quad\sum_{i=0}^{k} \varepsilon(P_i)x_i \leq M \\
@@ -241,13 +253,7 @@ x_i\in\{0,1\}, i\in\{0,\ldots,k\}
 \end{gather*}
 where $f(P_i)$ is the execution frequency of the instrumented basic block $P_i$, $x_i$ denotes the probes selected for removal, $M$ is the
 error threshold, and $\varepsilon(P_i)$ is the error of removing probe $P_i$ relative to the total work.
-%if $\Delta W$ is the work
-%value for the whole program's execution, computed from the basic block frequencies profiled from previous executions, the error for a
-%given probe $P_i$ is
-%\[
-%\varepsilon(P_i) = \frac{\omega(P_i)f(P_i)}{\Delta W}.
-%\]
 
-Contrary to the per DAG relaxation, the error introduced by whole program relaxation is not guaranteed to be bounded by the error threshold
-$M$. Still, we expect it to remain close to the threshold as long as the program's behavior does not deviate significantly from the
-behavior captured in profile we used.
+Contrary to the per DAG approach, the error introduced by \WPRelaxLower relaxation is not guaranteed to be bounded by the threshold $M$.
+Still, we expect it to remain close to the threshold as long as the program's behavior does not deviate significantly from the behavior
+captured in profile we used.
