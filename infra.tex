@@ -10,7 +10,7 @@ the code through the frontend and removes the need for shipping the full applica
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figs/infra-diagram}
-    \caption{Overview of the online \itercomp mechanism. \red{zw: mark the boundary of online and offline.}}
+    \caption{Overview of the online \itercomp mechanism.}
     \label{fig:infra-diagram}
 \end{figure}
 
@@ -26,7 +26,7 @@ performed once at offline compile time}. It allows measuring the amount of work 
 Section~\ref{sec:metric} to estimate a cost for each basic block of the IR and then add instrumentation to increase a global work counter
 by that cost every time a basic block is executed. The measured work should depend only on the program and the input, not the applied
 optimizations, so we instrument the unoptimized IR before any optimizations modify it. We present a detailed description of work
-instrumentation and how to keep it lightweight in Section~\ref{chap:instr}.
+instrumentation and how to keep it lightweight in Section~\ref{sec:prof}.
 
 \textit{Optimization Selector} is responsible for selecting which optimization sequence to use for the next execution of the program. Each
 sequence is used for multiple executions of the program in order to gather enough work efficiency measurements. When we are able to

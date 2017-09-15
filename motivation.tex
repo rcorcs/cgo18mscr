@@ -9,14 +9,14 @@
         \caption{
             Histograms of speedup over \texttt{-O3} for each of the 1,000 inputs of \texttt{susan\_c}. The green histogram shows the
             speedup when using the optimization sequence selected by offline \itercomp, the blue one is the speedup using the optimization
-            sequence selected by an online-like approach. \FIXME{Beware Daltonism!}
+            sequence selected by an online-like approach.
         }
         \label{fig:motivation-online}
     \end{figure}
 
-    We performed offline iterative compilation on \texttt{susan\_c} to find the optimization settings that maximize the average performance
+    We performed offline iterative compilation on the \texttt{susan\_c} benchmark to find the optimization settings that maximize the average performance
     over five randomly chosen inputs from a set of 1,000 provided by the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a}.
-    The green histogram in Figure~\ref{fig:motivation-online} shows for each of the 1,0000 inputs the speedup versus \texttt{-O3} of that
+    The green histogram in Figure~\ref{fig:motivation-online} shows, for each of the 1,000 inputs, the speedup versus \texttt{-O3} of that
     chosen optimization setting. The dark green line shows the average speedup for all those inputs. The five training inputs are
     all among the top performing inputs. On the other hand, the chosen optimization does poorly on other inputs, often causing
     a slowdown and yielding only a slight speedup of 4\% on average.
@@ -50,11 +50,14 @@
     promising in the sense that faster instruction execution is a good thing, this is belied by the simple observation that adding
     redundant NOPs to a program will increase IPC while also slowing the program down. Figure~\ref{fig:motivation-metric} shows the
     relationship between execution time, IPC and speedup for different optimizations of \texttt{susan\_c}, averaged across a subset of the
-    inputs. We use correlation coefficient~\cite{Bishop:2006:PRM:1162264} to quantify if  IPC and execution time is strongly correlated to
-    speedup. This correlation coefficient takes a value between -1 and 1, the closer the coefficient is to +/-1, the stronger the
-    correlation between the variables. In our case, the IPC and execution time show correlation coefficients of $-0.14$ and $-0.16$,
-    respectively, to speedup. These values are far from 1, suggesting that there is a weak correlation between speedup and IPC or
-    execution time. Clearly, neither IPC nor execution time correlate well, and so neither can be used for iterative compilation. We need a work efficiency
+    inputs. We use correlation coefficient~\cite{Bishop:2006:PRM:1162264} to quantify if  IPC and execution time are strongly correlated to
+    speedup.
+    %This correlation coefficient takes a value between -1 and 1, the closer the coefficient is to +/-1, the stronger the
+    %correlation between the variables.
+    In our case, the IPC and execution time show correlation coefficients of $-0.14$ and $-0.16$,
+    respectively, to speedup.
+    %These values are far from 1, suggesting that there is a weak correlation between speedup and IPC or execution time.
+    Neither IPC nor execution time correlate well, and so neither can be used for iterative compilation. We need a work efficiency
     metric which can approximate speedup instead, using only a single execution.
 
     In the remainder of this paper we present our work efficiency metric and demonstrate its utility for iterative compilation.

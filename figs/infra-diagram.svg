@@ -21,6 +21,20 @@
     <marker
        inkscape:isstock="true"
        style="overflow:visible"
+       id="marker4969"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleOutL">
+      <path
+         transform="scale(0.8)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path4971" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
        id="marker5965"
        refX="0.0"
        refY="0.0"
@@ -444,11 +458,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="404.88311"
-     inkscape:cy="232.14797"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="402.15865"
+     inkscape:cy="406.63028"
      inkscape:document-units="px"
-     inkscape:current-layer="g8650"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1855"
      inkscape:window-height="1176"
@@ -463,7 +477,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1243,12 +1257,12 @@
          id="tspan8596"
          y="875.43372"
          x="158.7283"
-         sodipodi:role="line">Optimization</tspan><tspan
+         sodipodi:role="line">Search</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;font-family:'Latin Modern Roman';-inkscape-font-specification:'Latin Modern Roman, '"
          y="894.18372"
          x="158.7283"
          sodipodi:role="line"
-         id="tspan11824">Selector</tspan></text>
+         id="tspan11824">Driver</tspan></text>
     <rect
        ry="0"
        y="859.19049"
@@ -1256,7 +1270,7 @@
        height="43.57143"
        width="109.28571"
        id="rect8598"
-       style="fill:none;fill-opacity:1;stroke:#ff5555;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <text
        sodipodi:linespacing="125%"
        id="text8608"
@@ -1507,7 +1521,7 @@
     <g
        style="fill:#ffffff"
        id="g8710"
-       transform="translate(61.968972,545.85954)">
+       transform="translate(-51.061358,605.1738)">
       <path
          style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 247.5,109.8622 0,26.42857 61.78571,0 0,-21.07142 -5.26786,-5.26786 z"
@@ -1522,21 +1536,21 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="340.27426"
-       y="671.91687"
+       x="227.24393"
+       y="731.23114"
        id="text8716"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         x="340.27426"
-         y="671.91687"
+         x="227.24393"
+         y="731.23114"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.5px;font-family:'Latin Modern Roman';-inkscape-font-specification:'Latin Modern Roman, '"
          id="tspan8718">Program</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path8720"
-       d="m 340.40988,682.43704 0,18.07743"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker9568)" />
+       d="m 258.15886,728.24989 21.25941,0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker4969)" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker6435)"
        d="m 524.56096,831.78743 0,21.46573"
@@ -1549,37 +1563,6 @@
        id="path8724"
        d="m 578.34648,880.83909 46.21448,0 0,-43.43655"
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker6585)" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="158.7283"
-       y="797.43372"
-       id="text8728"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         x="158.7283"
-         y="797.43372"
-         id="tspan8732"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;font-family:'Latin Modern Roman';-inkscape-font-specification:'Latin Modern Roman, '">Optimization</tspan><tspan
-         sodipodi:role="line"
-         x="158.7283"
-         y="816.18372"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;font-family:'Latin Modern Roman';-inkscape-font-specification:'Latin Modern Roman, '"
-         id="tspan11828">Generator</tspan></text>
-    <rect
-       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect8734"
-       width="109.28571"
-       height="43.57143"
-       x="104.34315"
-       y="781.19049"
-       ry="0" />
-    <path
-       sodipodi:nodetypes="cc"
-       inkscape:connector-curvature="0"
-       id="path8736"
-       d="m 158.98601,825.08672 0,27.45257"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker9288)" />
     <text
        sodipodi:linespacing="125%"
        id="text9746"
@@ -1637,29 +1620,6 @@
        id="path11238"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
-    <g
-       id="g12643"
-       transform="translate(0.35355339,80.13258)">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-         id="rect12634"
-         width="31.785717"
-         height="12.288039"
-         x="142.80116"
-         y="752.03137" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="159.32918"
-         y="761.06763"
-         id="text12636"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           x="159.32918"
-           y="761.06763"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.5px;font-family:'Latin Modern Roman';-inkscape-font-specification:'Latin Modern Roman, '"
-           id="tspan12638">Opt.</tspan></text>
-    </g>
     <g
        id="g4567"
        transform="translate(-0.05652046,0)">

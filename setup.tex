@@ -1,21 +1,24 @@
-\section{Experimental Setup}
+\section{Experimental Setup}\label{sec:setup}
+
 \paragraph{Compiler and Hardware} We implemented our approach in LLVM 4.0\footnote{Download URL hide for anonymous review.}. Our evaluation platform has a \red{xx-core} 3.4 GHz Intel Core i7 CPU with 16 GB of RAM. The
 operating system is \red{Ubuntu 14.02} with Linux kernel 4.4.27.
 
 %The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz Skylake~CPU with 16~GiB RAM.
 
 \paragraph{Benchmarks}
-We use the \textit{KDataSets} benchmark suit~\cite{chen10,chen12a}. This suit provides 1,000 different inputs per benchmark. The inputs
-have different sizes and often lead to different program execution path.
+We use a subset of the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a},
+shown in Table~\ref{tab:kdatasets}.
+This suite provides 1,000 different inputs per benchmark.
+The inputs have different sizes and often lead to different program execution paths.
 %A summary of the benchmarks and their datasets is given in Table~\ref{tab:kdatasets}.
-This benchmark suit allows us to evaluate our approach on a large number of inputs provided by independent
+This benchmark suite allows us to evaluate our approach on a large number of inputs provided by independent
 developers.
 
 \input{table-benchs1}
 
-Table~\ref{tab:kdatasets:training} gives the benchmarks used to train the cost model that is used for computing the instruction weights for
-the work metric. These were also used for collecting a fixed set of optimizations for the {\itercomp}. Table~~\ref{tab:kdatasets:test}
-lists the testing benchmarks used to evaluate our approach.
+%Table~\ref{tab:kdatasets} gives the benchmarks used to train the cost model that is used for computing the instruction weights for
+%the work metric. These were also used for collecting a fixed set of optimizations for the {\itercomp}. Table~~\ref{tab:kdatasets:test}
+%lists the testing benchmarks used to evaluate our approach.
 
 
 \paragraph{Performance Report}
