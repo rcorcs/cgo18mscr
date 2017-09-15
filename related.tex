@@ -1,29 +1,28 @@
 \section{Related Work}\label{sec:relatedwork}
 
 \subsection{{\IterComp}}
+Multiple different adaptive compilation techniques have been proposed for finding a near optimal combination of optimization
+settings~\cite{agakov06,hoste2008cole,kulkarni04,stephenson03} by probabilistically searching the space of possible combinations. But with
+all of them there is uncertainty about whether the quality of their results depends on the data set used. Chen~\etal~\cite{chen10,chen12a}
+examined this issue and showed that indeed the best optimization options differ across inputs. Still, in most cases it is possible to find
+a combination of optimizations that produces good results across all inputs, by using a few tens of inputs to evaluate our optimizations
+on. While a positive result, this is still impractical. Producing tens of realistic input sets might be difficult. Even if not, each
+combination of optimization options has to be evaluated on every input set, increasing the time \itercomp takes by at least an order of
+magnitude.
 
-Chen~\etal~\cite{chen10,chen12a} evaluate the effectiveness of iterative compilations across a large number of input test cases.
-Their main motivation is to answer the question:
-\textit{How data input dependent is {\itercomp}?}
-Their results show that it is possible to find a combination of compiler optimizations that achieves at least 86\% of the maximum speedup across all input test cases.
-These optimal combinations are program-specific and yield average speedups up to 3.75$\times$ over the highest optimization level of compilers.
+Recent research~\cite{chen12b,fang15} has used real data for performing online {\itercomp} on distributed data center applications. Each
+worker receives a subset of the input dataset to evaluate a small set of optimization settings on. The best such setting from each round
+is used for subsequent executions of the same code. By testing new settings and re-evaluating old ones on new datasets this approach makes
+it more likely to select an optimization setting that works well across inputs. Like in~\cite{chen10} every setting is tested on the same
+set of inputs, wasting time and energy. This approach only works well with MapReduce-like workloads, since it relies on the MapReduce
+framework for repeating the same computation multiple times without side-effects or corrupting the input.
 
-When optimising a program, the main method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a} evaluates each combination of compiler optimizations across all the available inputs, i.e., if $N$ is the number of input test cases and $M$ is the total number of combinations of compiler optimizations, they perform a total of $O(NM)$ runs of the program being optimized.
-Furthermore, they use a pre-defined set of only 300 different combinations of compiler optimizations, which represents a very small sample of the optimization search space for most modern compilers, e.g.
-LLVM has 56 distinct optimization passes and GCC has about 47 high-level (SSA form) optimization passes and about 25 low-level (RTL) optimization passes, which in both cases result in much more than $2^{50}$ distinct combinations of compiler optimizations, without considering repetition.
-
-Recent work~\cite{chen12b,fang15} have applied the same idea of performing input-dependent {\itercomp} to distributed applications on data centres.
-In summary, each worker receives a subset of the input dataset, called the evaluation dataset, to perform an \textit{online} {\itercomp} of the code being executed.
-Each worker performs the same the method for {\itercomp} used by Chen~\etal~\cite{chen10,chen12a}, i.e., they evaluate each combination of compiler optimizations across all the evaluation dataset.
-However, because the optimization is performed online, they usually consider a small evaluation dataset and a small number of compiler optimizations.
-
-Fursin~\etal~\cite{fursin07} addressed the problem of comparing the effect of two optimizations on two distinct inputs. For that purpose, they proposed to use instruction per cycle (IPC) as the metric for performing such comparison.
-Their result show that using IPC seems promising as a robust metric for {\itercomp} across large input datasets.
-However, some specific optimization techniques may affect the use of IPC as a robust metric, and specially IPC has been shown to provide poor performance estimation for multi-threaded programs~\cite{alameldeen06,eyerman08}.
-In particular, IPC can give a skewed performance measure if threads spend time in \textit{spin-lock loops} or other synchronisation mechanisms.
-Some existing work on performance assessment suggest that total execution time should be used for measuring performance of multi-threaded programs~\cite{alameldeen06,eyerman08}.
-Aalameldeen and Wood~\cite{alameldeen06} in particular suggest that a simple work-related metric should be used if the unit of work is representative enough.
-Work-related metrics have already been largely used for measuring performance of throughput-oriented applications, for other applications, however, choosing an appropriate unit of work can be more challenging~\cite{alameldeen06}.
+Fursin~\etal~\cite{fursin07} attempted to find a more general approach for online \itercomp. They proposed instructions per cycle (IPC) as
+a metric for comparing runs of the same program with different optimization settings and different inputs: application binaries displaying
+higher IPC are more efficient than lower IPC binaries. Their results show that IPC seems promising as a robust metric for {\itercomp}.
+However, some optimization techniques affect IPC in the opposite way, making the program more efficient while lowering IPC. In the context
+of multithreaded application, IPC cannot be used to estimate performance~\cite{alameldeen06,eyerman08}. Aalameldeen and
+Wood~\cite{alameldeen06} suggest a work metric for quantifying efficiency, but choosing a unit of work is program specific and challenging.
 
 %\subsection{Work and Input Size Metrics}
 
@@ -43,8 +42,9 @@ Work-related metrics have already been largely used for measuring performance of
 
 \subsection{Optimal Instrumentation}
 
-In 1973, Donald Knuth~\cite{knuth73} provided an optimal algorithm for profiling block frequency, inserting fewer probes than the previously described naive instrumentation that was commonly used in practice~\cite{knuth71}.
-Forman~\cite{forman81} proposed further overhead reductions by placing the probes in basic blocks that are less likely to be executed based on static heuristics.
-
-Ball and Larus~\cite{ball94} offered a detailed discussion comparing two approaches for optimally profiling block frequency, namely, placing probes on the vertices or the edges of the control-flow graph (CFG).
-They show that the edge-based approach produces optimal placement of probes.
+Donald Knuth~\cite{knuth73} introduced an optimal algorithm for profiling block frequency, inserting much fewer probes than naive
+instrumentation approaches that were used in practice~\cite{knuth71}. Forman~\cite{forman81} proposed further overhead reductions by
+placing the probes in basic blocks that are less likely to be executed based on static heuristics. Ball and Larus~\cite{ball94} offered a
+detailed discussion comparing two approaches for optimally profiling block frequency, namely, placing probes on the vertices or the edges
+of the control-flow graph (CFG). They show that the edge-based approach produces optimal placement of probes. Theirs is the algorithm we
+used for our initial selection of probes before relaxation.
