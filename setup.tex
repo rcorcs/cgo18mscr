@@ -24,23 +24,16 @@ developers.
 
 
 \paragraph{Performance Report}
-We execute each benchmark with an input a number of times until the gap of the upper and lower confidence bounds is smaller than 5\% under
-a 95\% confidence interval setting. We report the geometric mean performance across runs and inputs per benchmark, and provide a min-max
-bar to show the variance across inputs.
+We execute each benchmark with the same input a number of times until the width of the 95\% confidence interval is smaller than 5\% of the
+mean. We report the geometric mean performance  across runs and inputs per benchmark, and provide a min-max
+bar to show the variance across inputs. \FIXME{PP:Which metric is performance? What is the performance report? What about the plots that are not about performance?}
 
 
-\paragraph{The Set of Optimization Sequences}
+\paragraph{Optimization Space Search}
 
-In this paper, our focus is to investigate a work efficiency metric that enables
-true online {\itercomp}.
-We do not emphasize the search driver of the {\itercomp}.
-There have been many previous works that address the search mechanism of {\itercomp}\cite{???}.
-For the purpose of evaluating the effectiveness of our work efficiency metric
-on guiding online {\itercomp}, we use a fixed set of 500 optimization sequences
-that were generated at random.
-However, we appreciate that there are better search mechanisms available
-but having a better search driver would only improve the whole process of the
-online {\itercomp}.
+The focus of this paper is on developing a new way for measuring algorithmic efficiency and enabling true online {\itercomp}. The choice of
+mechanism for driving the search of the optimization space is orthogonal. For that reason, we decided against using a sophisticated search
+mechanism, instead working with a fixed set of 500 optimization sequences that were selected at random. 
 %These optimization sequences contain an average of 40 individual optimization passes,
 %including repetitions, with a maximum of 119 optimization passes, but it also contains
 %optimization sequences which consist of a single flag, such as the default optimizations
