@@ -89,10 +89,8 @@ of perfect profiling information.
     \label{fig:speedups}
 \end{figure*}
 
-For comparison, we use five configurations.
-In all configurations, the same optimization sequence is used for multiple inputs, using a dynamic input-window size, as explained in Section~\ref{sec:oic-infra}.
-The average performance over the input window provides an estimate for the overall performance of the optimization sequence across distinct inputs.
-The optimization sequences are ranked based on their average performance, and the best optimization sequence is selected.
+\subsubsection{\Itercomp Strategies}
+In this experiment, we use evaluate our \itercomp approach against an oracle. We consider five \itercomp strategies:
 %When selecting the best optimization sequence, they are ranked by the average of their performance measurement, using the WP metric, except for the Oracle-RM which uses the real speedup over \texttt{-O0}.
 \begin{itemize}[leftmargin=3mm]
 \item \textbf{Oracle-RM} executes the program twice for each input, measuring the real speedup for each optimization sequence, and then uses the real speedup over {\flagstype -O0} for guiding online {\itercomp}. This oracle provides a reference results for assessing the effectiveness work-efficiency metric.
@@ -107,6 +105,11 @@ The optimization sequences are ranked based on their average performance, and th
 \item \textbf{Real-WPO-R5} is similar to the {Real-OP}, but with a whole-program relaxation of 5\% in the work profiling.
 %\item \textbf{Real-IPC} uses IPC for guiding the online {\itercomp}.
 \end{itemize}
+
+In all configurations, the same optimization sequence is used for multiple inputs, using a dynamic input-window size, as explained in
+Section~\ref{sec:oic-infra}. The average performance over the input window provides an estimate for the overall performance of the
+optimization sequence across distinct inputs. The optimization sequences are ranked based on their average performance, and the best
+optimization sequence is selected.
 
 The comparison between Oracle-RM and Oracle-PP is crucial for validating the
 effectiveness of the work efficiency metric in guiding online {\itercomp},
@@ -125,14 +128,11 @@ they offered better overhead reductions for little dynamic errors in the measure
 %    \label{fig:window-size}
 %\end{figure*}
 
-\subsection{Performance Evaluation}
+In order to evaluate the quality of the final optimization sequences selected by each configuration of the online {\itercomp}, we compare
+their speedup over the \texttt{-O3} optimization across all the 1,000 inputs of the benchmark being optimized. None of the configurations
+degrades the performance over \texttt{-O3} (with statistical significance).
 
-In order to evaluate the quality of the final optimization sequences selected by
-each configuration of the online {\itercomp}, we compare their speedup over the
-\texttt{-O3} optimization across all the 1,000 inputs of the benchmark being
-optimized.
-None of the configurations degrades the performance over \texttt{-O3} (with
-statistical significance).
+\subsubsection{Results}
 
 %When measuring the wall-clock time for each input, to reduce noise, we execute
 %the same input until we have a statistically sound measurement, i.e. we execute
