@@ -31,18 +31,23 @@ bar to show the variance across inputs.
 
 \paragraph{The Set of Optimization Sequences}
 
-The main goal of this paper is to enable online {\itercomp},
+In this paper, our focus is to investigate a work efficiency metric that enables
+true online {\itercomp}.
+We do not emphasize the search driver of the {\itercomp}.
+There have been many previous works that address the search mechanism of {\itercomp}\cite{???}.
+For the purpose of evaluating the effectiveness of our work efficiency metric
+on guiding online {\itercomp}, we use a fixed set of 500 optimization sequences
+that were generated at random.
+However, we appreciate that there are better search mechanisms available
+but having a better search driver would only improve the whole process of the
+online {\itercomp}.
+%These optimization sequences contain an average of 40 individual optimization passes,
+%including repetitions, with a maximum of 119 optimization passes, but it also contains
+%optimization sequences which consist of a single flag, such as the default optimizations
+%\texttt{-O1}, \texttt{-O2}, \texttt{-O3}, \texttt{-Os}, and \texttt{-Oz}.
 
-For the purpose of evaluating the use of the work efficiency metric for guiding
-online {\itercomp}, we collected in advance a fixed set of optimization sequences.
-The reason for using this fixed set is to allow a direct comparison among the configurations.
-We assume that a good generator of optimization sequences will be used in a real online scenario.
-Having a better generator would only improve the whole process of the online {\itercomp}.
-This set contains 500 optimization sequences collected in a random search using the training benchmarks.
-These optimization sequences contain an average of 40 individual optimization passes,
-including repetitions, with a maximum of 119 optimization passes, but it also contains
-optimization sequences which consist of a single flag, such as the default optimizations
-\texttt{-O1}, \texttt{-O2}, \texttt{-O3}, \texttt{-Os}, and \texttt{-Oz}.
+
+
 
 %All optimization sequences in the set of optimizations were generated completely
 %at random, without using any knowledge of individual transformations.
