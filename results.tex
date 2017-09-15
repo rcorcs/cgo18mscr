@@ -60,14 +60,14 @@ Because these probes were placed in basic blocks with a considerable execution
 frequency, their removal resulted in a significant reduction in performance
 overhead.
 
-A few of the benchmark present abnormal regressions in their execution time.
+A few of the benchmarks present abnormal regressions in their execution time.
 This increase in the profiling overhead is counter-intuitive because the
 relaxation algorithms only reduces the number of instrumented probes,
 without changing their placement.
-We suggest some reasons for this abnormal regressions.
-By analysing these cases, we noticed that several of the frequently executed
-probes could not be removed by the relaxation.
-Moreover, another important aspect to point out is that we also observed
+We suggest some reasons for these abnormal regressions.
+By analyzing these cases, we noticed that several of the frequently executed
+probes could not be removed by the relaxation strategies with small thresholds.
+Another important aspect to point out is that we also observed
 differences among the final CFGs after applying the \texttt{-O3} optimization.
 Although relaxation does not directly alter the CFG, it is worth mentioning that
 many optimization passes make use of LLVM's built-in target-based cost model,
@@ -80,9 +80,10 @@ These changes in the program's CFGs may affect other compiler optimizations and
 also possibly in hardware performance, for example affecting the instruction
 caching.
 
-Furthermore, these improvements can be obtained while incurring very little dynamic error, as shown in Figure~\ref{fig:error-O3}.
-This result confirms the overly conservative aspect of the relaxation algorithm applied per DAG,
-while the WPO relaxation is significantly less conservative.
+Finally, as shown in Figure~\ref{fig:error-O3}, these improvements can be
+obtained while incurring very little dynamic error.
+This result confirms the overly conservative aspect of the relaxation algorithm
+applied per DAG, while the WPO relaxation is significantly less conservative.
 Although the error bound is not guaranteed by the WPO relaxation,
 its dynamic error was always below the 5\% thresholds due to the use
 of perfect profiling information.
@@ -117,11 +118,11 @@ The optimization sequences are ranked based on their average performance, and th
 \end{itemize}
 
 The comparison between Oracle-RM and Oracle-PP is crucial for validating the
-effectiveness of the work efficiency metric for guiding online {\itercomp},
+effectiveness of the work efficiency metric in guiding online {\itercomp},
 while the other configurations demonstrate the viability of applying online
 {\itercomp} in real-world scenarios.
 For the relaxation strategies, we evaluate only those with a 5\% threshold, since
-they offered better overhead reductions for little dynamic error in the measurement.
+they offered better overhead reductions for little dynamic errors in the measurement.
 
 %Figure~\ref{fig:window-size} shows the average input-window size for each benchmark and configuration.
 %It shows that we can have a statistically sound measurement of the performance metric using just a small number of inputs.
