@@ -30,11 +30,16 @@
 
     \begin{figure}[t]
         \centering
+        %\begin{tabular}{cc}
+        %\includegraphics[width=0.25\textwidth]{figs/motivation-metric-ipc.pdf} &
+        %\includegraphics[width=0.25\textwidth]{figs/motivation-metric-runtime.pdf}
+        %\end{tabular}
         \includegraphics[width=0.5\textwidth]{figs/motivation-metric.pdf}
         \caption{
-            Relationship between IPC and execution time vs optimization speedup for 500 different binaries of \texttt{susan\_c}.
-            Each point represents averages over a subset of all inputs.
-            The IPC shows a correlation coefficient of $-0.14$.
+            Relationship between IPC and execution time \textit{vs} speedup over the unoptimized program
+            for 500 different binaries of \texttt{susan\_c}.
+            Each point represents the average over a subset of all inputs.
+            The IPC and execution time show correlation coefficients of $-0.14$ and $-0.16$, respectively.
         }
         \label{fig:motivation-metric}
     \end{figure}
