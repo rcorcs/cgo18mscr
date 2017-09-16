@@ -93,8 +93,8 @@ For all out-going neighbor $v\in N^+(u)$,
 %\forall v\in N^+(u):  D_{(u,v)} \gets
 D_{(u,v)} \gets
 \begin{cases}
-    D_{(u,v)} & \!\!\!\quad \text{if $D_{(u,v)}\neq 0$}\\
-    \mathrm{SumIn}(u) - \mathrm{SumOut}(u)       & \!\!\!\quad \text{otherwise}
+    \mathrm{SumIn}(u) - \mathrm{SumOut}(u) & \!\!\!\quad \text{if $D_{(u,v)} = 0$}\\
+    D_{(u,v)}       & \!\!\!\quad \text{otherwise}
 \end{cases}
 \]
 For all in-coming neighbor $v\in N^-(u)$,
@@ -102,8 +102,8 @@ For all in-coming neighbor $v\in N^-(u)$,
 %\forall v\in N^-(u):  D_{(v,u)} \gets
 D_{(v,u)} \gets
 \begin{cases}
-    D_{(v,u)} & \!\!\!\quad \text{if $D_{(v,u)}\neq 0$}\\
-    \mathrm{SumOut}(u) - \mathrm{SumIn}(u)       & \!\!\!\quad \text{otherwise}
+    \mathrm{SumOut}(u) - \mathrm{SumIn}(u) & \!\!\!\quad \text{if $D_{(v,u)} = 0$}\\
+    D_{(v,u)}  & \!\!\!\quad \text{otherwise}
 \end{cases}
 \]
 
