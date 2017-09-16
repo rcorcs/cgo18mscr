@@ -5,7 +5,7 @@
 
 In this section we discuss our experimental evaluation of the work profiling strategies and
 the effectiveness of the work efficiency metric on guiding true online {\itercomp}.
-We use the following naming convention for the profiling strategies considered
+We use the following naming convension for the profiling strategies considered
 throughout this section:
 \begin{itemize}[leftmargin=3mm]
 \item \textbf{\OracleRM} measures the actual speedup over the unoptimized version of the program for any given input.
@@ -15,7 +15,7 @@ In our experiments, this oracle is allowed to execute each input at least twice 
   it allows us to isolate and evaluate the actual effectiveness of the work efficiency metric.
 \item \textbf{\OptProf} corresponds to the work profiling using the optimal placement of the probes.
   This profiling strategy requires a single execution of the program for any given input.
-\item \textbf{\WCRelax-\textit{N}\%} measures the work efficiency metric using the work profiling with a \textit{N}\% threshold for
+\item \textbf{\WCRelax-\textit{N}\%} measures the work efficiency metric using the work profiling with a \textit{N}\% thresheld for
 the \WCRelaxLower relaxation.
   Similar to the \OptProf, this profiling strategy also requires a single execution of the program for any given input.
 \item \textbf{\WPRelax-\textit{N}\%} is similar to the \WCRelax, but it applies the \WPRelaxLower relaxation instead.
@@ -25,8 +25,9 @@ the \WCRelaxLower relaxation.
 
 In this experiment we evaluate the runtime overhead introduced by the work efficiency profiling. We compile the program using the
 \texttt{-O3}. We then measure the wall-clock time of the instrumented and the native versions to calculate the runtime overhead. For
-each benchmark, we compute the average overhead over all its 1,000 inputs. 
-Figure~\ref{fig:overhead-O3} shows the runtime overhead introduced by profiling for each of the proposed strategies.
+each benchmark, we compute the average overhead over all its 1,000 inputs.
+Figure~\ref{fig:overhead-O3} shows the runtime overhead imposed by the work profiling using each of the proposed work profiling strategies over
+their non-instrumented counterparts.
 %The WPO relaxation was performed using profiling information for every specific input, which provides
 %the perfect information to perform the WPO relaxation. This means that the experiments show its best performance enabled by having perfect
 %profiling information.
@@ -38,23 +39,23 @@ Figure~\ref{fig:overhead-O3} shows the runtime overhead introduced by profiling 
 %    \label{fig:adpcm_d-cfg-instr}
 %\end{figure}
 
-The overhead for \OptProf typically remains below or around 10\% but can reach up to 59\% for \texttt{adpcm\_d}, which would be
-unacceptable. \WCRelax-\textit{5}\% on the other hand manages to eliminate most of the overhead, with a worst
-case of 16\% and an average of 8\%. \WPRelax-\textit{5}\% further reduces the cost of profiling, 5\% overhead on average and 13\%
-worst case. For both \WCRelax and \WPRelax setting the threshold to 2\% makes it too difficult to remove probes. As a result, overhead
-remains high.
+While the \OptProf has a maximum overhead of near 60\%, the \WCRelax-\textit{5}\% has an overhead of
+less than 16\% for all benchmarks, with the \WPRelax-\textit{5}\% reaches an average overhead of only 5\%,
+compared to an average overhead of 12\% for the optimal profiling.
 
 \begin{figure*}[t!]
     \centering
     \includegraphics[width=\textwidth]{figs/overhead-O3.pdf}
     \caption{Overhead of the instrumentations compiled with {\flagstype -O3}.}
     \label{fig:overhead-O3}
+    \vspace{-2mm}
 \end{figure*}
 \begin{figure*}[t!]
     \centering
     \includegraphics[width=\textwidth]{figs/error-O3.pdf}
     \caption{Dynamic error of the work profiling averaged over the 1000 inputs, after relaxing the number of probes.}
     \label{fig:error-O3}
+      \vspace{-2mm}
 \end{figure*}
 
 %Mean values...
@@ -64,16 +65,33 @@ remains high.
 %Real-R5: 75.51\%
 %WPO-R5:  79.07\%
 
-The benchmark where \OptProf records its worst result, \texttt{adpcm\_d}, has a single hot function which consists mainly of a single hot
-loop with several branches. This leads to numerous short basic blocks, many of them with probes. Most of the improvement achieved by both
-relaxation strategies comes from removing only two probes from the hot loop. They were initially placed in branches with high probabilities
-of being taken but with a small work contribution. Removing either of the probes introduces error of about 1.3\% at the loop level but
-eliminates three quarters of the overhead.
+The most critical case, amongst the evaluated benchmarks, happens with the
+\texttt{adpcm\_d} program, with an overhead of about 59\% for the optimal
+instrumentation.
+With a threshold of only 5\%, the \WCRelaxLower relaxation reduces
+the overhead by about 75\% over the \OptProf,
+and the \WPRelax-5\% reduces it by about 80\%.
+This benchmark has a single hot function
+which consists mainly of a single hot loop with several branches inside it. %, as depicted by Figure~\ref{fig:adpcm_d-cfg-instr}.
+Most of the improvement achieved by both strategies comes from removing only two probes from the hot loop. The two relaxed probes were
+placed in branches with a high probability of being taken, but with a small contribution to the total amount of
+work measured in DAG for this loop (both probes with an static error of about 1.3\%). Because these probes were placed in basic blocks with
+a considerable execution frequency, removing the probes resulted in a significant reduction in runtime overhead.
 
-For a few of the benchmarks, relaxation unexpectedly introduces additional overhead. This is counter-intuitive since relaxation leads to
-less computational work. In these cases, relaxation did not manage to remove high frequency probes, so we did not benefit significantly.
-On the other hand, the probes that were removed affected how \texttt{-O3} optimized the surrounding code, in some cases blocking useful
-optimizations that were applied originally. This resulted in slightly slower code.
+A few of the benchmarks present abnormal regressions in their execution time.
+This increase in the profiling overhead is counter-intuitive because the
+relaxation algorithms only reduces the number of instrumented probes,
+without changing their placement.
+We suggest some reasons for these abnormal regressions.
+By analyzing these cases, we noticed that some of the frequently executed
+probes could not be removed by the relaxation strategies with small thresholds.
+Another important aspect to point out is that we also observed
+differences among the final CFGs after applying the \texttt{-O3} optimization.
+Although relaxation does not directly alter the CFG, it is worth mentioning that
+there are optimizations that make use of LLVM's built-in target-based cost model,
+which means that adding or removing instructions from basic blocks may affect
+decisions during transformations of the code, which may end up changing the CFG
+in different ways depending on the instrumentation applied.
 %For example, some of the optimizations that make use of this built-in cost model
 %and also alter the CFG are: loop-unrolling, function inlining, and
 %simplifications of the CFG.
@@ -81,9 +99,13 @@ optimizations that were applied originally. This resulted in slightly slower cod
 %also possibly in hardware performance, for example affecting the instruction
 %caching.
 
-In Figure~\ref{fig:error-O3}, we see the error in our work estimation introduced by relaxation. The error for the WC-Relax strategies is low, always below 1\% and usually much lower, regardless of threshold. This confirms that WC-Relax is very conservative. WP-Relax brings
-us closer to our target threshold. Despite not having hard guarantees for the error under WP-Relax, in all cases the error was below the
-threshold.
+Finally, as shown in Figure~\ref{fig:error-O3}, these improvements can be
+obtained while incurring very little dynamic error.
+This result confirms the overly conservative aspect of the \WCRelaxLower relaxation,
+while the \WPRelaxLower relaxation is significantly less conservative.
+Although the error bound is not guaranteed by the \WPRelaxLower relaxation,
+its dynamic error was always below the 5\% thresholds.
+%due to the use of perfect profiling information.
 
 \subsection{Evaluation of Online {\IterComp}}
 
@@ -93,15 +115,16 @@ threshold.
     \caption{Speedups obtained from the final optimization sequence selected by the online {\itercomp}.
 	         The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
     \label{fig:speedups}
+          \vspace{-2mm}
 \end{figure*}
 
 In this section we evaluate the effectiveness of our work efficiency metric.
 We perform online {\itercomp} using all five profiling strategies, namely
-\OracleRM, \OraclePP, \OptProf, \WCRelax-5\%, and \WPRelax-5\%.
+\OracleRM, \OraclePP,\OptProf,\WCRelax-5\%, and \WPRelax-5\%.
 Because the \OracleRM measures actual speedup, it provides reference results for
 assessing the effectiveness of the work-efficiency metric.
 For the relaxation strategies, we evaluate only those with a 5\% threshold, since
-they offered better overhead reductions for little dynamic error in the measurement.
+they offered better overhead reductions for little dynamic errors in the measurement.
 
 For all strategies, the same optimization sequence is used for multiple inputs, using a dynamic input-window size, as explained in
 Section~\ref{sec:oic-infra}. The average performance over the input window provides an estimate for the overall performance of the
@@ -111,8 +134,7 @@ optimization sequence is selected.
 The comparison between \OracleRM and \OraclePP is crucial for validating the
 effectiveness of the work efficiency metric in guiding online {\itercomp},
 while the other configurations demonstrate the viability of applying online
-{\itercomp} in real-world scenarios. \OracleRM manages an average speedup of 9.3\% over \texttt{-O3}. This is modest by typical \itercomp
-standards because search is a relatively small random search. The search driver is not the focus of this work, and we expect higher speedups from more complex drivers, like genetic algorithms.
+{\itercomp} in real-world scenarios.
 
 In order to evaluate the quality of the final optimization sequences selected by each configuration of the online {\itercomp}, we compare
 their speedup over the \texttt{-O3} optimization across all the 1,000 inputs of the benchmark being optimized. None of the configurations
@@ -138,15 +160,15 @@ and therefore also affects the work efficiency metric,
 \textit{(ii.)} the instrumentation code may affect many of the optimizations, e.g.,
 due to the use of a global variable or in decisions taken based on a cost-model
 for the instructions.
-However, even in the \OptProf configuration
+However, even in the \OptProf configuration, which has a highly intrusive instrumentation,
 it is still possible to obtain performance improvements in a realistic online
 {\itercomp}.
 
 Finally, the evaluation also indicates that the use of relaxation algorithms
 is beneficial not only for its reduction in overhead, which is directly observed
 by the user, by it also tends to improve the quality of the search.
-This improvement has to do with the effects of 
-instrumentation on the search mentioned earlier.
+This improvement has to do with the aforementioned effects of an intrusive
+instrumentation on the search.
 The relaxation has the potential to reduce both effects of the profiling.
 Both the \WCRelax-5\% and \WPRelax-5\% achieve about 60\% of the
 performance improvement obtained by the \OracleRM.

@@ -1,7 +1,7 @@
 \section{Work Profiling}\label{sec:prof}
 
 In this section, we describe how to measure work online. Total work is just the sum of the costs of all executed basic blocks, so it is
-possible to embed its computation into the execution of the program. A na\"{\i}ve instrumentation would use a global counter initialized 
+possible to embed its computation into the execution of the program. A na\"{\i}ve instrumentation would use a global counter initialized
 to zero. Each basic block would then have only to increment this counter with the total cost of its
 instructions every time it is executed. Although easy to implement, the na\"{\i}ve approach introduces a significant overhead.
 
@@ -111,7 +111,7 @@ D_{(v,u)} \gets
 If $x$ is a symbolic expression, then $\kappa_P(x)$ represents the coefficient
 of the term $P$ in $x$.
 In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
-Once all the edge flows are known, then, 
+Once all the edge flows are known, then,
 for all probes $P$, the amount of work associated
 with probe $P$ is:
 \[
@@ -174,11 +174,12 @@ An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG
   \includegraphics[scale=0.8]{figs/cfg-relax-example.pdf}
   \caption{Example of a CFG containing a loop and its decomposition into DAGs.
            The DAGs are the subgraphs within the dashed boundaries.}
+  \vspace{-4mm}
   \label{fig:cfg-relax-example}
 \end{figure}
 
 Finally, the error term is determined by calculating $m$, the minimum amount of work that can be performed in the
-DAG. Given this, the worst case relative error caused by removing a probe $P_i$ is $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$. 
+DAG. Given this, the worst case relative error caused by removing a probe $P_i$ is $\varepsilon(P_i) = \frac{\omega(P_i)}{m}$.
 By constraining the worst case
 relative error in every single DAG of the CFG, we guarantee that the final error introduced by relaxation will always be below the chosen
 threshold.
