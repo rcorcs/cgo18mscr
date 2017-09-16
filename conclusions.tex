@@ -1,16 +1,16 @@
 \section{Conclusions}
-This paper introduced a novel efficiency metric which enables us to compare in terms of performance versions of an application compiled in
-different ways even when they perform different amounts of work. Our approach automatically estimates the work done by each basic block of
-the application and inserts instrumentation code to increment a global work counter every time a block is executed. We optimize the
+This paper has introduced a novel efficiency metric which enables us to compare in terms of performance versions of an application compiled
+in different ways even when they perform different amounts of work. Our approach automatically estimates the work done by each basic block
+of the application and inserts instrumentation code to increment a global work counter every time a block is executed. We optimize the
 placement of the instrumentation probes to reduce the runtime overhead. On top of it, we implement two strategies for removing probes from
 the application to control the trade-off between runtime overhead and work estimation accuracy.
 
 We use this efficiency metric to enable for the first time true online iterative compilation. Instead of comparing different optimizations
 sequences offline by running the application repeatedly with different optimizations applied but the same input, we can now compare runs
 using different inputs as they are provided by the user. We evaluated our online iterative compilation methodology using the KDataSets
-benchmark suite. Experimental results show that we deliver \red{80\%} of the speedup achieved by an offline oracle while not having to 
+benchmark suite. Experimental results show that we deliver \red{80\%} of the speedup achieved by an offline oracle while not having to
 execute any input more than once. Our probe optimization and removal strategies bring the instrumentation overhead down to only \red{4\%}
-on average, making our approach suitable for integration into software products. 
+on average, making our approach suitable for integration into software products.
 
 
 %This paper has presented a novel work efficiency metric to enable one to compare the performance of any two different compiled versions of
