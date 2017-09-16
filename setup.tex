@@ -1,13 +1,12 @@
 \section{Experimental Setup}\label{sec:setup}
 
-\paragraph{Compiler and Hardware} We implemented our approach in LLVM 4.0.
-We have made it available for download\footnote{Download URL hidden for anonymous review.}.
-Our evaluation platform has a quad-core 3.4 GHz Intel Core i7 CPU with 16 GB of RAM.
-The operating system is openSUSE 42.2 with Linux kernel 4.4.27.
+\paragraph{Compiler and Hardware.}
+Our approach is implmented in LLVM 4.0 and is open sourced\footnote{Download URL hidden for anonymous review.}. Our evaluation platform has
+a quad-core 3.4 GHz Intel Core i7 CPU with 16 GB of RAM. The operating system is openSUSE 42.2 with Linux kernel version 4.4.27.
 
 %The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz Skylake~CPU with 16~GiB RAM.
 
-\paragraph{Benchmarks}
+\paragraph{Benchmarks.}
 We use a subset of the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a},
 shown in Table~\ref{tab:kdatasets}.
 This suite provides 1,000 different inputs per benchmark.
@@ -23,7 +22,7 @@ developers.
 %lists the testing benchmarks used to evaluate our approach.
 
 
-\paragraph{Measurement Report}
+\paragraph{Measurement Report.}
 When reporting our results in Section~\ref{sec:results},
 we execute each benchmark with the same input a number of times until the width of the 95\% confidence interval is smaller than 5\% of the
 mean. We report the geometric mean performance  across runs and inputs per benchmark, and provide a min-max
@@ -32,11 +31,11 @@ This same process is used for reporting the measurements in Figures~\ref{fig:ove
 %\FIXME{PP:Which metric is performance? What is the performance report? What about the plots that are not about performance?}
 
 
-\paragraph{Optimization Space Search}
+\paragraph{Optimization Space Search.}
 
 The focus of this paper is on developing a new way for measuring algorithmic efficiency and enabling true online {\itercomp}. The choice of
 mechanism for driving the search of the optimization space is orthogonal. For that reason, we decided against using a sophisticated search
-mechanism, instead working with a fixed set of 500 optimization sequences that were selected at random. 
+mechanism, instead working with a fixed set of 500 optimization sequences that were selected at random.
 %These optimization sequences contain an average of 40 individual optimization passes,
 %including repetitions, with a maximum of 119 optimization passes, but it also contains
 %optimization sequences which consist of a single flag, such as the default optimizations

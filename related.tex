@@ -5,12 +5,12 @@ Various adaptive compilation techniques have been proposed for finding near opti
 settings~\cite{agakov06,kulkarni04,stephenson03,hoste08}. These approaches compare the performance of candidate compiler options by first
 compile the program with different options and then profiling the different compiled versions on the same program input. All these
 approaches implicitly assume that the best-performing compiler settings found from a small set of inputs will work well on unseen datasets.
-Chen~\etal~\cite{chen10,chen12a} show that the best optimization options can differ across inputs. Their results suggest that, in most
-cases it is possible to find a single set of optimizations that produces good results across all inputs; but achieving this requires
+Chen~\etal~\cite{chen10,chen12a} show that the best optimization options, however, can differ across inputs. Their results suggest that, in
+most cases it is possible to find a single set of optimizations that produces good results across all inputs; but achieving this requires
 developers provide a few tens of representative inputs to be used by the iterative compilation search process. We argue that providing
-representative inputs is difficult in practice, as this require developers to foresee all possible user inputs. Even this is possible,
-current approaches all require to evaluate each candidate compiler option on every single input. Doing so incurs significant overhead,
-which thus prevents iterative compilation to be adopted at a larger scale.
+representative inputs is difficult in practice, as users may not use the applications as the developer expects. Even this is possible,
+current approaches all require to evaluate all candidate compiler options on the same input. Doing so across a range of inputs would incur
+significant overhead, which thus prevents iterative compilation to be adopted at a larger scale.
 
 %=======
 %Multiple adaptive compilation techniques have been proposed for finding a near optimal combination of optimization
@@ -23,22 +23,22 @@ which thus prevents iterative compilation to be adopted at a larger scale.
 %magnitude.
 %>>>>>>> origin/master
 
-Recent studies~\cite{chen12b,fang15} have used real data to perform {\itercomp} on distributed data center applications. Each worker
-receives a subset of the input dataset to evaluate a small set of optimization settings on. The best such setting from each round is used
-for subsequent executions of the same code. By testing new settings and re-evaluating old ones on new datasets this approach makes it more
-likely to select an optimization setting that works well across inputs. Like in~\cite{chen10} every setting is tested on the same set of
-inputs, wasting time and energy. This approach only works well with MapReduce-like workloads, since it relies on the MapReduce framework
-for repeating the same computation multiple times without side-effects or corrupting the input.
+Recent studies~\cite{chen12b,fang15} have used user inputs to perform {\itercomp} in distributed data centers. Using these approaches, each
+compilation worker receives a subset of the input dataset to evaluate a small set of optimization settings on. The best such setting from
+each round is used for subsequent executions of the same code. The best-found compilation strategy is then re-fined over time, by testing
+new settings and re-evaluating old ones on new datasets. Like in~\cite{chen10} every setting is tested on the same set of inputs, wasting
+time and energy. This approach only works well with MapReduce-like workloads, since it relies on the framework for repeating the same
+computation multiple times without causing side-effects.
 
 Fursin~\etal~\cite{fursin07} attempted to find a general approach for online \itercomp. They proposed to use instructions per cycle (IPC)
 as a metric for comparing different runs of the same program with different optimization settings and different inputs. Their hypothesis is
 that application binaries displaying higher IPC are more efficient than lower IPC binaries. However, many optimization techniques affect
 IPC in the opposite way, making the program more efficient while lowering IPC. We have also shown in Section~\ref{sec:motivation}, IPC is
-not strongly correlate to speedup. Therefore, it is not a good metric for \itercomp. Furthermore, IPC cannot be used to estimate
-performance for multi-threaded applications~\cite{alameldeen06,eyerman08} due to the side-effect of thread contention. Aalameldeen and
-Wood~\cite{alameldeen06} also suggest that relying on IPC can be harmful, and work metrics like time per work unit or work units per time
-should be used. However, prior works all rely on developers to provide such metrics. This paper presents the first automatic approach to
-derive such work metrics from arbitrary code without developer intervention.
+not strongly correlate to speedup. Furthermore, IPC cannot be used to estimate performance for multi-threaded
+applications~\cite{alameldeen06,eyerman08} due to the side-effect of thread contention. Aalameldeen and Wood~\cite{alameldeen06} also
+suggest that relying on IPC can be harmful, and work metrics like time per work unit or work units per time should be used. However, prior
+works all rely on developers to provide such metrics. This paper presents the first automatic approach to derive a such work metric from
+arbitrary code without developer intervention.
 
 %\subsection{Work and Input Size Metrics}
 

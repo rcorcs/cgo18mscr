@@ -1,11 +1,11 @@
 \section{Online {\IterComp} Overview} \label{sec:oic-infra}
 
-Although {\itercomp} had been originally proposed as an \textit{offline} optimization strategy, it can be adapted to work in
-\textit{online} scenarios. Instead of selecting the best optimization sequence at development time, a first version of the program is
-shipped bundled with the {\itercomp} mechanism. Our mechanism produces new application binaries using different optimization sequences.
-When the user starts the application, we load and execute one of these binaries to evaluate the corresponding sequence online. Our
-mechanism operates on the application's Intermediate Representation (IR) produced by LLVM. This saves us the effort of repeatedly parsing
-the code through the frontend and removes the need for shipping the full application code.
+Although {\itercomp} had been originally proposed as an \textit{offline} optimization strategy, this work shows that this powerful
+technique can be adapted to work in \textit{online} scenarios. Instead of selecting the best optimization sequence at development time, a
+first version of the program is shipped bundled with the {\itercomp} mechanism. Our mechanism produces new application binaries using
+different optimization sequences. When the user starts the application, we load and execute one of these binaries to evaluate the
+corresponding sequence online. Our mechanism operates on the application's Intermediate Representation (IR) produced by LLVM. This saves us
+the effort of repeatedly parsing the code through the frontend and removes the need for shipping the full application code.
 
 \begin{figure}[t]
     \centering

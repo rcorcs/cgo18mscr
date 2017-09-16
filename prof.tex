@@ -51,14 +51,13 @@ contains a negative term for a probe, then the block is executed when we do not 
 In our example CFG, the symbolic expression for the basic block $B_8$ is $P_0 - P_1$, so the amount of work of $B_8$, denoted by $w(B_8)$,
 is incremented in probe $P_0$ and decremented in $P_1$.
 
-\paragraph{Populating the edge flows:}
-Intuitively, if all the edge flows are known for the complement of a spanning tree then at any leaf of the spanning tree there is only one
-unknown edge flow. This unknown edge flow can be calculated by Kirchhoff's first law\cite{knuth73,ball94},
-also known as the principle of \textit{conservation of flow}, which states that
-the amount of flow into a vertex equals the amount of output flow.
-This process repeats as a bottom-up propagation until all the unknown edge flows have been calculated. This algorithm can be formally defined as a post-order traversal on the
-spanning tree. Let $G$ be the CFG. This algorithm first initializes the edge flows $D_{(u,v)}$, for each edge $(u,v)$ in the CFG, as
-follows:
+\paragraph{Populating the edge flows.}
+Intuitively, if all the edge flows are known for the complement of a spanning tree, then at any leaf of the spanning tree there is only one
+unknown edge flow. This unknown edge flow can be calculated by Kirchhoff's first law~\cite{knuth73,ball94}, which is also known as the
+principle of \textit{conservation of flow}. Specifically, this theory states that the amount of flow into a vertex equals the amount of
+output flow. To populate the edge flows, we repeat this process as a bottom-up propagation until all the unknown edge flows have been
+calculated. This algorithm can be formally defined as a post-order traversal on the spanning tree. Let $G$ be the CFG. This algorithm first
+initializes the edge flows $D_{(u,v)}$, for each edge $(u,v)$ in the CFG, as follows:
 \[
 D_{(u,v)} \gets
 \begin{cases}
@@ -66,8 +65,8 @@ D_{(u,v)} \gets
     0       & \quad \text{otherwise}
 \end{cases}
 \]
-This initialization represents only the trivially known edge flows, which are the
-probes themselves (the highlighted edges in red).
+This initialization represents only the trivially known edge flows, which are the probes themselves, e.g. the highlighted edges in
+Figure~\ref{fig:cfg-example}.
 
 Afterwards, the algorithm propagates the known edge flows, inferring
 the symbolic expressions in the unknown edge flows.
@@ -107,7 +106,7 @@ D_{(v,u)} \gets
 \end{cases}
 \]
 
-\paragraph{Composing the aggregated value of the probes:}
+\paragraph{Composing the aggregated value of the probes.}
 If $x$ is a symbolic expression, then $\kappa_P(x)$ represents the coefficient
 of the term $P$ in $x$.
 In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
@@ -174,6 +173,7 @@ An example of this is shown in Figure~\ref{fig:cfg-relax-example}, where the CFG
   \includegraphics[scale=0.8]{figs/cfg-relax-example.pdf}
   \caption{Example of a CFG containing a loop and its decomposition into DAGs.
            The DAGs are the subgraphs within the dashed boundaries.}
+  \vspace{-4mm}
   \label{fig:cfg-relax-example}
 \end{figure}
 
