@@ -76,27 +76,34 @@ edge flows (in red) by applying the Kirchhoff's first law, i.e.,
 for each vertex with a single unknown edge flow, we compute the difference between
 the known incoming edge flows by the known outgoing edge flows.
 Formally,
-for each vertex $u\in G$, in a post-order traversal of the spanning tree,
-we can use the Kirchhoff's first law and apply the following operations
-in a symbolic fashion:
+for each vertex $u\in G$, following a post-order traversal of the spanning tree,
+the Kirchhoff's first law is applied as the following symbolic operations:
+First, sum all the out-going edge flows
 \[
-\Sigma^+_u = \sum_{v\in N^+(u)} D_{(u,v)}
+%\Sigma^+_u = \sum_{v\in N^+(u)} D_{(u,v)}
+\mathrm{SumOut}(u): \sum_{v\in N^+(u)} D_{(u,v)}
 \]
+and then sum all the in-coming edge flows
 \[
-\Sigma^-_u = \sum_{v\in N^-(u)} D_{(v,u)}
+%\Sigma^-_u = \sum_{v\in N^-(u)} D_{(v,u)}
+\mathrm{SumIn}(u): \sum_{v\in N^-(u)} D_{(v,u)}
 \]
+For all out-going neighbor $v\in N^+(u)$,
 \[
-\forall v\in N^+(u):  D_{(u,v)} \gets
+%\forall v\in N^+(u):  D_{(u,v)} \gets
+D_{(u,v)} \gets
 \begin{cases}
-    D_{(u,v)} & \quad \text{if $D_{(u,v)}\neq 0$}\\
-    \Sigma^-_u - \Sigma^+_u       & \quad \text{otherwise}
+    D_{(u,v)} & \!\!\!\quad \text{if $D_{(u,v)}\neq 0$}\\
+    \mathrm{SumIn}(u) - \mathrm{SumOut}(u)       & \!\!\!\quad \text{otherwise}
 \end{cases}
 \]
+For all in-coming neighbor $v\in N^-(u)$,
 \[
-\forall v\in N^-(u):  D_{(v,u)} \gets
+%\forall v\in N^-(u):  D_{(v,u)} \gets
+D_{(v,u)} \gets
 \begin{cases}
-    D_{(v,u)} & \quad \text{if $D_{(v,u)}\neq 0$}\\
-    \Sigma^+_u - \Sigma^-_u       & \quad \text{otherwise}
+    D_{(v,u)} & \!\!\!\quad \text{if $D_{(v,u)}\neq 0$}\\
+    \mathrm{SumOut}(u) - \mathrm{SumIn}(u)       & \!\!\!\quad \text{otherwise}
 \end{cases}
 \]
 
@@ -104,9 +111,12 @@ in a symbolic fashion:
 If $x$ is a symbolic expression, then $\kappa_P(x)$ represents the coefficient
 of the term $P$ in $x$.
 In our case, $\kappa_P(x)$ will belong to the set $\{-1,0,1\}$.
-Then, for all probes $P$:
+Once all the edge flows are known, then, 
+for all probes $P$, the amount of work associated
+with probe $P$ is:
 \[
-\omega(P) = \sum_{u\in G} \kappa_P(\Sigma^+_u)w(u)
+%\omega(P) = \sum_{u\in G} \kappa_P(\Sigma^+_u)w(u)
+\omega(P) = \sum_{u\in G} \kappa_P(\mathrm{SumOut}(u))w(u)
 \]
 
 \subsection{Relaxed Instrumentation}
@@ -176,7 +186,7 @@ The \WCRelaxLower relaxation provides hard guarantees that error will remain bel
 guarantees are too conservative. It assumes that each loop will always execute the path with the minimum amount of work
 possible, which might be orders of magnitude less than the work actually performed. In such cases, we remove too few probes and have little
 effect on the profiling overhead, while the actual relative error in our work estimation is negligible. To avoid this problem, we
-propose a more aggressive approach that operates on the probes from whole program at once.
+propose a more aggressive approach that operates on the probes from the whole program at once.
 
 The \WPRelaxLower relaxation works by using block-frequency profiling from previous executions. With this information, we are able to
 compute the error of removing a given probe in terms of the whole program's execution, and then select a subset of all the probes to be
