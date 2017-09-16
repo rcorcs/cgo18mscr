@@ -72,7 +72,7 @@ eliminates three quarters of the overhead.
 
 For a few of the benchmarks, relaxation unexpectedly introduces additional overhead. This is counter-intuitive since relaxation leads to
 less computational work. In these cases, relaxation did not manage to remove high frequency probes, so we did not benefit significantly.
-On the other, the probes that were removed affected how \texttt{-O3} optimized the surrounding code, in some cases blocking useful
+On the other hand, the probes that were removed affected how \texttt{-O3} optimized the surrounding code, in some cases blocking useful
 optimizations that were applied originally. This resulted in slightly slower code.
 %For example, some of the optimizations that make use of this built-in cost model
 %and also alter the CFG are: loop-unrolling, function inlining, and
