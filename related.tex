@@ -3,14 +3,24 @@
 \subsection{{\IterComp}}
 Various adaptive compilation techniques have been proposed for finding near optimal compilation
 settings~\cite{agakov06,kulkarni04,stephenson03}. These approaches evaluate the performance of candidate compiler options through repeated
-executions using the same input. All these approaches implicitly assume the found compiler settings work for other unseen datasets.
-Chen~\etal~\cite{chen10,chen12a} show that this assumption is not true, and the best optimization options can differ across inputs. Still,
-in most cases it is possible to find a combination of optimizations that produces good results across all inputs, by using a few tens of
-inputs to evaluate our optimizations on. While a positive result, this is still impractical. Producing tens of realistic input sets might
-be difficult. Even if not, each combination of optimization options has to be evaluated on every input set, increasing the time \itercomp
-takes by at least an order of magnitude.
+executions using the same input. All these approaches implicitly assume the best-performing compiler settings found from a small set of
+inputs will work well on unseen datasets. Chen~\etal~\cite{chen10,chen12a} show that the best optimization options can differ across
+inputs. Their results suggest that, in most cases it is possible to find a combination of optimizations that produces good results across
+all inputs, by using a few tens of inputs to evaluate our optimizations on. While a positive result, this is still impractical. Producing
+tens of realistic input sets might be difficult. Even if not, each combination of optimization options has to be evaluated on every input
+set, increasing the time \itercomp takes by at least an order of magnitude.
+%=======
+%Multiple adaptive compilation techniques have been proposed for finding a near optimal combination of optimization
+%settings~\cite{agakov06,hoste08,kulkarni04,stephenson03} by probabilistically searching the space of possible combinations. But with
+%all of them there is uncertainty about whether the quality of their results depends on the data set used. Chen~\etal~\cite{chen10,chen12a}
+%examined this issue and showed that indeed the best optimization options differ across inputs. Still, in most cases it is possible to find
+%an optimization sequence that produces good results across all inputs, by evaluating the optimizations on a representative set inputs.
+%While a positive result, this is still impractical. Producing a set of realistic inputs might be difficult. Even if not, each
+%optimization sequence has to be evaluated on every input, increasing the time \itercomp takes by at least an order of
+%magnitude.
+%>>>>>>> origin/master
 
-Recent research~\cite{chen12b,fang15} has used real data for performing online {\itercomp} on distributed data center applications. Each
+Recent research~\cite{chen12b,fang15} has used real data for performing {\itercomp} on distributed data center applications. Each
 worker receives a subset of the input dataset to evaluate a small set of optimization settings on. The best such setting from each round
 is used for subsequent executions of the same code. By testing new settings and re-evaluating old ones on new datasets this approach makes
 it more likely to select an optimization setting that works well across inputs. Like in~\cite{chen10} every setting is tested on the same

@@ -17,14 +17,14 @@ the code through the frontend and removes the need for shipping the full applica
 Figure~\ref{fig:infra-diagram} shows an overview of how our online {\itercomp} mechanism works. On the developer's side, the program is
 pre-compiled to IR without optimizations and is instrumented to measure the amount of work performed and the wall-clock time. On the user's
 side, we select an optimization sequence and then compile the instrumented IR to binary using this sequence. Next time the user runs the
-application, we measure the work and the execution time. We accumulate multiple such measurements until we can estimate the efficiency
-metric P of this optimization sequence with high confidence. Finally, we use this information to help us select the next optimization
-sequence.
+application, we measure the work and the execution time. We accumulate multiple such measurements, executing each input only once, until we
+can estimate the efficiency metric P of this optimization sequence with high confidence. Finally, we use this information to help us select
+the next optimization sequence.
 
 This work focuses on the highlighted component of Figure~\ref{fig:infra-diagram}, the \textit{Work Instrumentation}. It is performed once
 and offline, right after the IR is generated. Its purpose is to measure the amount of work performed. Conceptually, we use the cost model of
 Section~\ref{sec:metric} to estimate a cost for each basic block of the IR and then add instrumentation to increase a global work counter
-by that cost every time a basic block is executed. The measured work represents the computational effort of the unoptimised program and it
+by that cost every time a basic block is executed. The measured work represents the computational effort of the unoptimized program and it
 should depend only on the program and the input, not the applied optimizations. For that reason, we instrument the unoptimized IR before any optimizations modify it. We present a detailed description of work
 instrumentation and how to keep it lightweight in Section~\ref{sec:prof}.
 
