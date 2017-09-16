@@ -5,7 +5,7 @@
 
 In this section we discuss our experimental evaluation of the work profiling strategies and
 the effectiveness of the work efficiency metric on guiding true online {\itercomp}.
-We use the following naming convension for the profiling strategies considered
+We use the following naming convention for the profiling strategies considered
 throughout this section:
 \begin{itemize}[leftmargin=3mm]
 \item \textbf{\OracleRM} measures the actual speedup over the unoptimized version of the program for any given input.
@@ -15,7 +15,7 @@ In our experiments, this oracle is allowed to execute each input at least twice 
   it allows us to isolate and evaluate the actual effectiveness of the work efficiency metric.
 \item \textbf{\OptProf} corresponds to the work profiling using the optimal placement of the probes.
   This profiling strategy requires a single execution of the program for any given input.
-\item \textbf{\WCRelax-\textit{N}\%} measures the work efficiency metric using the work profiling with a \textit{N}\% thresheld for
+\item \textbf{\WCRelax-\textit{N}\%} measures the work efficiency metric using the work profiling with a \textit{N}\% threshold for
 the \WCRelaxLower relaxation.
   Similar to the \OptProf, this profiling strategy also requires a single execution of the program for any given input.
 \item \textbf{\WPRelax-\textit{N}\%} is similar to the \WCRelax, but it applies the \WPRelaxLower relaxation instead.
