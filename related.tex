@@ -34,7 +34,7 @@ Fursin~\etal~\cite{fursin07} attempted to find a general approach for online \it
 as a metric for comparing different runs of the same program with different optimization settings and different inputs. Their hypothesis is
 that application binaries displaying higher IPC are more efficient than lower IPC binaries. However, many optimization techniques affect
 IPC in the opposite way, making the program more efficient while lowering IPC. We have also shown in Section~\ref{sec:motivation}, IPC is
-not strongly correlate to speedup. Furthermore, IPC cannot be used to estimate performance for multi-threaded
+not strongly correlated to speedup. Furthermore, IPC cannot be used to estimate performance for multi-threaded
 applications~\cite{alameldeen06,eyerman08} due to the side-effect of thread contention. Aalameldeen and Wood~\cite{alameldeen06} also
 suggest that relying on IPC can be harmful, and work metrics like time per work unit or work units per time should be used. However, prior
 works all rely on developers to provide such metrics. This paper presents the first automatic approach to derive a such work metric from
