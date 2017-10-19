@@ -22,7 +22,8 @@
 
     We take the simple view that the amount of work performed by a program's execution is proportional to the time it takes for its
     unoptimized version to process the input. We believe that this also matches the developer's intentions and expectations of program
-    work. We instrument the program, before optimization, to record how much work it does. The work done for each basic block in the
+    work. We instrument the program, before optimization, to record how much work it does, which allows it to consistently report the same
+    amount of work for a given input, regardless of the optimization used. The work done for each basic block in the
     program is calculated by a cost model of the expected execution time for each instruction. This simple method rather effectively
     estimates the unoptimized execution time. Using this metric for online {\itercomp} and running each input only once is nearly as good
     as using an oracle which can cheat and get the true runtime of the unoptimized program version for any input.
