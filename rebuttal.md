@@ -1,4 +1,4 @@
-#Review#107A
+# Review#107A
 A.1 The metric is in some ways coarse, but has a strong correlation coefficient to runtime (0.99) and a mean absolute error of 3.5% (Fig3). It is enough for iterative compilation (Fig9).
 
 A.2 We used all benchmarks in KDataSets. Some were for the cost model, the others for evaluating our methodology. This standard model
@@ -6,7 +6,7 @@ training/evaluation practice to evaluate the generality of the model. We will ma
 
 A.3 We will publish the cost model.
 
-#Review#107B
+# Review#107B
 
 The paper is **not** about *reducing overhead in iterative compilation*. It is about **online** iterative compilation. We will clarify this in the paper.
 
@@ -47,136 +47,34 @@ Figure 9 reports average speedups over O3 optimization level as a % improvement 
 Regarding Oracle-RM performing worse than other methods, these measurements are within the noise floor.  We will run more times increase the run count to get statistically significant comparisons.
 
 
-#Review#107C
+# Review#107C
 
-    Overall merit
-    -------------
-    2. Weak reject
+C.1 Thank you for the feedback, we will clarify this confusion in the paper.
 
-    Reviewer expertise
-    ------------------
-    3. Knowledgeable
+In Section 2 we mean that execution time does not correlate to efficiency unless all inputs have the same work. We will reword.
 
-    Paper summary ------------- 
-    The paper presents a new online iterative optimization strategy. The main new contributions of this work
-    are a new work efficiency metrics that makes it possible to compare different program versions (compiled with different optimization
-    sessions) across different inputs. The paper also includes an optimization of basic block profiling that is based on the idea of
-    removing profiling probes if the amount of work they contribute is low but their execution count might be high.
+In Section 3 we show the work metric correlates with unoptimized execution time for *the same input*, regardless of optimization. We will clarify.
 
-    Comments for author
-    -------------------
+We think you are asking for a "total lifetime cost", i.e. including costs of poorly performing program versions in the search. This is a very good idea which we did not think of. However, random search is ill suited for this, a well designed GA would be better. We were not considering the search itself as interesting. We will show total lifetime cost, and in the future apply better search.
 
-    I found the new efficiency metric interesting – making it possible to compare different versions of a program across different inputs
-    is a novel contribution. However, some of the discussion around the efficiency metric in the paper was confusing. For example, Section
-    2 states that execution time is not correlated to speedup – how is speedup exactly computed here – isn’t it based on execution time?
-    Section 3 then introduces the work metrics and shows in Figure 2 that it is correlated to execution time. Earlier we established that
-    execution is not correlated with speedup so does that mean the new work metric also is not correlated with speedup? The new work is
-    however, positioned to approximate speedup – so these analyses are confusing – it may just be a result of the description in the paper
-    but the authors should clarify.
+Starting with the best statically compiled version is a very good idea. We don't know the quantitive benefit. We will consider this in future work when improving the search technique.
 
-C.1:
-Thank you for the feedback, we will clarify this confusion in the paper.
+We do compare offline iterative compilation, OracleRM, it runs each input twice per optimization. Our approach is gets close to this.
 
-In section 2, we mean that execution time alone does not correlate to the actual speedup, when we compare the program execution time obtained from different inputs, as different inputs would entail different amounts of work. In section 3, we show that work metric obtain from a given input indeed correlates with the unoptimized execution time for *the same input*, regardless of the optimization used to compile the program.  
+Regarding benchmarks not being for data centers, please see B.9.
 
-    My main problem with the paper is that it introduces a new online iterative optimization strategy without properly evaluating it. The
-    paper offers Figure 9 to show that the final optimization sequence chosen by the new online strategy reaches about 60% of the
-    performance that can be achieved with offline iterative optimization.
+# Review#107D
 
-    This evaluation doesn’t show all that much, it shows me that the proposed new strategy “has the potential to produce good results”.
-    This is not enough I also need to know what it takes (i.e., the cost ) of using online optimization versus starting out with a fixed
-    version that was produced with less optimally selected input in an offline iterative optimization.
+For novelty, please see B.2.
 
-    Specially, to compare online versus offline iterative optimization, I need to know the accumulated performance penalty from running
-    suboptimal versions in the online setting, until I find the final optimization strategy. The authors don’t want to get into evaluating
-    different search strategies – that is fine – but one could always pick a fixed search strategy that is used in both online and offline
-    and then compare. To assess the potential of an online techniques I need to understand how quickly it converges or in other words how
-    long the iterative optimization process continues. There is also the questions as to whether there are any advantages over offline
-    iterative optimization, once the online iterative optimization sequence concludes – the actual inputs may continue to evolve .
+Yes, work efficiency is the metric. It is work/time. Time is easy, we need a work metric.
 
-C.2
-Regarding the cost of online iterative compilation, we have focused our analysis on the profiling overhead required for guiding the search, but not the time spent on searching for the optimal version. We target scenarios where the program to be optimized will be repeatedly executed, so that the search overhead can be amortised by the improved performance. There are works on using active learning and genetic search to reduce the search overhead, which are orthogonal to our work. 
+If work efficiency were $1/t$: consider comparing efficiency of two sorting algorithms this way. If program A sorts a 2 element list and program B sorts a million, $t_A<t_B$ but we do not know which is more efficient. We will clarify in the paper.
 
-Nonetheless, we will provide results on the search overhead, and refer to those complementary techniques.
+Our work metric does not change because of the optimization. We will clarify.
 
-    In any realistic setting, one would want to start out with the best statically compiled version  - can this strategy provide any benefits over that scenario?  
+The only similarity in our work is to classic block-frequency profiling. We extend with relaxation which is entirely novel. We will rebalance the writing.
 
-C.3
-Indeed it would interesting to investigate a search scheme that leverages from starting with the best statically compiled version of the program. However, unfortunately we do not have data for this experiment, as we assumed that -O3 would be the initial baseline. We will investigate it in the future.
+The profiling that drives the whole program relaxation is done *online* - by profiling the first few inputs (not programmer provided). It could be periodically updated. We regard this as somewhat orthogonal. No pre-knowledge is required. We will clarify.
 
-    We need a comparison to offline iterative optimization to understand whether this approach is viable. 
-
-C.4
-Prior works on offline iterative compilation are all based on replays or requires the profiling to be performed on the same input. These assumptions are not suitable for the scenarios we target (see also response to B.1). We will, however, provide a comparison against offline iterative compilation. 
-
-    The limited evaluation included is further limited by the fact that the benchmarks programs are very small and not representative of realistic datacenter applications.
-
-C.5 Please refer to response B.6 regarding the benchmarks we used. 
-
-#Review#107D
-
-    Overall merit
-    -------------
-    2. Weak reject
-
-    Reviewer expertise
-    ------------------
-    3. Knowledgeable
-
-    Paper summary
-    -------------
-    Paper proposes online iterative compilation technique, which is composed of
-    multiple components.
-    1. Work metric to approximate performance.
-    2. Relaxation methods that reduces runtime profiling overhead but penalizes
-    estimation accuracy.
-
-    Comments for author
-
-    It is difficult to find what authors are newly contributing on top of
-    existing works.
-    Authors use work efficiency metric to guide optimization selection. While
-    authors claim that they introduce a new "work" metric, this metric does not seem
-    to be critical because "work efficiency" metric is what authors actually use to
-    guide the optimization selection.
-    e.g. if authors defined work efficiency as 1 / t, where t is execution time, it
-    would have resulted in same conclusions.
-    Although not very clear from the paper, if authors compute "work" metric
-    differently for every optimization, then authors are defining the metric wrong,
-    as authors highlight that work metric is defined as the amount of time taken by
-    the "unoptimized" program.
-
-D.1
-Indeed, the work metric does not depend on optimizations but it does depend on the input. More input to process or more complex processing result in more work. Each measurement is done using not only a different program version but also a different input, so the work is different for each measurement. Our work efficiency metric takes this work and the runtime to calculate the amount of work done in a unit of time. Since both of them change, the work efficiency is not similar to the inverse of the runtime.
-
-    The methods described for reducing instrument (or profiling) overhead at runtime
-    are also similar to the prior works, and does not seem to contribute any
-    novelty.
-    In fact, many of the implementation details in the paper could just cite the
-    previous work, and authors should have focused on the new parts.
-
-D.2
-We will make the contributions more explicit in section 5. As we highlight in the introduction, the main contributions regarding the profiling technique are the two relaxation strategies. Apart from the relaxation strategies, however, the optimal work profiling is not a direct implementation of the classic block-frequency profiling, thus we judged important to also describe it in more detail.
-
-    Another problem is that there are many inconsistencies on authors' claims. For
-    example, authors argue that online real inputs are important because they could
-    be very different from small set of inputs given by programmer.
-    However, some of the methods used by authors' do require those pre-knowledges.
-    For example, whole-program relaxation requires block-frequency profiling. Since
-    the instrumentation itself is done once at offline, block-frequency profiling
-    must be also done before online deployment. This profiling will be again
-    dependent on those small set of inputs given by programmer, which contradicts
-    what authors were aiming for.
-
-D.3
-It is possible to use static heuristics for estimating block frequencies. In fact, these static heuristics are used in the results for the worst-case relaxation, where no prior profiling is required. For the whole-program profiling, however, we want to show the results for the ideal case by using actual block-frequency profiling. These block-frequency profiling can be integrated with the online framework, for example, by interleaving a sequence of executions with one that only performs the block-frequency profiling.
-
-    Minor typos, etc:
-    - Page 6, second to last paragraph:
-      into the DAG An example of this is
-      -> period missing between "DAG" and "An".
-
-    - Page 9, last paragraph:
-      user, by it also
-      -> "by" should be "but"
-
+Thank for catching the typos.
