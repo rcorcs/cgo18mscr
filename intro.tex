@@ -39,8 +39,8 @@
     the worst case of any execution path through the program. This gives strong guarantees about the maximum error, but is sometimes so
     conservative that few probes are actually removed and the observed errors are far below the threshold. The second is more aggressive
     and computes induced error based on the relative change of the work measurement that removing a probe would make to the total amount
-    work for the whole program. This approach removes more probes and still seems to keep the error below the threshold although it is no
-    longer guaranteed to do so. In both cases, the user sees reduced overhead, but the iterative compilation still performs well.
+    of work for the whole program. This approach removes more probes and still seems to keep the error below the threshold although it is
+    no longer guaranteed to do so. In both cases, the user sees reduced overhead, but the online iterative compilation still performs well.
 
     Our evaluation shows that performing online iterative compilation guided by work efficiency achieves about 80\% of the speedup
     available to an offline oracle, with improvements of up to about 20\% over the compiler's standard optimization. While our solution
