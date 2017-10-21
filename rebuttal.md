@@ -14,13 +14,13 @@ B.1 Offline iterative compilation is done ahead of time in the development envir
 
 B.2 Online iterative compilation has **never** been done before in the general case. Some work has done online optimization where the developer provides a work or throughput metric (e.g. #requests/second assuming each request does the same work). No one has solved the general, automatic case without developer involvement. We are the first to do this. We will clarify this.
 
-B.3 Yes, there has been work on input sensitivity. We agree that programs' behavior varies over inputs. That is why online iterative compilation is better, it optimizes according to the inputs the user actual presents. Input sensitive iterative compilation (via multi-versioning etc) is entirely orthogonal to online/offline. Offline requires the developer to choose representative inputs, online does not. Online input sensitive iterative compilation will match the users's inputs better. Until now, online has been impossible. We will clarify this.
+B.3 Yes, there has been work on input sensitivity. We agree that programs' behavior varies over inputs. That is why online iterative compilation is better, it optimizes according to the inputs the user actual presents. Input sensitive iterative compilation (via multi-versioning etc) is entirely orthogonal to online/offline. Online input sensitive iterative compilation will match the users's inputs better. We will clarify this.
 
-The papers, Fursin etal., Ding etal., and Chen etal., are about offline iterative compilation, their approaches do not work in the online case.
+The papers, Fursin etal., Ding etal., and Chen etal., use offline iterative compilation, their approaches do not work in the online case.
 
-That runtimes of programs with different input sets are not directly comparable is not a problem for **offline** iterative compilation, it breaks online iterative compilation. Throughput could be used, but there is no such general metric. Developers would have to provide one (e.g. #requests/second - and ensure each request comprises the same work). Our work is the first general and automatic approach.
+That runtimes of programs with different input sets are not directly comparable is not a problem for **offline** iterative compilation, but it breaks online iterative compilation. Throughput could be used, but there is no such general metric. Developers would have to provide one (e.g. #requests/second - and ensure each request comprises the same work). Our work is the first general and automatic approach.
 
-B.4 IPC has been suggested by other papers as a possible approach to achieve online iterative compilation. None has tried it. We have shown that IPC does not work (Fig2). Our example with NOPs is only the most egregious case, to show logically why IPC is no good. In fact, it is not the cause of IPC's poor correlation in Fig2. Trading high CPI instructions for low CPI instructions (e.g. replace divide by $2^k$ with shift) also shows IPC is no good. Filtering NOPs would not fix the other cases. IPC is only good for architectural optimization where the program is invariant. Our observation is back up by paper [17]. We will clarify this and change the example from NOPs.
+B.4 IPC has been suggested by other papers as a possible approach to achieve online iterative compilation. None has tried it. We have shown that IPC does not work (Fig2). Our example with NOPs is only the most egregious case, to show logically why IPC is no good. In fact, it is not the cause of IPC's poor correlation in Fig2. Trading high CPI instructions for low CPI instructions (e.g. replace divide by $2^k$ with shift) also shows IPC is no good. Filtering NOPs would not fix the other cases. IPC is only good for architectural optimization where the program is invariant. We will clarify this and change the example from NOPs.
 
 B.5 Our work is not about the *overhead of replay executions*. It is about online iterative compilation where inputs cannot be repeated. See also B.1 and B.2.
 
@@ -38,13 +38,13 @@ The AutoFDO paper is not about iterative compilation. It repeatedly profiles and
 
 Yes, our evaluation was not done in a data center. However, it is entirely general and should work from mobile systems to data centers. We did not mean to suggest that we had evaluated it in all domains. We will clarify.
 
-Yes, the performance improvements are modest because of the small, random search. We choose it to allow easy comparison with other metrics. Better searches (e.g.genetic algorithms) often do much better, but the search technique is orthogonal to our work and not our focus.
+Yes, the performance improvements are modest because of the small, random search. We chose it to allow easy comparison with other metrics. Better searches (e.g.genetic algorithms) often do much better, but the search technique is orthogonal to our work and not our focus.
 
 Please see response to A.2 regarding benchmark partitions. 
 
 Figure 9 reports average speedups over O3 optimization level as a % improvement whereas Figure 1 reports improvement as speedup. % improvement and speedup are not the same. We will clarify.
 
-Regarding Oracle-RM performing worse than other methods, these measurements are within the noise floor.  We will run more times increase the run count to get statistically significant comparisons.
+Regarding Oracle-RM performing worse than other methods, these measurements are within the noise floor.  We will increase the run count to get statistically significant comparisons.
 
 
 # Review#107C
@@ -55,7 +55,7 @@ In Section 2 we mean that execution time does not correlate to efficiency unless
 
 In Section 3 we show the work metric correlates with unoptimized execution time for *the same input*, regardless of optimization. We will clarify.
 
-We think you are asking for a "total lifetime cost", i.e. including costs of poorly performing program versions in the search. This is a very good idea which we did not think of. However, random search is ill suited for this, a well designed GA would be better. We were not considering the search itself as interesting. We will show total lifetime cost, and in the future apply better search.
+We think you are asking for a "total lifetime cost", i.e. including costs of poorly performing program versions in the search. This is a very good idea which we did not think of. However, random search is ill-suited for this, a well designed GA would be better. We were not considering the search itself as interesting. We will show total lifetime cost, and in the future apply better search.
 
 Starting with the best statically compiled version is a very good idea. We don't know the quantitive benefit. We will consider this in future work when improving the search technique.
 
@@ -69,6 +69,7 @@ For novelty, please see B.2.
 
 Yes, work efficiency is the metric. It is work/time. Time is easy, we need a work metric.
 
+**HJL rewrite - lists of different sizes**
 If work efficiency were $1/t$: consider comparing efficiency of two sorting algorithms this way. If program A sorts a 2 element list and program B sorts a million, $t_A<t_B$ but we do not know which is more efficient. We will clarify in the paper.
 
 Our work metric does not change because of the optimization. We will clarify.
