@@ -33,39 +33,19 @@ Regarding the shipping of the program to the iterative compilation mechanism: We
 Our work is not meant only for data centers. It is generally applicable. We will clarify.
 
 There do not need to be many alternate binaries stored. It depends on the search strategy. In the smallest case, only one binary exists at any time. Many are produced over time. We will clarify.
+    
+The AutoFDO paper is not about iterative compilation. It repeatedly profiles and feeds profiles to an FDO compiler, but this is not iterative compilation search (despite a section with that title) -- theirs has no search for performance efficiency. We will discuss in related work.
 
+Yes, our evaluation was not done in a data center. However, it is entirely general and should work from mobile systems to data centers. We did not mean to suggest that we had evaluated it in all domains. We will clarify.
 
-    For more on autotuning on the data center, see this paper from CGO16
-
-    Dehao Chen, David Xinliang Li, and Tipp Moseley. 2016. AutoFDO: automatic feedback-directed optimization for warehouse-scale applications.
-
-    The authors claim the proposed strategy is suitable for data center environments. But the evaluation is done on a single Intel system
-    with sequential applications.
-
-B.6
-We agree that the benchmark suite used does not represent typical data center workloads. Still, we believe that our approach is perfectly suited to data center scenarios and there is no reason it would not work. In a future work, we plan to evaluate our mechanism under such an environment to better support our claim.
-
-    The performance improvement numbers are modest. But this is probably because only 500 sequences are selected out of a possible 200
-    factorial sequences in LLVM.
-Yes, the performance improvements are modest. We choose a simple, repeatable, random search to allow easy comparison with other metrics. Better searches (e.g.genetic algorithms) often do much better, but the search technique is orthogonal to our work and not our focus.
-
-    What was the basis for choosing the subset of programs from KDataSets? This needs to be clearly justified. 
+Yes, the performance improvements are modest because of the small, random search. We choose it to allow easy comparison with other metrics. Better searches (e.g.genetic algorithms) often do much better, but the search technique is orthogonal to our work and not our focus.
 
 Please see response to A.2 regarding benchmark partitions. 
 
-    Minor comments:
-
-    Speedup on X-axes made it difficult for me to interpret the results
-
 Figure 9 reports average speedups over O3 optimization level as a % improvement whereas Figure 1 reports improvement as speedup. % improvement and speedup are not the same. We will clarify.
 
-    Why is the Oracle-RM performing worse than other methods in some instances (e.g., qsort)?
+Regarding Oracle-RM performing worse than other methods, these measurements are within the noise floor.  We will run more times increase the run count to get statistically significant comparisons.
 
-    Section 4 has only one subsection. Consider revising. 
-
-    page 10, line 1: correlate -> correlated
-
-We will make all the minor corrections you suggested. Thanks for the feedback. 
 
 #Review#107C
 
