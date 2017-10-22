@@ -8,7 +8,7 @@ A.3.We will publish the cost model.
 
 # Review#107B
 
-The paper is **not** about *reducing overhead in iterative compilation*. It is about **online** iterative compilation. We will clarify in the paper.
+The paper is **not** about *reducing overhead in iterative compilation*. It is about enabling **online** iterative compilation. We will clarify in the paper.
 
 B.1.Offline iterative compilation happens ahead-of-time in the development environment. Online iterative compilation is done *live* on users' machines. Offline requires developers to choose representative inputs, online does not. Instead, online optimization targets the actual user inputs. Being live on users' machines, inputs cannot run twice. We will clarify.
 
@@ -69,7 +69,7 @@ D.1.For novelty, please see B.2.
 
 D.2.Yes, work efficiency is the metric. It is work/time. Time is easy, we need a work metric.
 
-If work efficiency were $1/t$: consider comparing efficiency of sorting algorithms this way.If programs, A and B sort lists of different sizes, $t_A<t_B$ does not say which is more efficient. We will clarify.
+If work efficiency were $1/t$: consider comparing efficiency of sorting algorithms this way. If programs, A and B sort lists of different sizes, $t_A<t_B$ does not say which is more efficient. We will clarify.
 
 Our work metric does not change across optimization. We will clarify.
 
