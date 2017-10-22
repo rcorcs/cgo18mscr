@@ -12,9 +12,9 @@ The paper is **not** about *reducing overhead in iterative compilation*. It is a
 
 B.1.Offline iterative compilation happens ahead-of-time in the development environment. Online iterative compilation is done *live* on users' machines. Offline requires developers to choose representative inputs, online does not. Instead, online optimization targets the actual user inputs. Being live on users' machines, inputs cannot run twice. We will clarify.
 
-B.2.Online iterative compilation has **never** been done before in the general case. Some work has done online autotuning/optimization where the developer provides a work or throughput metric (e.g. #requests/second assuming all requests have equal amount of work). No one has solved the general case without developer involvement. We are the first to do this. We will clarify.
+B.2.Online iterative compilation has **never** been done before in the general case. Some work has done online autotuning/optimization where the developer provides a work or throughput metric (e.g. #requests/second assuming all requests have an equal amount of work). No one has solved the general case without developer involvement. We are the first to do this. We will clarify.
 
-B.3.Yes, there is work on input sensitivity. We agree, programs' behavior varies over inputs. That is why online iterative compilation is better, it optimizes according to actual user inputs. Input-sensitive iterative compilation (via multi-versioning, etc) is entirely orthogonal to online/offline. Online input-sensitive iterative compilation will match the users's inputs better. We will clarify.
+B.3.Yes, there is work on input sensitivity. We agree, programs' behavior varies over inputs. That is why online iterative compilation is better, it optimizes according to actual user inputs. Input-sensitive iterative compilation (via multi-versioning, etc) is entirely orthogonal to online/offline. Online input-sensitive iterative compilation will match the users' inputs better. We will clarify.
 
 The papers, Fursin etal.,Ding etal.,and Chen etal., use offline strategies, they do not handle the online case.
 
@@ -34,7 +34,7 @@ B.9.Our work is not data-centers specific. It is generally applicable. We will c
 
 B.10.Storing many alternate binaries is unnecessary. It is search strategy dependent. In ours, one binary exists at any time. We will clarify.
     
-B.11.AutoFDO is not about iterative compilation. It repeatedly feeds profiles to a FDO compiler. That is not iterative compilation search (despite such a section title)--they have no search. We will discuss in related work.
+B.11.AutoFDO is not about iterative compilation. It repeatedly feeds profiles to an FDO compiler. That is not iterative compilation search (despite such a section title)--they have no search. We will discuss in related work.
 
 B.12.Yes, we did not evaluate on data-centers. We meant it is general from mobile systems to data-centers. We did not mean to suggest that we evaluated in all domains. We will clarify.
 
@@ -51,11 +51,11 @@ B.16.Regarding Oracle-RM performing worse, these measurements are within the noi
 
 C.1.Thank you for the feedback, we will clarify confusion in the paper.
 
-In Section 2 we mean that runtime does not correlate to true speedup unless comparing inputs with equal amount of work.
+In Section 2 we mean that runtime does not correlate to true speedup unless comparing inputs with an equal amount of work.
 
 In Section 3 we show the work metric correlates with unoptimized execution time for *the same input*, regardless of optimization.
 
-C.2.Regarding "total lifetime cost", i.e. costs of poorly performing program versions in the search. This is a good idea, thank-you. However, random search is ill-suited for this, unlike a well designed GA. We were not considering the search interesting. We will show total lifetime cost, and in future apply better search.
+C.2.Regarding "total lifetime cost", i.e. costs of poorly performing program versions in the search. This is a good idea, thank-you. However, random search is ill-suited for this, unlike a well-designed GA. We were not considering the search interesting. We will show total lifetime cost, and in future apply better search.
 
 C.3.Starting with the best statically compiled version is a good idea. We don't know the quantitive benefit. We will consider this in future work when improving the search.
 
@@ -68,10 +68,11 @@ C.5.Regarding benchmarks for data-centers, please see B.9-B.12.
 D.1.For novelty, please see B.2.
 
 D.2.Yes, work efficiency is the metric. It is work/time. Time is easy, we need a work metric.
+The amount of work changes with the input but does not change across optimizations.
 
-If work efficiency were $1/t$: consider comparing efficiency of sorting algorithms this way. If programs, A and B sort lists of different sizes, $t_A<t_B$ does not say which is more efficient. We will clarify.
+If efficiency were simply $1/t$: consider comparing the efficiency of sorting algorithms this way. If programs, A and B sort lists of different sizes, $t_A<t_B$ does not say which is more efficient. 
 
-Our work metric does not change across optimization. We will clarify.
+We will clarify.
 
 D.3.The only similarity in our work is to classic block-frequency profiling. However, we extend with relaxation which is entirely novel. We will rebalance the writing.
 
