@@ -51,7 +51,7 @@ B.16.Regarding Oracle-RM performing worse, these measurements are within the noi
 
 C.1.Thank you for the feedback, we will clarify confusion in the paper.
 
-In Section 2 we mean that runtime does not correlate to true speedup unless comparing inputs with an equal amount of work.
+In Section 2 we mean that runtime does not correlate to true speedup unless we compare inputs with an equal amount of work.
 
 In Section 3 we show the work metric correlates with unoptimized execution time for *the same input*, regardless of optimization.
 
@@ -70,7 +70,7 @@ D.1.For novelty, please see B.2.
 D.2.Yes, work efficiency is the metric. It is work/time. Time is easy, we need a work metric.
 The amount of work changes with the input but does not change across optimizations.
 
-If efficiency were simply $1/t$: consider comparing the efficiency of sorting algorithms this way. If programs, A and B sort lists of different sizes, $t_A<t_B$ does not say which is more efficient. 
+If efficiency was simply $1/t$: consider comparing the efficiency of sorting algorithms this way. If programs, A and B sort lists of different sizes, $t_A<t_B$ does not say which is more efficient. 
 
 We will clarify.
 
