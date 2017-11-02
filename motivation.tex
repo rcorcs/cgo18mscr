@@ -40,28 +40,27 @@
     the system state. This is significant engineering work. Even if this was not the case, many applications are just not able to save
     data for privacy or storage overhead reasons.
     
-    \paragraph{Using real inputs online is not enough.} We could overcome these problems by just evaluating optimization sequences online,
-    while the application is being used. This gives us real data but creates a new problem. Iterative compilation finds good optimizations
-    by measuring the efficiency of the resulting binary in terms of speedup over another baseline binary. This requires processing the same
-    input in the exact same way twice, one with the optimized and one with the baseline binary, measuring the runtimes, and calculating the
-    speedup. When done online, we cannot process the same input twice, each time we process whatever the input happens to be. We need
-    another efficiency metric that only requires a single use of an optimized binary.
+    \paragraph{Using real inputs online is not enough.} We could overcome these problems by just evaluating optimization sequences online
+    while the application is being used. This gives us live data but creates a new problem. Optimizations sequences are compared based on
+    how much faster the program becomes. When all of them are tested against the same inputs, it is just a matter of comparing runtimes.
+    A shorter runtime for processing the same data means a more efficient binary. With live data, we cannot do this, each binary processes
+    whatever the input happens to be. We need another efficiency metric that only requires a single use of an optimized binary with a
+    single input.
 
-    \paragraph{Existing efficiency metrics are not up to the task.} A application-specific ones~\cite{alameldeen06,coppa14} may work well,
-    but the developer has to choose the appropriate metric and then manually modify the application to calculate it. Existing
-    application-agnostic ones do not work. We run each of the \FIXME{32} \textit{KDataSets} benchmarks 1,000 times, each time with a
-    different input \textit{and} a different optimized binary. We selected three performance metrics that can be easily measured in a
-    single run and can potentially be used as efficiency metrics: runtime, inverse runtime, and
-    \textit{Instructions Per Cycle}~(IPC)~\citep{fursin07}.
-   
-    \FIXME{Fig.XXX} shows how well these three candidates for an efficiency metric correlate with the metric we would actually like to have,
-    speedup over \texttt{-O0}. For all benchmarks, the correlation coefficient~\cite{Bishop:2006:PRM:1162264} is below \FIXME{0.20} for
-    runtime and below \FIXME{0.35} for inverse runtime. Both have obvious reasons for being inappropriate efficiency metrics. Doubling the
-    amount of data to be processed will cause the runtime to rise and the inverse runtime to fall, even if we use the same binary.
-    Efficiency has nothing to do with it. IPC also correlates poorly with performance speedup, the correlation coefficient being just
-    \FIXME{0.15}. While it is a common efficiency metric in computer architecture, it works there because it is used with invariant binaries.
-    In contrast, any compiler optimization that trades high latency instructions for multiple low latency instructions can reduce IPC while
-    improving efficiency.
+    \paragraph{Existing efficiency metrics are not up to the task.} Application-specific efficiency metrics~\cite{alameldeen06,coppa14} may
+    work well, but the developer has to choose the appropriate metric and then manually modify the application to calculate it. Speedup
+    over a common baseline binary is a good application-agnostic metric, equating efficiency with how much faster a given input is
+    processed. It would be ideal, if we did not have to use the same input twice, one with the baseline and one with the optimized binary.
+    
+    Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose. To show this, we ran
+    each of the \FIXME{32} \textit{KDataSets} benchmarks 1,000 times, each time with a different input \textit{and} a different optimized
+    binary, and we measured three metrics: runtime, inverse runtime, and IPC. \FIXME{Fig.XXX} shows the correlation coefficient between
+    them and a reasonable efficiency metric, speedup over \texttt{-O0}. For all benchmarks, the correlation coefficient is below
+    \FIXME{0.20} for runtime and below \FIXME{0.35} for inverse runtime. Both have obvious reasons for being inappropriate efficiency
+    metrics. Doubling the amount of data to be processed will cause the runtime to rise and the inverse runtime to fall, even if we use the same binary.
+    Efficiency has nothing to do with it. IPC also correlates poorly with efficiency, the correlation coefficient being just \FIXME{0.15}.
+    While it is used often in computer architecture, it works there because it is used with invariant binaries. In contrast, any compiler
+    optimization that trades high latency instructions for multiple low latency instructions can reduce IPC while improving efficiency.
     
     No existing metric can give us an application-agnostic measure of efficiency with a single execution. The rest of the paper will show
     how to create one and how to use it for iterative compilation. 
