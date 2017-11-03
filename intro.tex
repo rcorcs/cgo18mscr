@@ -11,10 +11,10 @@
     performance and energy consumption.
 
     An adaptive, online technique would solve this problem as the search would use actual, live inputs and the developer is no longer
-    responsible for predicting usage patterns. Unfortunately, we cannot compare two different program versions by runtime when each one
-    executes a different input entailing different amounts of work. It also may not always be possible to run the inputs through both
-    versions due to possible side effects or overheads for replaying executions. Repeating a bank transfer, for example, is undesirable.
-    Instead, we can prefer programs which do more work per unit of time. This work metric could be program
+    responsible for predicting usage patterns. Unfortunately, runtime would not work as a comparison metric. Executing different inputs
+    each time will result in different runtimes regardless of the efficiency of the program version evaluated. Running the same input
+    through multiple versions at once is not an option either, due to side effects or overheads. Repeating a bank transfer, for example,
+    is undesirable. Instead, we can prefer programs which do more work per unit of time. This work metric could be program
     specific~\cite{alameldeen06,coppa14}, e.g. number of database rows processed. However, if the developer is left with the burden of
     manually choosing the best work metric, it might not always be so easy to reason about, and would be better if it could be computed
     automatically and in a more general way. This paper contributes such an automated system to estimate the amount of work, and then
@@ -23,13 +23,13 @@
     We take the simple view that the amount of work performed by a program's execution is proportional to the time it takes for its
     unoptimized version to process the input. We believe that this also matches the developer's intentions and expectations of program
     work. We instrument the program, before optimization, to record how much work it does, which allows it to consistently report the same
-    amount of work for a given input, regardless of the optimization used. The work done for each basic block in the
-    program is calculated by a cost model of the expected execution time for each instruction. This simple method rather effectively
-    estimates the unoptimized execution time. Using this metric for online {\itercomp} and running each input only once is nearly as good
-    as using an oracle which can cheat and get the true runtime of the unoptimized program version for any input.
-
+    amount of work for a given input, regardless of the optimization used. The work done for each basic block in the program is calculated
+    by a cost model of the expected execution time for each instruction. This simple method rather effectively estimates the unoptimized
+    execution time. When used to calculate work per unit of time and compare the quality of different optimizations without reusing inputs,
+    it is nearly as good as using an unrealistic oracle which knows the true runtime of the unoptimized program version for any input.
+    
     However, the instrumentation overheads must be kept low to avoid upsetting the user and to reduce the risk of changing how
-    optimizations behave relative to each other~\cite{forman81,anderson97,duesterwald00}. To reduce the profiling overhead, in addition to
+    optimizations behave relative to each other~\cite{forman81,anderson97,duesterwald00}. To reduce this overhead, in addition to
     performing an optimal placement of the instrumentation probes~\cite{knuth73,forman81,ball94}, we propose a novel probe removal
     strategy, which we call probe \textit{relaxation}, that provides a trade-off between the measurement accuracy and overhead. Each probe
     has an expected cost, based on its execution frequency, and we can calculate the error that removing it will cause in the work metric.
