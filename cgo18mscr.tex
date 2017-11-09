@@ -1,50 +1,48 @@
 \PassOptionsToPackage{table}{xcolor}
 \PassOptionsToPackage{draft}{hyperref}
-\documentclass[sigplan,10pt]{acmart}
+\documentclass[sigplan,review,anonymous]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 \input{preamble}
 
 \begin{document}
 \title{Online {\IterComp}}
 
-\author{ \vspace{2em} }
+\author{Rodrigo C. O. Rocha}
+\affiliation{
+  \institution{University of Edinburgh, UK}
+}
+\email{r.rocha@ed.ac.uk}
 
-%\author{Rodrigo C. O. Rocha}
-%\affiliation{%
-%  \institution{University of Edinburgh, UK}
-%}
-%\email{r.rocha@ed.ac.uk}
+\author{Pavlos Petoumenos}
+\affiliation{
+  \institution{University of Edinburgh, UK}
+}
+\email{ppetoume@inf.ed.ac.uk}
 
-%\author{Pavlos Petoumenos}
-%\affiliation{%
-%  \institution{University of Edinburgh, UK}
-%}
-%\email{ppetoume@inf.ed.ac.uk}
+\author{Lu\'is F. W. G\'oes}
+\affiliation{
+  \institution{PUC Minas, Brazil}
+}
+\email{lfwgoes@pucminas.br}
 
-%\author{Lu\'is F. W. G\'oes}
-%\affiliation{%
-%  \institution{PUC Minas, Brazil}
-%}
-%\email{lfwgoes@pucminas.br}
+\author{Murray Cole}
+\affiliation{
+  \institution{University of Edinburgh, UK}
+}
+\email{mic@inf.ed.ac.uk}
 
-%\author{Murray Cole}
-%\affiliation{
-%  \institution{University of Edinburgh, UK}
-%}
-%\email{mic@inf.ed.ac.uk}
+\author{Zheng Wang}
+\affiliation{
+  \institution{Lancaster University, UK}
+}
+\email{z.wang@lancaster.ac.uk}
 
-%\author{Zheng Wang}
-%\affiliation{%
-%  \institution{Lancaster University, UK}
-%}
-%\email{z.wang@lancaster.ac.uk}
+\author{Hugh Leather}
+\affiliation{
+  \institution{University of Edinburgh, UK}
+}
+\email{hleather@inf.ed.ac.uk}
 
-%\author{Hugh Leather}
-%\affiliation{%
-%  \institution{University of Edinburgh, UK}
-%}
-%\email{hleather@inf.ed.ac.uk}
-
-%\renewcommand{\shortauthors}{R. Rocha et al.}
+\renewcommand{\shortauthors}{R. Rocha et al.}
 
 \input{abstract}
 
@@ -53,23 +51,23 @@
 % http://dl.acm.org/ccs.cfm
 % Please copy and paste the code instead of the example below.
 %
-%\begin{CCSXML}
-%<ccs2012>
-%<concept>
-%<concept_id>10011007.10011006.10011041</concept_id>
-%<concept_desc>Software and its engineering~Compilers</concept_desc>
-%<concept_significance>500</concept_significance>
-%</concept>
-%<concept>
-%<concept_id>10011007.10011006.10011041.10011043</concept_id>
-%<concept_desc>Software and its engineering~Retargetable compilers</concept_desc>
-%<concept_significance>500</concept_significance>
-%</concept>
-%</ccs2012>
-%\end{CCSXML}
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011006.10011041</concept_id>
+<concept_desc>Software and its engineering~Compilers</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011041.10011043</concept_id>
+<concept_desc>Software and its engineering~Retargetable compilers</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
 
-%\ccsdesc[500]{Software and its engineering~Compilers}
-%\ccsdesc[500]{Software and its engineering~Retargetable compilers}
+\ccsdesc[500]{Software and its engineering~Compilers}
+\ccsdesc[500]{Software and its engineering~Retargetable compilers}
 \keywords{{\IterComp}, Profiling} %, Relaxed Instrumentation}
 
 \maketitle
