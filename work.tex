@@ -1,8 +1,8 @@
 \section{Work Efficiency} \label{sec:work}
 
     In this section, we introduce \textit{work efficiency}, a novel performance metric for comparing the quality of different optimized
-    versions of a program, even when we run them only once with a different input each time. Similarly to existing one-shot performance
-    metrics, work efficiency is simply the amount of \textit{work done per unit of time}: 
+    versions of a program, even when we evaluate them with a different input each time. Similarly to existing one-shot performance metrics,
+    work efficiency is simply the amount of \textit{work done per unit of time}: 
     \[
         \textrm{Work Efficiency} = \frac{\Delta W}{\Delta t}
     \]
@@ -91,10 +91,10 @@
       \label{fig:cfg-example}
     \end{figure}
 
-    In contrast to the na\"ive instrumentation where each basic block records only its own amount of work, with optimal probe placement 
-    the work counter increments need to take other basic blocks into account. Figure~\ref{fig:cfg-example} shows an example CFG, where the
-    instrumented blocks are marked with red. In this example, reaching probe $P_2$ implies not only executing block $B_5$ but also not
-    executing $B_6$.
+    With na\"ive instrumentation each basic block records only its own amount of work. With optimal probe placement, reaching a probe
+    implies not only executing the containing block but also executing or not executing other uninstrumented blocks, so work counter
+    increments have to reflect this. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented blocks are marked with red.
+    In this example, reaching probe $P_2$ implies not only executing block $B_5$ but also not executing $B_6$.
     
     To compute the amount of work associated with each instrumentation probe, we first need to determine how reaching a probe relates with
     executing or not a basic block. Starting from instrumented edges, we use Kirchhoff's first law~\cite{knuth73,ball94} and a post-order
