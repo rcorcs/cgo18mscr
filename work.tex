@@ -13,29 +13,34 @@
     the developer considers useful work and is simple enough to be calculated online.
 
     Section~\ref{subsec:workmetric} describes this new work metric and the design choices we made, Section~\ref{subsec:prof} details how
-    we measure work, and Section~\ref{subsec:relaxed} explores ways to measure it without interfering with the normal operation of the
-    program.
+    we measure work, and Section~\ref{subsec:relaxed} explores ways to measure it with reduced interference on %without interfering with
+    the normal operation of the program.
 
     \subsection{Work Metric} \label{subsec:workmetric}
 
-    To build a reasonable work metric, our approach starts by assuming that each executed instruction contributes a certain amount towards
+    To build a reasonable work metric, our approach starts by assuming that each executed instruction\footnote{In this paper, we consider instructions at the level of the intermediate representation of the LLVM compiler.} contributes a certain amount towards
     the total useful work. To keep the measurement simple and minimize the online overhead, we assume that the contribution depends only on
     the type of instruction. Additionally, we would expect two program versions processing the same data in the same way to do the same
     work. If measured using the actual instructions executed for the two versions, we would get a different amount of work. Instead, we
-    increase the work total based on the instructions that would be executed with the unoptimized code, regardless of the version we use.
+    increase the total work based on the instructions that would be executed with the unoptimized code, regardless of the version we use.
     The unoptimized version is convenient as a common baseline, since we start with it anyway and it is as close as possible to the
     programmer's intention.
 
     We selected the work contribution of each instruction type so that total work becomes an estimator of the runtime of the unoptimized
-    program. Our choice to associate work with unoptimized runtime is largely arbitrary but instinctively reasonable. Unoptimized time is
+    program.
+    %Our choice to associate work with unoptimized runtime is largely arbitrary but instinctively reasonable.
+    Our choice to associate work with unoptimized runtime is largely for practical reasons but it is also instinctively reasonable.
+    Unoptimized time is
     close to how the programmer understands the effort put by the computer. Using it as the work metric makes work efficiency (work per unit
     of time) an estimator of the speedup of the optimized version over the unoptimized version. While other ways of setting the instruction
     contributions might be better, our results in Section~\ref{sec:results} show that this simple definition of work produces good results.
     Using the experimental setup described in Section~\ref{sec:setup}, we run the unoptimized versions of the \FIXME{7} benchmarks listed
-    in \FIXME{XXX} with all 1,000 available inputs. For each run, we recorded execution time and dynamic counts for all instruction types.
+    in \FIXME{XXX} with all 1,000 available inputs. For each run, we recorded execution time and dynamic counters for all instruction types\footnote{
+    Dynamic instruction counts were obtained by using the classic block-frequency profiling.}.
     Similarly to prior work~\cite{giusto01,powell09,brandolese11}, we then applied linear regression to find the contribution of each
-    instruction type that minimizes the error between measured runtime and work.\footnote{The resulting regression model uses \FIXME{70}
-    different instruction types which make it too long to present here.}
+    instruction type that minimizes the error between measured runtime and work.
+    %\footnote{The resulting regression model uses \FIXME{70}
+    %different instruction types which make it too long to present here.}
 
     \begin{figure}[t]
         \centering
