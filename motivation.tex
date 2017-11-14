@@ -20,7 +20,15 @@
     After performing iterative compilation on the first set, the selected optimization sequence has an average speedup of 1.22 over -O3 for
     the training set itself, but it produces a slowdown of 0.91 for the second set of inputs.
     However, if the iterative compilation was performed on the second set itself, it would be able to find a optimization sequence that
-    produces a speedup of \FIXME{1.02} over -O3.
+    produces a speedup of 1.07 over -O3.
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figs/motivation_wrong_inputs.pdf}
+    \caption{Iterative compilation performed on the wrong set of inputs compared to the ideal case for the \texttt{tiff2bw} benchmark.}
+    \label{fig:motivation_wrong_inputs}
+\end{figure}
 
     %Even with larger set of training inputs, the lack of representative inputs for iterative compilation can still hurt performance.
     %For the same \textttt{tiff2bw} benchmark, we were able to partition the whole dataset into 

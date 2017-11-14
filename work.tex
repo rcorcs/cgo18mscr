@@ -18,7 +18,7 @@
 
     \subsection{Work Metric} \label{subsec:workmetric}
 
-    To build a reasonable work metric, our approach starts by assuming that each executed instruction\footnote{In this paper, we consider instructions at the level of the intermediate representation of the LLVM compiler.} contributes a certain amount towards
+    To build a reasonable work metric, our approach starts by assuming that each executed instruction\footnote{In this paper, we consider instructions at the level of the Intermediate Representation (IR) of the LLVM compiler.} contributes a certain amount towards
     the total useful work. To keep the measurement simple and minimize the online overhead, we assume that the contribution depends only on
     the type of instruction. Additionally, we would expect two program versions processing the same data in the same way to do the same
     work. If measured using the actual instructions executed for the two versions, we would get a different amount of work. Instead, we
