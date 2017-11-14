@@ -86,7 +86,17 @@
     over a common baseline binary is a good application-agnostic metric, equating efficiency with how much faster a given input is
     processed. It would be ideal, if we did not have to use the same input twice, one with the baseline and one with the optimized binary.
     
-    Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose. To show this, we ran
+    Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose.
+    \FIXME{Evidence1:}
+    To show this, we performed iterative compilation guided by IPC for the same set of 10 inputs
+    discussed in Figure~\ref{fig:motivation_wrong_inputs} and compare with the previous approach which optimizes directly for execution time.
+    The best optimization sequence found in Figure~\ref{fig:motivation_wrong_inputs}
+    has an average speedup of 1.7 over \texttt{-O3} and an average IPC of 2.59.
+    However, iterative compilation guided by IPC is able to find an optimization
+    sequence that produces a higher IPC of 2.72 but an average slowdown of 0.98.
+    This result agrees with the known fact that higher IPC does not necessarily translate to lower execution time when comparing different versions of the program.
+    \FIXME{Evidence2:}
+    To show this, we ran
     each of the \FIXME{32} \textit{KDataSets} benchmarks 1,000 times, each time with a different input \textit{and} a different optimized
     binary, and we measured three metrics: runtime, inverse runtime, and IPC. \FIXME{Fig.XXX} shows the correlation coefficient between
     them and a reasonable efficiency metric, speedup over \texttt{-O0}. For all benchmarks, the correlation coefficient is below
