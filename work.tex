@@ -42,21 +42,29 @@
     %\footnote{The resulting regression model uses \FIXME{70}
     %different instruction types which make it too long to present here.}
 
-    \begin{figure}[t]
-        \centering
-        \includegraphics[width=0.5\textwidth]{figs/work-correlation-with-O0_susan_c.pdf}
-        \caption{
-            Relationship between work metric ($\Delta W$) and the execution time of the unoptimized version of the \texttt{susan\_c}
-            benchmark over the 1,000 inputs. Each point represents the execution of a single input. They have a correlation coefficient of
-            $0.99$.
-        }
-        \label{fig:work-vs-O0time}
-    \end{figure}
+%%    \begin{figure}[t]
+%%        \centering
+%%        \includegraphics[width=0.5\textwidth]{figs/work-correlation-with-O0_susan_c.pdf}
+%%        \caption{
+%%            Relationship between work metric ($\Delta W$) and the execution time of the unoptimized version of the \texttt{susan\_c}
+%%            benchmark over the 1,000 inputs. Each point represents the execution of a single input. They have a correlation coefficient of
+%%            $0.99$.
+%%        }
+%%        \label{fig:work-vs-O0time}
+%%    \end{figure}
     
     Figure~\ref{fig:work-vs-O0time} shows the correlation of the work metric ($\Delta W$) with runtime for the unoptimized version of one
     benchmark that was not used for training the linear model, \texttt{susan\_c}. Each point represents the execution of a single input
     from a total of 1,000 inputs. The correlation coefficient is $0.99$, and the mean absolute percentage error (MAPE) is only about 3.5\%.
     \FIXME{More benchmarks and only coefficients?}.
+
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figs/corr_coeff.pdf}
+    \caption{Correlation coefficients between the work metric ($\Delta W$) and the execution time of the unoptimized version for each benchmark.}
+    \label{fig:motivation-speedups}
+\end{figure*}
 
 
     \subsection{Work Profiling}\label{subsec:prof}

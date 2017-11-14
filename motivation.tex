@@ -22,9 +22,8 @@
     However, in the ideal case, if the iterative compilation was performed on the production set itself, it would be able to find an optimization sequence that
     results on a 7\% improvement over -O3, this is an improvement of about 17\% over
     the result of iterative compilation on the wrong set of inputs.
-    
 
-\begin{figure}[t]
+\begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\linewidth]{figs/motivation_wrong_inputs.pdf}
     \caption{Performance results for the \texttt{tiff2bw} benchmark, comparing optimization sequences selected by iterative compilation when performed on the wrong set of inputs and the ideal case using the same set of inputs.
@@ -53,7 +52,7 @@
 %%    sequence that works well both on average and under most inputs. It is a matter of finding a set of inputs that represents the full
 %%    range of inputs the application is likely to process. If we do, we can improve average performance by \FIXME{13\%}. If not, we might
 %%    hurt average performance instead. 
-    
+
     \paragraph{Representative input sets are hard to create.} For developers to create artificial input sets, they first need to know how
     their application is actually being used. This is not always easy or even possible. Then, they need to create data that will trigger a
     similar behavior and this needs a deep knowledge of the application and considerable effort. This will have to be a continuous work in
@@ -64,7 +63,7 @@
     modifications to ensure that the application does the same work every time the same data are reused, despite changes in the rest of
     the system state. This is significant engineering work. Even if this was not the case, many applications are just not able to save
     data for privacy or storage overhead reasons.
-    
+
     %\paragraph{Using real inputs online is not enough.} We could overcome these problems by just evaluating optimization sequences online
     %while the application is being used. This gives us live data but creates a new problem. Optimization sequences are compared based on
     %how much faster the program becomes. When all of them are tested against the same inputs, it is just a matter of comparing runtimes.
@@ -87,7 +86,7 @@
     work well, but the developer has to choose the appropriate metric and then manually modify the application to calculate it. Speedup
     over a common baseline binary is a good application-agnostic metric, equating efficiency with how much faster a given input is
     processed. It would be ideal, if we did not have to use the same input twice, one with the baseline and one with the optimized binary.
-    
+
     Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose.
     \FIXME{Evidence1:}
     To show this, we performed iterative compilation guided by IPC for the same set of 10 inputs
@@ -97,25 +96,25 @@
     However, iterative compilation guided by IPC is able to find an optimization
     sequence that produces a higher IPC of 2.72 but an average slowdown of 0.98.
     This result agrees with the known fact that higher IPC does not necessarily translate to lower execution time when comparing different versions of the program.
-    \FIXME{Evidence2:}
-    To show this, we ran
-    each of the \FIXME{32} \textit{KDataSets} benchmarks 1,000 times, each time with a different input \textit{and} a different optimized
-    binary, and we measured three metrics: runtime, inverse runtime, and IPC. \FIXME{Fig.XXX} shows the correlation coefficient between
-    them and a reasonable efficiency metric, speedup over \texttt{-O0}. For all benchmarks, the correlation coefficient is below
-    \FIXME{0.20} for runtime and below \FIXME{0.35} for inverse runtime. Both have obvious reasons for being inappropriate efficiency
-    metrics. Doubling the amount of data to be processed will cause the runtime to rise and the inverse runtime to fall, even if we use the same binary.
-    Efficiency has nothing to do with it. IPC also correlates poorly with efficiency, the correlation coefficient being just \FIXME{0.15}.
-    While it is used often in computer architecture, it works there because it is used with invariant binaries. In contrast, any compiler
-    optimization that trades high latency instructions for multiple low latency instructions can reduce IPC while improving efficiency.
+%     \FIXME{Evidence2:}
+%    To show this, we ran
+%    each of the \FIXME{32} \textit{KDataSets} benchmarks 1,000 times, each time with a different input \textit{and} a different optimized
+%    binary, and we measured three metrics: runtime, inverse runtime, and IPC. \FIXME{Fig.XXX} shows the correlation coefficient between
+%    them and a reasonable efficiency metric, speedup over \texttt{-O0}. For all benchmarks, the correlation coefficient is below
+%    \FIXME{0.20} for runtime and below \FIXME{0.35} for inverse runtime. Both have obvious reasons for being inappropriate efficiency
+%    metrics. Doubling the amount of data to be processed will cause the runtime to rise and the inverse runtime to fall, even if we use the same binary.
+%    Efficiency has nothing to do with it. IPC also correlates poorly with efficiency, the correlation coefficient being just \FIXME{0.15}.
+%    While it is used often in computer architecture, it works there because it is used with invariant binaries. In contrast, any compiler
+%    optimization that trades high latency instructions for multiple low latency instructions can reduce IPC while improving efficiency.
     
     No existing metric can give us an application-agnostic measure of efficiency with a single execution. The rest of the paper will show
     how to create one and how to use it for iterative compilation. 
 
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figs/motivation-speedups.pdf}
-    \caption{\FIXME{[Fall-back Result]} Performance improvement of iterative compilation guided by IPC and runtime.}
-    \label{fig:motivation-speedups}
-\end{figure*}
+%\begin{figure*}[t]
+%    \centering
+%    \includegraphics[width=\textwidth]{figs/motivation-speedups.pdf}
+%    \caption{\FIXME{[Fall-back Result]} Performance improvement of iterative compilation guided by IPC and runtime.}
+%    \label{fig:motivation-speedups}
+%\end{figure*}
 
