@@ -34,8 +34,8 @@
     close to how the programmer understands the effort put by the computer. Using it as the work metric makes work efficiency (work per unit
     of time) an estimator of the speedup of the optimized version over the unoptimized version. While other ways of setting the instruction
     contributions might be better, our results in Section~\ref{sec:results} show that this simple definition of work produces good results.
-    Using the experimental setup described in Section~\ref{sec:setup}, we run the unoptimized versions of the \FIXME{7} benchmarks listed
-    in \FIXME{XXX} with all 1,000 available inputs. For each run, we recorded execution time and dynamic counters for all instruction types\footnote{
+    Using the experimental setup described in Section~\ref{sec:setup}, we run the unoptimized versions of the 10 benchmarks listed in
+    Table~\ref{tab:kdatasets:training} with all 1,000 available inputs. For each run, we recorded execution time and dynamic counters for all instruction types\footnote{
     Dynamic instruction counts were obtained by using the classic block-frequency profiling.}.
     Similarly to prior work~\cite{giusto01,powell09,brandolese11}, we then applied linear regression to find the contribution of each
     instruction type that minimizes the error between measured runtime and work.
@@ -53,10 +53,12 @@
 %%        \label{fig:work-vs-O0time}
 %%    \end{figure}
     
-    Figure~\ref{fig:work-vs-O0time} shows the correlation of the work metric ($\Delta W$) with runtime for the unoptimized version of one
-    benchmark that was not used for training the linear model, \texttt{susan\_c}. Each point represents the execution of a single input
-    from a total of 1,000 inputs. The correlation coefficient is $0.99$, and the mean absolute percentage error (MAPE) is only about 3.5\%.
-    \FIXME{More benchmarks and only coefficients?}.
+    Figure~\ref{fig:work-vs-O0time} shows the correlation coefficient between the work metric ($\Delta W$) and the runtime of the
+    unoptimized version for 14 benchmarks that were not used for training the linear model. The work metric correlates very strongly with
+    runtime for almost all the benchmarks, the correlation coefficient being typically higher than $0.98$. The exception is the benchmarks
+    based on \texttt{tiff}. The coefficient for them ranges from $0.47$ to $0.96$. Despite that, in most cases work is an excellent proxy
+    for unoptimized runtime. For the rest, our Section~\ref{sec:results} evaluation shows that our work metric is still useful for quantifying
+    performance. 
 
 
 \begin{figure*}[t]

@@ -1,35 +1,22 @@
 \section{Experimental Setup}\label{sec:setup}
 
 \paragraph{Compiler and Hardware.}
-Our approach is implmented in LLVM 4.0 and is open sourced\footnote{Download URL hidden for anonymous review.}. Our evaluation platform has
+Our approach is implemented in LLVM 4.0 and is open sourced\footnote{Download URL hidden for anonymous review.}. Our evaluation platform has
 a quad-core 3.4 GHz Intel Core i7 CPU with 16 GB of RAM. The operating system is openSUSE 42.2 with Linux kernel version 4.4.27.
 
-%The target platform is a Linux-4.4.27 system with an Intel Core i7-4770 3.40GHz Skylake~CPU with 16~GiB RAM.
-
 \paragraph{Benchmarks.}
-We use a subset of the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a},
-shown in Table~\ref{tab:kdatasets}.
-This suite provides 1,000 different inputs per benchmark.
-The inputs have different sizes and often lead to different program execution paths.
-%A summary of the benchmarks and their datasets is given in Table~\ref{tab:kdatasets}.
-This benchmark suite allows us to evaluate our approach on a large number of inputs provided by independent
-developers.
+Our work uses the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a}. This suite provides 1,000 different inputs per benchmark. The
+inputs have different sizes and often lead to different program execution paths. This benchmark suite allows us to evaluate our approach on
+a large number of inputs provided by independent developers. We split the suite in two distinct subsets, the training and testing
+subsets. The former is shown in Table~\ref{tab:kdatasets:training} and was used for calibrating the work model of
+Section~\ref{subsec:workmetric}. The latter is shown in Table~\ref{tab:kdatasets} and was used for evaluating our approach.
 
 \input{table-benchs1}
 
-%Table~\ref{tab:kdatasets} gives the benchmarks used to train the cost model that is used for computing the instruction weights for
-%the work metric. These were also used for collecting a fixed set of optimizations for the {\itercomp}. Table~~\ref{tab:kdatasets:test}
-%lists the testing benchmarks used to evaluate our approach.
-
-
 \paragraph{Measurement Report.}
-When reporting our results in Section~\ref{sec:results},
-we execute each benchmark with the same input a number of times until the width of the 95\% confidence interval is smaller than 5\% of the
-mean. We report the geometric mean performance  across runs and inputs per benchmark, and provide a min-max
-bar to show the variance across inputs.
-This same process is used for reporting the measurements in Figures~\ref{fig:overhead-O3},~\ref{fig:error-O3}, and \ref{fig:speedups}.
-%\FIXME{PP:Which metric is performance? What is the performance report? What about the plots that are not about performance?}
-
+To reduce the measurement noise, all evaluation runs in Section~\ref{sec:results} were repeated multiple times until the width of the 95\%
+confidence interval of the runtime came within 5\% of the mean runtime. For all reported metrics, our figures show the geometric mean of
+the metric for each benchmark across all inputs, as well as a min-max bar representing the variance across inputs. 
 
 \paragraph{Optimization Space Search.}
 
