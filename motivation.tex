@@ -13,19 +13,30 @@
     what we need to overcome the problem.
 
     \paragraph{Iterative compilation needs representative inputs.} 
+%%    Figure~\ref{fig:motivation_wrong_inputs} highlights what happens when we apply iterative compilation using the wrong set of inputs, we selected two distinct sets of
+%%    10 out of the 1,000 inputs of the of \textit{KDataSets}~\cite{chen10,chen12a} for the \texttt{tiff2bw} benchmark.
+%%    The first set represents the training set, i.e., the set of inputs that will be used for selecting the best optimization sequence by
+%%    iterative compilation, and the second set is a specific set of inputs which is misrepresented by the training set, let us call it the production set.
+%%    After performing iterative compilation on the training set, the selected optimization sequence has an average of 22\% improvement over -O3 for
+%%    the training set itself, but it produces a slowdown of about 9\% for the production set.
+%%    However, in the ideal case, if the iterative compilation was performed on the production set itself, it would be able to find an optimization sequence that
+%%    results on a 7\% improvement over -O3, this is an improvement of about 17\% over
+%%    the result of iterative compilation on the wrong set of inputs.
+
     Figure~\ref{fig:motivation_wrong_inputs} highlights what happens when we apply iterative compilation using the wrong set of inputs, we selected two distinct sets of
     10 out of the 1,000 inputs of the of \textit{KDataSets}~\cite{chen10,chen12a} for the \texttt{tiff2bw} benchmark.
-    The first set represents the training set, i.e., the set of inputs that will be used for selecting the best optimization sequence by
-    iterative compilation, and the second set is a specific set of inputs which is misrepresented by the training set, let us call it the production set.
-    After performing iterative compilation on the training set, the selected optimization sequence has an average of 22\% improvement over -O3 for
-    the training set itself, but it produces a slowdown of about 9\% for the production set.
-    However, in the ideal case, if the iterative compilation was performed on the production set itself, it would be able to find an optimization sequence that
-    results on a 7\% improvement over -O3, this is an improvement of about 17\% over
-    the result of iterative compilation on the wrong set of inputs.
+    We perform iterative compilation in one of the set of inputs and then evaluate the selected optimization on both set of inputs.
+    The goal is to show that if iterative compilation is performed on a training set which misrepresents the user's real workload,
+    the search can end up selecting a optimization sequence that results in poor performance for the user's real workload.
+    After performing iterative compilation on the input set \#1, the selected optimization sequence, refered as optimization \#1, has an average of 22\% improvement over \texttt{-O3} for
+    the input set \#1 itself, but it produces a slowdown of about 9\% for the input set \#2.
+    On the other hand, if iterative compilation is performed on the input set \#2, the selected optimization sequence, refered as optimization \#2, is able to produce an average improvement of 7\% over \texttt{-O3} for the input set \#2 itself, but resulting in an improvement of only 5\% for the input set \#1.
+    In both cases, performing iterative compilation on the ideal set of inputs provides an improvement of over 15\% compared to the other option.
+    This result shows that when iterative compilation is performed on representative inputs it results in the most profitable optimization sequence for the user's real workload.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\linewidth]{figs/motivation_wrong_inputs.pdf}
+    \includegraphics[width=0.7\linewidth]{figs/motivation_two_inputs.pdf}
     \caption{Performance results for the \texttt{tiff2bw} benchmark, comparing optimization sequences selected by iterative compilation when performed on the wrong set of inputs and the ideal case using the same set of inputs.
     This result supports the fact that iterative compilation needs representative inputs.}
     \label{fig:motivation_wrong_inputs}
