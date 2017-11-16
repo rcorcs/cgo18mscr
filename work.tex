@@ -114,8 +114,13 @@
     To compute the amount of work associated with each instrumentation probe, we first need to determine how reaching a probe relates with
     executing or not a basic block. Starting from instrumented edges, we use Kirchhoff's first law~\cite{knuth73,ball94} and a post-order
     traversal of the spanning tree to build symbolic expressions of edge frequencies as linear functions of probe counts, as seen in
-    Figure~\ref{fig:cfg-example}. This part is identical to how edge and block frequencies are calculated in prior work for basic block
-    profiling.
+    Figure~\ref{fig:cfg-example}. This part is similar to how edge and block frequencies are calculated in prior work for basic block
+    profiling, with a few key differences:
+    (i)   work profiling does not have to store the execution count of each basic block, only the total work which makes it cheaper to profile;
+    (ii)  it does not require a post-processing of the recorded profiling for populating the edge flows;
+    (iii) the propagation of the edge flows happens in a symbolic fashion during the instrumentation of the code, as depicted in Figure~\ref{fig:cfg-example}.
+    This symbolic edge flows are used to derive the frequency expression of the basic blocks, which is then used to derive the amount of work
+    recorded by each probe.
     
     %Simply put, the sum of the frequencies of the edges entering a block and the sum of the frequencies
     %exiting the same block must match. Starting from the leaf nodes of the spanning tree, where by definition all edges except one should
