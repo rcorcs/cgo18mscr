@@ -34,13 +34,6 @@ the \WCRelaxLower relaxation.
     \label{fig:error-O3}
 \end{figure*}
 
-%Mean values...
-%Real-R5: 30.43\%
-%WPO-R5:  54.97\%
-%adpcm_d:
-%Real-R5: 75.51\%
-%WPO-R5:  79.07\%
-
 \subsection{Evaluation of the Instrumentation}
 
 First, we evaluate the runtime overhead introduced by the work efficiency profiling. A high overhead would impact the user's experience
@@ -111,7 +104,7 @@ uninstrumented one. Relaxation reduces the deleterious effects of instrumentatio
 As a result, \WCRelax-5\% and \WPRelax-5\% are very close to the behavior of \OraclePP and they achieve about 60\% of the performance
 improvement obtained by \OracleRM.
 
-\subsubsection{Analysis of the cost during the online search}
+\subsubsection{Evaluation of the Costs During the Online Search}
 
 We also evaluate the actual cost perceived by the user when applying online iterative compilation.
 To this end we used the architecture described in Section~\ref{sec:oic-infra} with the search based on genetic algorithm.
@@ -120,10 +113,12 @@ Figure~\ref{fig:deployment_cost} shows, for each benchmark and configuration, th
 selected by the search (as in Figure~\ref{fig:speedups}) but also the average profitability/cost experienced by the user throughout the search process (labeled as [Live]),
 which takes into account the overhead of the work profiling.
 
-A Search Driver based on genetic algorithm is able to focus the search on promising optimization sequences, reducing the risk of
+With online iterative optimization, although the 
+user may experience slowdown during the search process by executing sub-optimal versions of the program,
+a Search Driver based on genetic algorithm is able to focus the search on promising optimization sequences, reducing the risk of
 executing sub-optimal versions of the program as the search evolves through generations.
-Although the user may experience slowdown during the optimization process, due to overheads or by executing sub-optimal versions of the program, after the first generation,
-the optimization sequences produced tend to overcome these costs, with their benefits surpassing the profiling overheads.
+After the first generation, the optimization sequences produced tend to overcome this issue, with their benefits surpassing the profiling overheads.
+
 
 For the \WCRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
 For the \WPRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
