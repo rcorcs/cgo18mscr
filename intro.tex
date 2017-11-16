@@ -11,8 +11,12 @@
     performance and energy consumption.
 
     An adaptive, online technique would solve this problem as the search would use actual, live inputs and the developer is no longer
-    responsible for predicting usage patterns. Unfortunately, runtime would not work as a comparison metric. Executing different inputs
-    each time will result in different runtimes regardless of the efficiency of the program version evaluated. Running the same input
+    responsible for predicting usage patterns. Unfortunately, runtime would not work as a comparison metric. Each input is different and 
+    processing it will result in a different runtime each time, regardless of the efficiency of the program version evaluated. Processing
+    a 20 megapixel image will take much longer than processing a 10 kilopixel thumbnail, no matter how we optimize the image processing
+    software.
+    
+    Running the same input
     through multiple versions at once is not an option either, due to side effects or overheads. Repeating a bank transfer, for example,
     is undesirable. Instead, we can prefer programs which do more work per unit of time. This work metric could be program
     specific~\cite{alameldeen06,coppa14}, e.g. number of database rows processed. However, if the developer is left with the burden of
@@ -50,6 +54,12 @@
     55\% and up to 80\% over the unrelaxed work profiling while often incurring much less than 1\% of dynamic error in the measurement of
     work.
 
+    We expect the results of this work to have a particularly high impact on mobile and cloud computing. In both areas, applications have
+    complex usage scenarios, target a huge variety of hardware architectures, including virtualized hardware, and users might be unwilling
+    to share their data with the developers. Creating a truly representative input set under these constraints is at best hard and time
+    consuming, impossible at worst. Still, our approach is not limited to these two use cases. It is general and can be used to simplify
+    iterative compilation on all types of software.
+
     Our main contributions are:
 
     \begin{itemize}[leftmargin=3mm]
@@ -57,7 +67,7 @@
         \item We propose a work efficiency metric which enables us to compare different optimized versions while running different inputs
         only once.
 
-        \item We show the effectiveness of the work efficiency for guiding {\itercomp} in an online scenario, where the program is expected
+        \item We show the effectiveness of work efficiency for guiding {\itercomp} in an online scenario, where the program is expected
         to execute only once for distinct inputs.
 
         \item A conservative relaxation algorithm is proposed for reducing the overhead of the work profiling, with a guaranteed bound for
