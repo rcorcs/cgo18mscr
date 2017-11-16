@@ -62,7 +62,7 @@ Some benchmarks display unexpectedly higher overheads under the relaxation strat
 reduces the number of instrumented probes without changing their placement. By analyzing these cases, we noticed that we could not remove
 the most frequently executed probes, so relaxation had little positive impact. At the same time, we removed some probes which were
 infrequently executed but were taken into consideration by the LLVM optimization heuristics. In some cases, removed probes caused different
-and suboptimal decisions to be made, increasing the runtime.
+and suboptimal decisions to be made, very slightly increasing the runtime.
 
 Figure~\ref{fig:error-O3} shows that profiling with relaxation incurs very little dynamic error. It also confirms that the \WCRelaxLower
 relaxation is overly conservative, while the \WPRelaxLower relaxation achieves a better trade-off. Although the error bound is not
@@ -75,14 +75,13 @@ conservative to be useful. The rest of the paper only evaluates the 5\% threshol
     \centering
     \includegraphics[width=\textwidth]{figs/speedups.pdf}
     \caption{Speedups obtained from the final optimization sequence selected by the online {\itercomp}.
-	         The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
+             The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
     \label{fig:speedups}
 \end{figure*}
 
 In this section we evaluate the effectiveness of our work efficiency metric. We perform online {\itercomp} using all five profiling
 strategies, namely \OracleRM, \OraclePP, \OptProf, \WCRelax-5\%, and \WPRelax-5\%. We evaluate every optimization sequence on multiple
-inputs, using a dynamic input-window size, as explained in Section~\ref{sec:oic-infra}. We use the average work efficiency over the input
-window to rank different optimization sequences and we select the one with the highest work efficiency.
+inputs. We use work efficiency to rank different optimization sequences and we select the one with the highest work efficiency.
 
 \OracleRM makes iterative compilation decisions based on the actual speedup over the unoptimized version. It does not depend on any kind of
 instrumentation or work estimation, so it acts as the baseline against which the rest of the profiling strategies are compared. \OraclePP
