@@ -90,7 +90,7 @@
     When all of the optimization sequences are tested against the same inputs, it is just a matter of comparing runtimes.
     A shorter runtime for processing the same data means a more efficient binary.
     With live data, we cannot do this, each binary processes
-    whatever the input happens to be. We need another efficiency metric that only requires a single use of an optimized binary with a
+    whatever the input happens to be. We need another efficiency metric that only requires a single execution of an optimized binary with a
     single input.
 
     \paragraph{Existing efficiency metrics are not up to the task.} Application-specific efficiency metrics~\cite{alameldeen06,coppa14} may
@@ -99,14 +99,12 @@
     processed. It would be ideal, if we did not have to use the same input twice, one with the baseline and one with the optimized binary.
 
     Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose.
-    \FIXME{Evidence1:}
-    To show this, we performed iterative compilation guided by IPC for the same set of 10 inputs
-    discussed in Figure~\ref{fig:motivation_wrong_inputs} and compare with the previous approach which optimizes directly for execution time.
-    The best optimization sequence found in Figure~\ref{fig:motivation_wrong_inputs}
-    has an average speedup of 1.7 over \texttt{-O3} and an average IPC of 2.59.
-    However, iterative compilation guided by IPC is able to find an optimization
-    sequence that produces a higher IPC of 2.72 but an average slowdown of 0.98.
+    To show this, we performed iterative compilation executing each optimization sequence with a different input and then measuring both runtime and IPC.
+    The experiments were performed in the set of inputs \#2 discussed in Figure~\ref{fig:motivation_wrong_inputs}.
+    For the iterative compilation guided by runtime, it resulted on an average slowdown of 0.97 compared to \texttt{-O3}.
+    For the iterative compilation guided by IPC, it resulted in an average slowdown of 0.51 with an IPC of 3.25., while the optimization expected with an average speedup of 1.07 has an average IPC of 2.31.
     This result agrees with the known fact that higher IPC does not necessarily translate to lower execution time when comparing different versions of the program.
+
 %     \FIXME{Evidence2:}
 %    To show this, we ran
 %    each of the \FIXME{32} \textit{KDataSets} benchmarks 1,000 times, each time with a different input \textit{and} a different optimized

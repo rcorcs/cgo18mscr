@@ -113,3 +113,12 @@ compilation, they also improve the search itself by keeping the behavior of the 
 uninstrumented one. Relaxation reduces the deleterious effects of instrumentation on both the runtime and how optimizations are applied.
 As a result, \WCRelax-5\% and \WPRelax-5\% are very close to the behavior of \OraclePP and they achieve about 60\% of the performance
 improvement obtained by \OracleRM.
+
+\subsubsection{Analysis of the cost during the online search}
+
+We also evaluate the actual cost perceived by the user when applying online iterative compilation.
+To this end we used the architecture described in Section~\ref{sec:oic-infra} with the search based on genetic algorithm.
+The results suggest that the proposed approach can be profitable in real-world online scenarios.
+For the \WCRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
+For the \WPRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
+
