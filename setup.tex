@@ -7,22 +7,23 @@ a quad-core 3.4 GHz Intel Core i7 CPU with 16 GB of RAM. The operating system is
 \paragraph{Benchmarks.}
 Our work uses the \textit{KDataSets} benchmark suite~\cite{chen10,chen12a}. This suite provides 1,000 different inputs per benchmark. The
 inputs have different sizes and often lead to different program execution paths. This benchmark suite allows us to evaluate our approach on
-a large number of inputs provided by independent developers. We split the suite in two distinct subsets, the training and testing
+a large number of inputs provided by independent developers. We split the entire suite in two distinct subsets, the training and testing
 subsets. The former is shown in Table~\ref{tab:kdatasets:training} and was used for calibrating the work model of
 Section~\ref{subsec:workmetric}. The latter is shown in Table~\ref{tab:kdatasets} and was used for evaluating our approach.
 
 \input{table-benchs1}
 
 \paragraph{Measurement Report.}
-To reduce the measurement noise, all evaluation runs in Section~\ref{sec:results} were repeated multiple times until the width of the 95\%
-confidence interval of the runtime came within 5\% of the mean runtime. For all reported metrics, our figures show the geometric mean of
-the metric for each benchmark across all inputs, as well as a min-max bar representing the variance across inputs. 
+To reduce the measurement noise, all experimental runs were repeated multiple times until the width of the 95\% confidence interval of the
+runtime came within 5\% of the mean runtime. For all reported metrics, our figures show the geometric mean of the metric for each benchmark
+across all inputs, as well as a min-max bar representing the variance across inputs.
 
 \paragraph{Optimization Space Search.}
 
 The focus of this paper is on developing a new way for measuring algorithmic efficiency and enabling true online {\itercomp}. The choice of
-mechanism for driving the search of the optimization space is orthogonal. For that reason, we decided against using a sophisticated search
-mechanism, instead working with a fixed set of 500 optimization sequences that were selected at random.
+mechanism for driving the search of the optimization space is orthogonal. For that reason, we search over a moderate-sized set of 500
+optimization sequences that were selected at random.
+
 %These optimization sequences contain an average of 40 individual optimization passes,
 %including repetitions, with a maximum of 119 optimization passes, but it also contains
 %optimization sequences which consist of a single flag, such as the default optimizations

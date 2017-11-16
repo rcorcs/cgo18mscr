@@ -1,17 +1,17 @@
 \section{Experimental Results}\label{sec:results}
 
-In this section we discuss our experimental evaluation of the work profiling strategies and 
+In this section we discuss our experimental evaluation of the work profiling strategies and
 the effectiveness of the work efficiency metric on guiding true online {\itercomp}.
 We use the following naming convention for the profiling strategies considered
 throughout this section:
 \begin{itemize}[leftmargin=3mm]
-\item \textbf{\OracleRM} measures the actual speedup over the unoptimized version of the program for any given input.
-In our experiments, this oracle is allowed to execute each input at least twice so the speedup can be computed.
+\item \textbf{\OracleRM} measures the actual speedup over the unoptimized version of the program for any given input. In our experiments,
+    this oracle is allowed to execute each input \emph{at least twice} so the speedup can be computed.
 \item \textbf{\OraclePP} measures the work efficiency metric with a \textit{magically perfect} non-intrusive profiling.
   Because this version simulates a \textit{perfect} profiling, with zero overhead,
   it allows us to isolate and evaluate the actual effectiveness of the work efficiency metric.
-\item \textbf{\OptProf} corresponds to the work profiling using the optimal placement of the probes.
-  This profiling strategy requires a single execution of the program for any given input.
+\item \textbf{\OptProf} corresponds to the work profiling using the optimal placement of the probes. This profiling strategy requires
+    \emph{a single execution} of the program for any given input.
 \item \textbf{\WCRelax-\textit{N}\%} measures the work efficiency metric using the work profiling with a \textit{N}\% threshold for
 the \WCRelaxLower relaxation.
   Similar to the \OptProf, this profiling strategy also requires a single execution of the program for any given input.
@@ -46,11 +46,11 @@ the \WCRelaxLower relaxation.
 First, we evaluate the runtime overhead introduced by the work efficiency profiling. A high overhead would impact the user's experience
 and would make our approach impractical. We take the original and instrumented versions of each benchmark, we compile them using the
 baseline \texttt{-O3} setting, and execute them with all 1,000 inputs. The difference in their runtimes, for the same input, is the
-instrumentation overhead. Figure~\ref{fig:overhead-O3} shows the average overhead for each benchmark and work profiling strategy. 
+instrumentation overhead. Figure~\ref{fig:overhead-O3} shows the average overhead for each benchmark and work profiling strategy.
 
 \OptProf typically slows the application down by 10\%, noticeably affecting the user experience, while in the worst case its overhead
 reaches 59\%. It is clearly unsuitable for online work profiling. \WCRelax and \WPRelax fare better, especially when used with a higher
-5\% threshold. \WPRelax-\textit{5}\%, in particular, has an average overhead of only 5\%, 13\% in its worst case. 
+5\% threshold. \WPRelax-\textit{5}\%, in particular, has an average overhead of only 5\%, 13\% in its worst case.
 
 For almost all the profiling strategies, their worst case is \texttt{adpcm\_d}. Still, compared to the 59\% overhead of the \OptProf,
 \WCRelax-\textit{5}\% and \WPRelax-\textit{5}\% incur only about a quarter of that overhead. This benchmark has a single hot function
@@ -62,7 +62,7 @@ Some benchmarks display unexpectedly higher overheads under the relaxation strat
 reduces the number of instrumented probes without changing their placement. By analyzing these cases, we noticed that we could not remove
 the most frequently executed probes, so relaxation had little positive impact. At the same time, we removed some probes which were
 infrequently executed but were taken into consideration by the LLVM optimization heuristics. In some cases, removed probes caused different
-and suboptimal decisions to be made, increasing the runtime. 
+and suboptimal decisions to be made, increasing the runtime.
 
 Figure~\ref{fig:error-O3} shows that profiling with relaxation incurs very little dynamic error. It also confirms that the \WCRelaxLower
 relaxation is overly conservative, while the \WPRelaxLower relaxation achieves a better trade-off. Although the error bound is not
@@ -76,8 +76,6 @@ conservative to be useful. The rest of the paper only evaluates the 5\% threshol
     \includegraphics[width=\textwidth]{figs/speedups.pdf}
     \caption{Speedups obtained from the final optimization sequence selected by the online {\itercomp}.
 	         The speedups reported for each benchmark represents the average speedup across their complete 1000 input datasets.}
-
-    \FIXME{Sort  the bars according to speedup, i.e. Oracle should be the last bars.}
     \label{fig:speedups}
 \end{figure*}
 
@@ -98,7 +96,7 @@ of each benchmark.
 Figure~\ref{fig:speedups} shows these speedups for all test benchmarks. In most cases, \OraclePP is very close to \OracleRM, achieving on
 average 80\% of its speedup. This demonstrates that it is a valid choice to drive iterative compilation decision using work efficiency. The
 few cases where the two strategies produce noticeably different results are for the \texttt{tiff} benchmarks. The weaker correlation between
-work and unoptimized runtime for these benchmarks is to blame for the lower speedups achieved by \OraclePP. 
+work and unoptimized runtime for these benchmarks is to blame for the lower speedups achieved by \OraclePP.
 
 The \OptProf achieves 4\% improvement on average, which represents a little bit more that half of the speedup of \OraclePP. The culprit is
 the one thing that is different between the two strategies, the profiling instrumentation. It affects the search in two key ways:
@@ -121,4 +119,3 @@ To this end we used the architecture described in Section~\ref{sec:oic-infra} wi
 The results suggest that the proposed approach can be profitable in real-world online scenarios.
 For the \WCRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
 For the \WPRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
-
