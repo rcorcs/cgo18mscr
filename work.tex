@@ -1,3 +1,12 @@
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figs/corr_coeff.pdf}
+    \caption{Correlation coefficients between the work metric ($\Delta W$) and the execution time of the unoptimized version for each benchmark.}
+    \label{fig:motivation-speedups}
+\end{figure*}
+
+
 \section{Work Efficiency} \label{sec:work}
 
     In this section, we introduce \textit{work efficiency}, a novel performance metric for comparing the quality of different optimized
@@ -9,7 +18,7 @@
     where $\Delta W$ is the amount of work performed during a period of time $\Delta t$.
 
     With similar metrics, what exactly is work depends on the application and is defined by the developer: SQL queries executed,
-    transactions completed, bytes processed, etc. In our case, we need a similar but \emph{application-agnostic} metric which correlates with what
+    transactions completed, bytes processed, etc. In our case, we need an \emph{application-agnostic} metric which correlates with what
     the developer considers useful work and is simple enough to be calculated online.
 
     Section~\ref{subsec:workmetric} describes this new work metric and the design choices we made, Section~\ref{subsec:prof} details how
@@ -28,12 +37,12 @@
 
     We selected the work contribution of each instruction type so that total work becomes an estimator of the runtime of the unoptimized
     program.
-    %Our choice to associate work with unoptimized runtime is largely arbitrary but instinctively reasonable.
-    Our choice to associate work with unoptimized runtime is largely for practical reasons but it is also instinctively reasonable.
+    Our choice to associate work with unoptimized runtime was instinctively reasonable.
     Unoptimized time is
     close to how the programmer understands the effort put by the computer. Using it as the work metric makes work efficiency (work per unit
-    of time) an estimator of the speedup of the optimized version over the unoptimized version. While other ways of setting the instruction
-    contributions might be better, our results in Section~\ref{sec:results} show that this simple definition of work produces good results.
+    of time) an estimator of the speedup of the optimized version over the unoptimized version. This speedup cannot be measured otherwise without
+    running the program more than once on each input. While other ways of setting the instruction contributions are possible, our evaluation in
+    Section~\ref{sec:results} shows that this simple definition of work produces good results.
     Using the experimental setup described in Section~\ref{sec:setup}, we run the unoptimized versions of the 10 benchmarks listed in
     Table~\ref{tab:kdatasets:training} with all 1,000 available inputs. For each run, we recorded execution time and dynamic counters for all instruction types\footnote{
     Dynamic instruction counts were obtained by using the classic block-frequency profiling~\cite{knuth73}.}.
@@ -56,25 +65,16 @@
     Figure~\ref{fig:motivation-speedups} shows the correlation coefficient between the work metric ($\Delta W$) and the runtime of the
     unoptimized version for 14 benchmarks that were not used for training the linear model. The work metric correlates very strongly with
     runtime for almost all the benchmarks, the correlation coefficient being typically higher than $0.98$. The exception is the benchmarks
-    based on \texttt{tiff}. The coefficient for them ranges from $0.47$ to $0.96$. Despite that, in most cases work is an excellent proxy
-    for unoptimized runtime. For the rest, our Section~\ref{sec:results} evaluation shows that our work metric is still useful for quantifying
-    performance.
-
-
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=\textwidth]{figs/corr_coeff.pdf}
-    \caption{Correlation coefficients between the work metric ($\Delta W$) and the execution time of the unoptimized version for each benchmark.}
-    \label{fig:motivation-speedups}
-\end{figure*}
+    based on \texttt{tiff}. The coefficient for them ranges from $0.47$ to $0.96$. Despite that, our work metric is still an excellent proxy
+    for unoptimized runtime and, as seen in Section~\ref{sec:results}, it is useful for quantifying performance.
 
 
     \subsection{Work Profiling}\label{subsec:prof}
 
     Total work is just the sum of the cost of all instructions that would be executed in the unoptimized binary. A na\"{\i}ve but
-    straightforward way to measure work online is to instrument the unoptimized code with a global work counter and instructions for
-    incrementing this counter after each instruction of the original code. Since the work contribution of each instruction depends only on
-    its type, it can be determined at compile time. Taking this one step further, we can calculate work contributions at the basic block
+    straightforward way to measure work online is to instrument the code, before optimization, with a global work counter and instructions for
+    incrementing this counter after each instruction of the original code. In our simplifying scheme, the work contribution of each instruction depends only on
+    its type, so it can be determined at compile time. Taking this one step further, we can calculate work contributions at the basic block
     level and insert only a single increment instruction in each block. Although easy to implement, the na\"{\i}ve approach introduces a
     significant overhead.
 
