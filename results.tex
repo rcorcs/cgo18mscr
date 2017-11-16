@@ -115,7 +115,16 @@ improvement obtained by \OracleRM.
 
 We also evaluate the actual cost perceived by the user when applying online iterative compilation.
 To this end we used the architecture described in Section~\ref{sec:oic-infra} with the search based on genetic algorithm.
-The results suggest that the proposed approach can be profitable in real-world online scenarios.
+Our results provide evidence that the proposed approach is profitable in real-world online scenarios.
+Figure~\ref{fig:deployment_cost} shows, for each benchmark and configuration, the profitability of the final optimization sequence
+selected by the search (as in Figure~\ref{fig:speedups}) but also the average profitability/cost experienced by the user throughout the search process (labeled as [Live]),
+which takes into account the overhead of the work profiling.
+
+A Search Driver based on genetic algorithm is able to focus the search on promising optimization sequences, reducing the risk of
+executing sub-optimal versions of the program as the search evolves through generations.
+Although the user may experience slowdown during the optimization process, due to overheads or by executing sub-optimal versions of the program, after the first generation,
+the optimization sequences produced tend to overcome these costs, with their benefits surpassing the profiling overheads.
+
 For the \WCRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
 For the \WPRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
 
