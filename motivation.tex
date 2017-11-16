@@ -12,7 +12,17 @@
     sets and that it is hard to create representative ones. Then we go on to examine what stops us from just using real inputs online and
     what we need to overcome the problem.
 
-    \paragraph{Iterative compilation needs representative inputs.}
+    \begin{figure}[t]
+        \centering
+        \includegraphics[width=0.7\linewidth]{figs/motivation_two_inputs.pdf}
+        \caption{Average speedup over \texttt{-O3} for the \texttt{tiff2bw} benchmark when optimized with two different optimization sequences and
+        evaluated on two distinct input sets. Each sequence was selected by iterative compilation on only one of the input sets. Processing
+        inputs with a version optimized for a different input set produces suboptimal results, supporting that iterative compilation needs
+        representative inputs.}
+        \label{fig:motivation_wrong_inputs}
+    \end{figure}
+
+    \paragraph{Iterative compilation needs representative inputs.} 
 %%    Figure~\ref{fig:motivation_wrong_inputs} highlights what happens when we apply iterative compilation using the wrong set of inputs, we selected two distinct sets of
 %%    10 out of the 1,000 inputs of the of \textit{KDataSets}~\cite{chen10,chen12a} for the \texttt{tiff2bw} benchmark.
 %%    The first set represents the training set, i.e., the set of inputs that will be used for selecting the best optimization sequence by
@@ -23,47 +33,17 @@
 %%    results on a 7\% improvement over -O3, this is an improvement of about 17\% over
 %%    the result of iterative compilation on the wrong set of inputs.
 
-    Figure~\ref{fig:motivation_wrong_inputs} highlights what happens when we apply iterative compilation using the wrong set of inputs, we selected two distinct sets of
-    10 out of the 1,000 inputs of the of \textit{KDataSets}~\cite{chen10,chen12a} for the \texttt{tiff2bw} benchmark.
-    We perform iterative compilation in one of the set of inputs and then evaluate the selected optimization on both set of inputs.
-    The goal is to show that if iterative compilation is performed on a training set which misrepresents the user's real workload,
-    the search can end up selecting a optimization sequence that results in poor performance for the user's real workload.
-    After performing iterative compilation on the input set \#1, the selected optimization sequence, refered as optimization \#1, has an average of 22\% improvement over \texttt{-O3} for
-    the input set \#1 itself, but it produces a slowdown of about 9\% for the input set \#2.
-    On the other hand, if iterative compilation is performed on the input set \#2, the selected optimization sequence, refered as optimization \#2, is able to produce an average improvement of 7\% over \texttt{-O3} for the input set \#2 itself, but resulting in an improvement of only 5\% for the input set \#1.
-    In both cases, performing iterative compilation on the ideal set of inputs provides an improvement of over 15\% compared to the other option.
-    This result shows that when iterative compilation is performed on representative inputs it results in the most profitable optimization sequence for the user's real workload.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.7\linewidth]{figs/motivation_two_inputs.pdf}
-    \caption{Performance results for the \texttt{tiff2bw} benchmark, comparing optimization sequences selected by iterative compilation when performed on the wrong set of inputs and the ideal case using the same set of inputs.
-    This result supports the fact that iterative compilation needs representative inputs.}
-    \label{fig:motivation_wrong_inputs}
-\end{figure}
-
-    %Even with larger set of training inputs, the lack of representative inputs for iterative compilation can still hurt performance.
-    %For the same \textttt{tiff2bw} benchmark, we were able to partition the whole dataset into
-    %I.C. on 85% set has speedup 1.06 on the set itself and 0.975 slowdown on the 15% set.
-    %I.C. on 15% set has speedup 1.03.
-
-%%    \paragraph{Iterative compilation needs representative inputs.} \FIXME{Fig.XXX} shows what happens when we apply iterative compilation
-%%    on \FIXME{susan\_c} using the wrong inputs. We selected \FIXME{50} of the 1,000 inputs of \textit{KDataSets}~\cite{chen10,chen12a} for
-%%    \FIXME{susan\_c} and we used them to evaluate different optimizations. The red bars show the average speedup over \texttt{-O3} achieved
-%%    by the optimization sequence selected by iterative compilation. On the left is the average over the \FIXME{50} inputs, on the right the
-%%    average over all 1,000 inputs. The selected sequence works great for the inputs we used, but it fails miserably for the rest, slowing
-%%    down the benchmark by \FIXME{5\%} on average.
-%%
-%%    The blue bars, on the other hand, show the ideal case where good optimizations are selected based on their average effect on all
-%%    inputs, not just a subset. Not only is the average speedup over all 1,000 inputs considerable, \FIXME{13\%} over \texttt{-O3}, but it
-%%    also works well for the \FIXME{50} input subset. The speedup for the subset is only \FIXME{1\%} less of what we got when we optimized
-%%    specifically for that subset.
-%%
-%%    Making iterative compilation work in this example is not a matter of handling input sensitivity, we were able to find an optimization
-%%    sequence that works well both on average and under most inputs. It is a matter of finding a set of inputs that represents the full
-%%    range of inputs the application is likely to process. If we do, we can improve average performance by \FIXME{13\%}. If not, we might
-%%    hurt average performance instead.
-
+    Figure~\ref{fig:motivation_wrong_inputs} highlights what happens when we apply iterative compilation using the wrong set of inputs. We
+    selected two distinct subsets of the \textit{KDataSets}~\cite{chen10,chen12a} inputs for the \texttt{tiff2bw} benchmark. Each subset
+    has ten inputs. Using iterative compilation we find the best optimization sequence for each subset separately.
+    Figure~\ref{fig:motivation_wrong_inputs} shows the speedup over \texttt{-O3} achieved by each sequence when using either of the two
+    subsets. Optimization \#1, which was selected using input set \#1, speeds up \texttt{tiff2bw} by 22\% on average when processing set
+    \#1, but hurts performance when used with set \#2. Similarly, using optimization \#2 on input set \#1 only improves performance by 5\%,
+    much less than what optimization \#1 achieves. In both cases, optimizing the benchmark for the same set it will be evaluated on
+    improves performance by 15\% compared to optimizing for some other set. To make iterative compilation profitable, applying it on a
+    inputs similar to the ones the application will be used with is absolutely necessary.
+    
+    
     \paragraph{Representative input sets are hard to create.} For developers to create artificial input sets, they first need to know how
     their application is actually being used. This is not always easy or even possible. Then, they need to create data that will trigger a
     similar behavior as when the application is used by users. This needs a deep knowledge of the potential user behavior and
@@ -76,40 +56,31 @@
     the system state. \FIXME{ZW: This is a bit vague. I think we need an example to illustrate why the application may not perform the same
     work if the same input is used.}
     This is significant engineering work. Even if this was not the case, many applications are just not able to save
-    data for privacy or storage overhead reasons.
+    data for privacy or storage overhead reasons. \FIXME{Refs?}
 
-    %\paragraph{Using real inputs online is not enough.} We could overcome these problems by just evaluating optimization sequences online
-    %while the application is being used. This gives us live data but creates a new problem. Optimization sequences are compared based on
-    %how much faster the program becomes. When all of them are tested against the same inputs, it is just a matter of comparing runtimes.
-    %A shorter runtime for processing the same data means a more efficient binary. With live data, we cannot do this, each binary processes
-    %whatever the input happens to be. We need another efficiency metric that only requires a single use of an optimized binary with a
-    %single input.
-
-    \paragraph{Challenges of using real inputs online.} We could overcome the problems of representative inputs by just evaluating
-    optimization sequences online while the application is being used.
-    %Optimization sequences are compared based on how much faster the program becomes.
-    This gives us live data but creates a new problems.
-    With live data, we cannot just compare runtimes.
-    When all of the optimization sequences are tested against the same inputs, it is just a matter of comparing runtimes.
-    A shorter runtime for processing the same data means a more efficient binary.
-    With live data, we cannot do this, each binary processes
-    whatever the input happens to be.
-    As an example, considering a sorting algorithm. To measure the efficiency of an optimization for the algorithm, we need to look at not just
-    how long does the algorithm run but also how many items it processes per run. Simply comparing the running time of two invocations does not
-    tell us which program version is faster, as the two invocations may not process the same number of items. As a result, we need another efficiency metric
+    \paragraph{Using live inputs online is not enough.} We could overcome the problem of representative inputs by just evaluating
+    optimization sequences online while the application is being used. This gives us live data but creates a bigger problem, that we cannot
+    compare different optimizations just by runtime anymore. When optimizations are tested against the same inputs, determining their
+    relative efficiency is just a matter of comparing runtimes. A shorter runtime for the same work means a more efficient binary.
+    With live data, we cannot do this, the binary processes whatever the input happens to be. Larger inputs require more work and will
+    likely lead to longer execution times, regardless of optimizations.
+    
+    As an example, consider a sorting algorithm. To measure the efficiency of an optimization for the algorithm, we need to look at not just
+    how long the algorithm runs but also how many items it processes per run. Just comparing the runtimes of two invocations does not
+    provide any information about efficiency, as the two invocations may not process the same number of items. We need another efficiency metric
     that only requires a single execution of an optimized binary with a single input.
 
-    \paragraph{Existing efficiency metrics are not up to the task.} Application-specific efficiency metrics such as the number of transactions per second may
-    work well, but the developer has to choose the appropriate metric and then manually modify the application to calculate it~\cite{alameldeen06,coppa14}. Speedup
-    over a common baseline binary is a good application-agnostic metric, equating efficiency with how much faster a given input is
-    processed. It would be ideal, if we did not have to use the same input twice, one with the baseline and one with the optimized binary.
+    \paragraph{Existing efficiency metrics are not up to the task.} Application-specific efficiency metrics~\cite{alameldeen06,coppa14} may
+    work well, but the developer has to choose the appropriate metric and then manually modify the application to calculate it. Speedup
+    over a common baseline binary is an adequate application-agnostic metric but it cannot be used online. It requires measuring runtime
+    for each input twice, one with the baseline and one with the optimized binary.
 
-    Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose.
-    To show this, we performed iterative compilation executing each optimization sequence with a different input and then measuring both runtime and IPC.
-    The experiments were performed in the set of inputs \#2 discussed in Figure~\ref{fig:motivation_wrong_inputs}.
-    For the iterative compilation guided by runtime, it resulted on an average slowdown of 0.97 compared to \texttt{-O3}.
-    For the iterative compilation guided by IPC, it resulted in an average slowdown of 0.51 with an IPC of 3.25, while the optimization expected with an average speedup of 1.07 has an average IPC of 2.31.
-    This result agrees with the known fact that higher IPC does not necessarily translate to lower execution time when comparing \emph{different versions} of the program.
+    Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose. To show this, we
+    performed iterative compilation on \texttt{tiff2bw}, evaluating each optimization sequence on a different input and using either
+    runtime or IPC as our efficiency metric. We selected our inputs from input set \#2 of Figure~\ref{fig:motivation_wrong_inputs}. When
+    iterative compilation is driven by runtime, the selected optimization slows down the benchmark by 3\% compared to \texttt{-O3}. When
+    driven by IPC, it is even worse with an average slowdown of 49\%. Its very high IPC of 3.25 does not indicate high performance. The
+    actual best optimization over the whole input set improves performance by 7\% while only having an average IPC of 2.31.
 
 %     \FIXME{Evidence2:}
 %    To show this, we ran
@@ -121,10 +92,10 @@
 %    Efficiency has nothing to do with it. IPC also correlates poorly with efficiency, the correlation coefficient being just \FIXME{0.15}.
 %    While it is used often in computer architecture, it works there because it is used with invariant binaries. In contrast, any compiler
 %    optimization that trades high latency instructions for multiple low latency instructions can reduce IPC while improving efficiency.
-
-    No existing metric can give us an application-agnostic measure of efficiency with a single execution. The rest of the paper will show
-    how to create one and how to use it for iterative compilation.
-
+    No existing metric can give us an application-agnostic measure of efficiency with a single execution. Without one, online iterative
+    compilation is impossible. Without doing it online, iterative compilation will always be limited by the quality of the input set.
+    The rest of the paper will show how to create an appropriate efficiency metric and how to use it for true online iterative
+    compilation. 
 
 %\begin{figure*}[t]
 %    \centering
