@@ -89,14 +89,14 @@
     optimization sequences online while the application is being used.
     %Optimization sequences are compared based on how much faster the program becomes.
     This gives us live data but creates a new problems.
-    With live data, we cannot just compare runtimes.
-    When all of the optimization sequences are tested against the same inputs, it is just a matter of comparing runtimes.
+    With live data, we cannot just compare runtime.
+    When all of the optimization sequences are tested against the same inputs, it is just a matter of comparing runtime.
     A shorter runtime for processing the same data means a more efficient binary.
     With live data, we cannot do this, each binary processes
     whatever the input happens to be.
     As an example, considering a sorting algorithm. To measure the efficiency of an optimization for the algorithm, we need to look at not just
-    how long does the algorithm run but also how many items it processes per run. Simply comparing the running time of two invocations does not
-    tell us which program version is faster, as the two invocations may not process the same number of items. As a result, we need another efficiency metric
+    how long does the algorithm run but also how many items it processes per run. Simply comparing the running time of two invocations of two program versions does not
+    tell us which program version is faster, as the two invocations may not process the same number of items in a production environment. As a result, we need another efficiency metric
     that only requires a single execution of an optimized binary with a single input.
 
     \paragraph{Existing efficiency metrics are not up to the task.} Application-specific efficiency metrics such as the number of transactions per second may

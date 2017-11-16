@@ -2,14 +2,14 @@
 
     In this section, we introduce \textit{work efficiency}, a novel performance metric for comparing the quality of different optimized
     versions of a program, even when we evaluate them with a different input each time. Similarly to existing one-shot performance metrics,
-    work efficiency is simply the amount of \textit{work done per unit of time}: 
+    work efficiency is simply the amount of \textit{work done per unit of time}:
     \[
         \textrm{Work Efficiency} = \frac{\Delta W}{\Delta t}
     \]
     where $\Delta W$ is the amount of work performed during a period of time $\Delta t$.
 
     With similar metrics, what exactly is work depends on the application and is defined by the developer: SQL queries executed,
-    transactions completed, bytes processed, etc. In our case, we need a similar but application-agnostic metric which correlates with what
+    transactions completed, bytes processed, etc. In our case, we need a similar but \emph{application-agnostic} metric which correlates with what
     the developer considers useful work and is simple enough to be calculated online.
 
     Section~\ref{subsec:workmetric} describes this new work metric and the design choices we made, Section~\ref{subsec:prof} details how
@@ -36,7 +36,7 @@
     contributions might be better, our results in Section~\ref{sec:results} show that this simple definition of work produces good results.
     Using the experimental setup described in Section~\ref{sec:setup}, we run the unoptimized versions of the 10 benchmarks listed in
     Table~\ref{tab:kdatasets:training} with all 1,000 available inputs. For each run, we recorded execution time and dynamic counters for all instruction types\footnote{
-    Dynamic instruction counts were obtained by using the classic block-frequency profiling.}.
+    Dynamic instruction counts were obtained by using the classic block-frequency profiling~\cite{knuth73}.}.
     Similarly to prior work~\cite{giusto01,powell09,brandolese11}, we then applied linear regression to find the contribution of each
     instruction type that minimizes the error between measured runtime and work.
     %\footnote{The resulting regression model uses \FIXME{70}
@@ -52,13 +52,13 @@
 %%        }
 %%        \label{fig:work-vs-O0time}
 %%    \end{figure}
-    
+
     Figure~\ref{fig:motivation-speedups} shows the correlation coefficient between the work metric ($\Delta W$) and the runtime of the
     unoptimized version for 14 benchmarks that were not used for training the linear model. The work metric correlates very strongly with
     runtime for almost all the benchmarks, the correlation coefficient being typically higher than $0.98$. The exception is the benchmarks
     based on \texttt{tiff}. The coefficient for them ranges from $0.47$ to $0.96$. Despite that, in most cases work is an excellent proxy
     for unoptimized runtime. For the rest, our Section~\ref{sec:results} evaluation shows that our work metric is still useful for quantifying
-    performance. 
+    performance.
 
 
 \begin{figure*}[t]
@@ -83,8 +83,8 @@
     all basic blocks if we choose a spanning tree of the function Control Flow Graph (CFG) and only instrument the edges of the CFG
     \textit{not} in the tree~\cite{nahapetian73,forman81}. To make the instrumentation probe placement optimal, we choose the maximum
     spanning tree, with the edge weights representing edge frequency estimates. This maximises the number of high frequency edges that will
-    not be instrumented, minimizing the instrumentation cost~\cite{forman81,ball94}. 
-    
+    not be instrumented, minimizing the instrumentation cost~\cite{forman81,ball94}.
+
     \begin{figure}[t]
     \centering {
       \includegraphics[scale=0.8]{figs/cfg-example.pdf}\\\vspace{1ex}
@@ -110,7 +110,7 @@
     implies not only executing the containing block but also executing or not executing other uninstrumented blocks, so work counter
     increments have to reflect this. Figure~\ref{fig:cfg-example} shows an example CFG, where the instrumented blocks are marked with red.
     In this example, reaching probe $P_2$ implies not only executing block $B_5$ but also not executing $B_6$.
-    
+
     To compute the amount of work associated with each instrumentation probe, we first need to determine how reaching a probe relates with
     executing or not a basic block. Starting from instrumented edges, we use Kirchhoff's first law~\cite{knuth73,ball94} and a post-order
     traversal of the spanning tree to build symbolic expressions of edge frequencies as linear functions of probe counts, as seen in
@@ -121,12 +121,12 @@
     (iii) the propagation of the edge flows happens in a symbolic fashion during the instrumentation of the code, as depicted in Figure~\ref{fig:cfg-example}.
     These symbolic edge flows are used to derive the frequency expressions of the basic blocks, which are then used to derive the amount of work
     recorded by each probe.
-    
+
     %Simply put, the sum of the frequencies of the edges entering a block and the sum of the frequencies
     %exiting the same block must match. Starting from the leaf nodes of the spanning tree, where by definition all edges except one should
     %be instrumented, and working upwards, we should be able to calculate the frequencies of all nodes and edges as a function of the probe
     %of the probe counts.
-    
+
     If a block's frequency expression contains a positive term for a probe, this means that the block is executed when we reach the probe,
     so the block's cost should be added at that probe. Conversely, if the expression contains a negative term for a probe, then the block
     is executed when we do not reach the probe, so the block's cost should be subtracted. In our example CFG, the symbolic expression for
@@ -138,13 +138,13 @@
 
     Optimal instrumentation significantly reduces the profiling overhead when compared to na\"ive instrumentation, from an average overhead
     of 79\% to 13\%. Still, 13\% slowdown might be more than what the user is ready to tolerate, while for isolated case the overhead might
-    be as high as 60\%. We need to reduce overhead further to make the work metric practical. 
-    
+    be as high as 60\%. We need to reduce overhead further to make the work metric practical.
+
     We propose two novel relaxation strategies that offer a trade-off between accuracy and overhead. Our insight was that, unlike basic
     block profiling, not all probes are of equal importance. The work associated with some is insignificant compared to the total work
     done by the program, so ignoring them will have little negative impact on the accuracy of measuring work. By removing such probes,
     especially if they are frequently executed, we can reduce the instrumentation overhead dramatically. These two strategies are
-    particular to work profiling and reduce the overhead much more than what previous research in basic block profiling has achieved. 
+    particular to work profiling and reduce the overhead much more than what previous research in basic block profiling has achieved.
 
     To select which probes to remove we consider the probes in a control flow region. The runtime benefit of removing a probe is
     proportional to the frequency of the block the probe is in, while the error introduced is proportional to both the work contribution of
@@ -202,12 +202,12 @@
     path with the minimum amount of work possible, which might be orders of magnitude less than the work actually performed. When this is
     the case, we end up with a relative error much lower than intended and a profiling overhead unnecessarily high. Our second, more
     aggressive, strategy avoids this problem, by estimating the error and overhead contributions of each probe in relation to the whole
-    program. 
+    program.
 
     The \WPRelaxLower relaxation does this by using block-frequency profiling from previous executions. With this information, we are able
     to estimate the probe frequencies and the relative error of removing a given probe in terms of total program work. We select a subset
     of all the probes to be removed, while keeping the total relative error (over total program work) below the threshold.
-    
+
     Contrary to the per DAG approach, the error introduced by \WPRelaxLower relaxation is not guaranteed to be bounded by the threshold
     $M$. Still, we expect it to remain close to the threshold as long as the program's behavior does not deviate significantly from the
     behavior captured in the profile we used.
