@@ -104,7 +104,16 @@ uninstrumented one. Relaxation reduces the deleterious effects of instrumentatio
 As a result, \WCRelax-5\% and \WPRelax-5\% are very close to the behavior of \OraclePP and they achieve about 60\% of the performance
 improvement obtained by \OracleRM.
 
-\subsubsection{Evaluation of the Costs During the Online Search}
+\subsubsection{Evaluating Costs During the Online Search}
+
+\begin{figure*}[t]
+  \centering
+  \subfigure[Opt-Profiling]{\includegraphics[width=0.3\textwidth]{figs/Opt-Profiling-deployment.pdf}}
+  \subfigure[WC-Relax-5\%]{\includegraphics[width=0.3\textwidth]{figs/WC-Relax-5-deployment.pdf}}
+  \subfigure[WP-Relax-5\%]{\includegraphics[width=0.3\textwidth]{figs/WP-Relax-5-deployment.pdf}}
+  \caption{.}
+  \label{fig:deployment_cost}
+\end{figure*}
 
 We also evaluate the actual cost perceived by the user when applying online iterative compilation.
 To this end we used the architecture described in Section~\ref{sec:oic-infra} with the search based on genetic algorithm.
@@ -123,12 +132,4 @@ After the first generation, the optimization sequences produced tend to overcome
 For the \WCRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
 For the \WPRelax-5\% configuration, an average speedup of XX was observed during the search, in the worst case with an slowdown of XX.
 
-%\begin{figure*}[t]
-%  \centering
-%  \subfigure[Opt-Profiling]{\includegraphics[width=0.3\textwidth]{figs/Opt-Profiling-deployment.pdf}}
-%  \subfigure[WC-Relax-5]{\includegraphics[width=0.3\textwidth]{figs/WC-Relax-5-deployment.pdf}}
-%  \subfigure[WP-Relax-5]{\includegraphics[width=0.3\textwidth]{figs/WP-Relax-5-deployment.pdf}}
-%  \caption{deployment cost.}
-%  \label{fig:deployment_cost}
-%\end{figure*}
 

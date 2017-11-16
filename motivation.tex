@@ -77,10 +77,36 @@
 
     Typical single-run performance metrics, like runtime or Instructions Per Cycle~(IPC), are not fit for purpose. To show this, we
     performed iterative compilation on \texttt{tiff2bw}, evaluating each optimization sequence on a different input and using either
-    runtime or IPC as our efficiency metric. We selected our inputs from input set \#2 of Figure~\ref{fig:motivation_wrong_inputs}. When
+    runtime or IPC as our efficiency metric. We selected a set of ten inputs from the KDataSets. When
     iterative compilation is driven by runtime, the selected optimization slows down the benchmark by 3\% compared to \texttt{-O3}. When
     driven by IPC, it is even worse with an average slowdown of 49\%. Its very high IPC of 3.25 does not indicate high performance. The
     actual best optimization over the whole input set improves performance by 7\% while only having an average IPC of 2.31.
+
+\begin{table}[h]
+\centering
+\label{tab:motivation_metrics}
+\begin{tabular}{|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{Metric} & \multicolumn{1}{c|}{Speedup/Slowdown} & \multicolumn{1}{c|}{IPC} \\ \hline
+Oracle (Speedup)             & 7\% speedup                                 & 2.31                      \\ \hline
+IPC                          & 49\% slowdown                                & 3.25                      \\ \hline
+1/Runtime                    & 3\% slowdown                                  & \multicolumn{1}{c|}{-}   \\ \hline
+\end{tabular}
+\caption{}
+\end{table}
+
+%    \begin{figure}[t]
+%        \centering
+%        \includegraphics[width=0.7\linewidth]{figs/motivation_metrics.pdf}
+%        \caption{Average speedup over \texttt{-O3} for the \texttt{tiff2bw} benchmark when optimized with two different optimization sequences and
+%        evaluated on two distinct input sets. Each sequence was selected by iterative compilation on only one of the input sets. Processing
+%        inputs with a version optimized for a different input set produces suboptimal results, supporting that iterative compilation needs
+%        representative inputs.}
+%        \label{fig:motivation_metrics}
+%    \end{figure}
+
+
+
 
 %     \FIXME{Evidence2:}
 %    To show this, we ran
