@@ -20,13 +20,23 @@ new settings and re-evaluating old ones on new datasets. Like in~\cite{chen10} e
 time and energy. This approach only works well with MapReduce-like workloads, since it relies on the framework for repeating the same
 computation multiple times without causing side-effects.
 
-Fursin~\etal~\cite{fursin07} attempted to find a general approach for online \itercomp. They proposed to use instructions per cycle (IPC)
+Older works attempted to drive \itercomp with execution time information~\cite{fursin:hal-01257279,fursin:inria-00001054}. They create
+multiple versions of the hottest procedures, optimized and unoptimized, and at runtime randomly and dynamically select which one to use.
+For each invocation, they record the time spent in the procedure and the version used. By comparing the average time required for each
+invocation, they are able to evaluate the relative performance of different optimizations. The limitations of this approach are that it
+depends on the amount of work performed by the procedure not changing dramatically from invocation to invocation and the number of
+invocations being sufficiently high to collect multiple data points for each version. These drawbacks keep it from being a general solution
+to the problem of iterative compilation.
+
+Fursin~\etal~\cite{fursin07} attempted to find such a general approach. They proposed to use instructions per cycle (IPC)
 as a metric for comparing different runs of the same program with different optimization settings and different inputs. Their hypothesis is
 that application binaries displaying higher IPC are more efficient than lower IPC binaries. However, many optimization techniques affect
 IPC in the opposite way, making the program more efficient while lowering IPC. The authors in~\cite{fursin07} acknowledge that this limits
-the applicability of IPC for \itercomp. In the context of multithreaded applications, IPC cannot be used to compare the performance of
+the applicability of IPC for \itercomp. Our experiments in Section~\ref{sec:motivation} also show that IPC is not an appropriate metric
+for quantifying efficiency for iterative compilation. In the context of multithreaded applications, IPC cannot be used to compare the performance of
 different runs even when they use the same intput~\cite{alameldeen06,eyerman08}. Work-related metrics are shown to be more appropriate, but prior work
 relied on application-specific work metrics. This paper presents the first automatic and application agnostic approach for deriving a work metric.
+
 
 %PP: Discuss input sensitivity?
 

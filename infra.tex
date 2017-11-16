@@ -17,7 +17,7 @@
     multiple such measurements, executing each input only once, until we can estimate the work efficiency of this optimization sequence
     with high confidence. Finally, we use this information to help us select the next optimization sequence.
     
-    In the previous Section, we examined the highlighted component of Figure~\ref{fig:infra-diagram}, the \textit{Work Instrumentation}.
+    In the previous section, we examined the highlighted component of Figure~\ref{fig:infra-diagram}, the \textit{Work Instrumentation}.
     We perform it once and offline, right after the IR is generated before applying optimizations. Its purpose is to measure the amount of
     work performed. The instrumentation creates a global work counter and adds code to a subset of the basic blocks to increment the counter
     each time a block is executed. We calculate the work contribution of each basic block according to the model of Section~\ref{subsec:workmetric}.
