@@ -20,11 +20,11 @@ new settings and re-evaluating old ones on new datasets. Like in~\cite{chen10} e
 time and energy. This approach only works well with MapReduce-like workloads, since it relies on the framework for repeating the same
 computation multiple times without causing side-effects.
 
-Older works attempted to drive \itercomp with execution time information~\cite{fursin:hal-01257279,fursin:inria-00001054}. They create
-multiple versions of the hottest procedures, optimized and unoptimized, and at runtime randomly and dynamically select which one to use.
+Some approaches attempt to drive \itercomp with execution time information~\cite{fursin:hal-01257279,fursin:inria-00001054,tiwari2011online}. They create
+multiple versions of the hottest procedures, optimized and unoptimized, and they evaluate them at runtime on different invocations.
 For each invocation, they record the time spent in the procedure and the version used. By comparing the average time required for each
-invocation, they are able to evaluate the relative performance of different optimizations. The limitations of this approach are that it
-depends on the amount of work performed by the procedure not changing dramatically from invocation to invocation and the number of
+invocation, they are able to evaluate the relative performance of different optimizations. The limitations of such approaches are that they
+depend on the amount of work performed by the procedure not changing dramatically from invocation to invocation and the number of
 invocations being sufficiently high to collect multiple data points for each version. These drawbacks keep it from being a general solution
 to the problem of iterative compilation.
 
