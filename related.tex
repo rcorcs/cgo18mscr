@@ -30,15 +30,16 @@ to the problem of iterative compilation.
 
 Fursin~\etal~\cite{fursin07} attempted to find such a general approach. They proposed to use instructions per cycle (IPC)
 as a metric for comparing different runs of the same program with different optimization settings and different inputs. Their hypothesis is
-that application binaries displaying higher IPC are more efficient than lower IPC binaries. However, many optimization techniques affect
+that application binaries displaying higher IPC are more efficient than lower IPC binaries. Similarly, Mars~\etal~\cite{Mars:2009:SBO:1545006.1545068}
+propose using IPC for online adaptation. During the learning/monitoring phase, a small number of competing versions of a hot function are executed, each
+for the same amount of time. The one with the highest number of retired instructions is selected for use. 
+
+However, many optimization techniques affect
 IPC in the opposite way, making the program more efficient while lowering IPC. The authors in~\cite{fursin07} acknowledge that this limits
 the applicability of IPC for \itercomp. Our experiments in Section~\ref{sec:motivation} also show that IPC is not an appropriate metric
-for quantifying efficiency for iterative compilation. In the context of multithreaded applications, IPC cannot be used to compare the performance of
-different runs even when they use the same intput~\cite{alameldeen06,eyerman08}. Work-related metrics are shown to be more appropriate, but prior work
+for quantifying efficiency when the binary is changing. In the context of multithreaded applications, IPC cannot be used to compare the performance of
+different runs even when they process the same input~\cite{alameldeen06,eyerman08}. Work-related metrics are shown to be more appropriate, but prior work
 relied on application-specific work metrics. This paper presents the first automatic and application agnostic approach for deriving a work metric.
-
-
-%PP: Discuss input sensitivity?
 
 %\subsection{Work and Input Size Metrics}
 
