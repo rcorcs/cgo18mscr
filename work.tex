@@ -119,7 +119,7 @@
     (i)   work profiling does not have to store the execution count of each basic block, only the total work which makes it cheaper to profile;
     (ii)  it does not require a post-processing of the recorded profiling for populating the edge flows;
     (iii) the propagation of the edge flows happens in a symbolic fashion during the instrumentation of the code, as depicted in Figure~\ref{fig:cfg-example}.
-    These symbolic edge flows are used to derive the frequency expression of the basic blocks, which is then used to derive the amount of work
+    These symbolic edge flows are used to derive the frequency expressions of the basic blocks, which are then used to derive the amount of work
     recorded by each probe.
     
     %Simply put, the sum of the frequencies of the edges entering a block and the sum of the frequencies
