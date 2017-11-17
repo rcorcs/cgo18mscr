@@ -40,15 +40,16 @@
     subsets. Optimization \#1, which was selected using input set \#1, speeds up \texttt{tiff2bw} by 22\% on average when processing set
     \#1, but hurts performance when used with set \#2. Similarly, using optimization \#2 on input set \#1 only improves performance by 5\%,
     much less than what optimization \#1 achieves. In both cases, optimizing the benchmark for the same set it will be evaluated on
-    improves performance by 15\% compared to optimizing for some other set. To make iterative compilation profitable, applying it on a
+    improves performance by 15\% compared to optimizing for some other set. To make iterative compilation profitable, applying it on
     inputs similar to the ones the application will be used with is absolutely necessary.
 
 
     \paragraph{Representative input sets are hard to create.} For developers to create artificial input sets, they first need to know how
     their application is actually being used. This is not always easy or even possible. Then, they need to create data that will trigger a
     similar behavior as when the application is used by users. This needs a deep knowledge of the potential user behavior and
-    considerable effort. This will have to be a continuous work in
-    progress, to handle changes in the way the application is used.
+    considerable effort. This will have to be a continuous work in progress, to handle changes in the way the application is used. In some
+    areas, such as mobile computing, where developers do not traditionally optimize their applications or provide inputs for performance
+    testing, depending on them to provide inputs is a suboptimal choice.
 
     Collecting real input data online and processing them again offline to evaluate optimizations is not a solution either. It requires
     manual modifications to the application to save the data, more modifications to avoid side effects while reusing data, and even more
