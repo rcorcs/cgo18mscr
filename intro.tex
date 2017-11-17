@@ -46,7 +46,7 @@
     of work for the whole program. This approach removes more probes and still seems to keep the error below the threshold although it is
     no longer guaranteed to do so. In both cases, the user sees reduced overhead, but the online iterative compilation still performs well.
 
-    Our evaluation shows that performing online iterative compilation guided by work efficiency achieves about 80\% of the speedup
+    Our evaluation shows that performing online iterative compilation guided by work efficiency achieves about 60\% of the speedup
     available to an offline oracle, with improvements of up to about 20\% over the compiler's standard optimization. While our solution
     executes each input a single time to measure the work efficiency metric, the offline oracle is allowed to execute multiple times to
     have a statistically sound measurement of the actual speedup. Regarding the two relaxation algorithms, our results show that the
@@ -57,7 +57,9 @@
     We expect the results of this work to have a particularly high impact on mobile and cloud computing. In both areas, applications have
     complex usage scenarios, target a huge variety of hardware architectures, including virtualized hardware, and users might be unwilling
     to share their data with the developers. Creating a truly representative input set under these constraints is at best hard and time
-    consuming, impossible at worst. Still, our approach is not limited to these two use cases. It is general and can be used to simplify
+    consuming, impossible at worst. In mobile computing especially, we need to extract as much performance as possible from our severely
+    constrained devices, but the developers often do not have the resources or willingness to provide test inputs or adapt their apps for
+    offline iterative compilation. Still, our approach is not limited to these two use cases. It is general and can be used to simplify
     iterative compilation on all types of software.
 
     Our main contributions are:
