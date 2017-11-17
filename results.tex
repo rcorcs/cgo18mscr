@@ -103,8 +103,6 @@ uninstrumented one. Relaxation reduces the deleterious effects of instrumentatio
 As a result, \WCRelax-5\% and \WPRelax-5\% are very close to the behavior of \OraclePP and they achieve about 60\% of the performance
 improvement obtained by \OracleRM.
 
-\subsubsection{Cost Evaluation During the Online Search}
-
 \begin{figure*}[t]
   \centering
   \subfigure[\OptProf]{\includegraphics[width=0.3\textwidth]{figs/Opt-Profiling-deployment.pdf}}
@@ -117,6 +115,8 @@ improvement obtained by \OracleRM.
   \label{fig:deployment_cost}
 \end{figure*}
 
+\subsubsection{Cost Evaluation During the Online Search}
+
 A typical argument against online adaptive techniques is that the overhead of management and the slowdown due to testing suboptimal
 configuration might overshadow the benefits of the technique. In this subsection, we establish that online iterative compilation is
 profitable even when factoring in the online costs. We modify the architecture described in Section~\ref{sec:oic-infra} to make it more
@@ -124,12 +124,11 @@ realistic by using genetic search~\cite{knijnenburg02,kulkarni04} over the whole
 
 Figure~\ref{fig:deployment_cost} shows, for each benchmark and configuration, the speedup over \texttt{-O3} of the best optimization sequence
 evaluated by the search but also the average profitability/cost experienced by the user throughout the search process (labeled as [Live]),
-which takes into account the overhead of the work profiling.
-With online iterative optimization, although the 
-user may experience slowdown during the search process by executing sub-optimal versions of the program,
-a Search Driver based on genetic algorithm is able to focus the search on promising optimization sequences, reducing the risk of
-executing sub-optimal versions of the program as the search evolves through generations.
-After the first generation, the optimization sequences produced tend to overcome this issue, with their benefits surpassing the profiling overheads.
-We evaluate the deployment cost for the three configurations that use work profiling, namely \OptProf, \WCRelax-5\%, and \WPRelax-5\%.
-In all three configurations, the online search has been shown profitable on average.
-The wider search space is also able to improve the performance gains over \texttt{-O3}.
+which takes into account the overhead of the work profiling. We evaluate three configurations that use work profiling, namely \OptProf,
+\WCRelax-5\%, and \WPRelax-5\%. By widening the search space, we are able to improve performance significantly compared to the results in
+Figure~\ref{fig:speedups}. In terms of the overall speedup throughout the search, all three configurations are profitable on average. 
+Although there is a slight risk we select a suboptimal version and the user experiences slowdown, our genetic search focuses on promising
+optimization sequences, reducing the risk of selecting a suboptimal version of the program as the genetic population evolves. For all three
+configurations, after the first generation, the optimization sequences we evaluate tend to overcome this issue, with their benefits
+surpassing the profiling overheads. This is particularly true for \WPRelax-5\%, where the small overhead combined with the large speedup
+lead to a 7.3\% overall speedup.
