@@ -137,7 +137,7 @@
     \subsection{Relaxed Instrumentation}\label{subsec:relaxed}
 
     Optimal instrumentation significantly reduces the profiling overhead when compared to na\"ive instrumentation, from an average overhead
-    of 79\% to 13\%. Still, 13\% slowdown might be more than what the user is ready to tolerate, while for isolated case the overhead might
+    of 79\% to 13\%. Still, 13\% slowdown might be more than what the user is ready to tolerate, while for isolated cases the overhead might
     be as high as 60\%. We need to reduce overhead further to make the work metric practical.
 
     We propose two novel relaxation strategies that offer a trade-off between accuracy and overhead. Our insight was that, unlike basic
@@ -198,7 +198,7 @@
 
     \subsubsection{\WPRelaxTitle Relaxation}
 
-    The \WCRelaxLower relaxation error guarantees are hard but also too conservative. It assumes that each loop will always execute the
+    The \WCRelaxLower relaxation error guarantee is hard but also too conservative. It assumes that each loop will always execute the
     path with the minimum amount of work possible, which might be orders of magnitude less than the work actually performed. When this is
     the case, we end up with a relative error much lower than intended and a profiling overhead unnecessarily high. Our second, more
     aggressive, strategy avoids this problem, by estimating the error and overhead contributions of each probe in relation to the whole

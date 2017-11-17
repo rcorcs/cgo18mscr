@@ -8,7 +8,7 @@ approaches implicitly assume that the best-performing compiler settings found fr
 
 Chen~\etal~\cite{chen10,chen12a} show that the best optimization options, however, can differ across inputs. Their results suggest that, in
 most cases it is possible to find a single set of optimizations that produces good results across all inputs; but achieving this requires
-developers provide a few tens of representative inputs to be used by the iterative compilation search process. We argue that providing
+developers provide a large number of representative inputs to be used by the iterative compilation search process. We argue that providing
 representative inputs is difficult in practice, as users may not use the applications as the developer expects. Even if this is possible,
 current approaches all require to evaluate all candidate compiler options on the same input. Doing so across a range of inputs would incur
 significant overhead, which thus prevents iterative compilation to be adopted at a larger scale.
@@ -24,7 +24,7 @@ Some approaches attempt to drive \itercomp with execution time information~\cite
 multiple versions of the hottest procedures, optimized and unoptimized, and they evaluate them at runtime on different invocations.
 For each invocation, they record the time spent in the procedure and the version used. By comparing the average time required for each
 invocation, they are able to evaluate the relative performance of different optimizations. The limitations of such approaches are that they
-depend on the amount of work performed by the procedure not changing dramatically from invocation to invocation and the number of
+depend on the amount of work performed by the procedure not changing from invocation to invocation and the number of
 invocations being sufficiently high to collect multiple data points for each version. These drawbacks keep it from being a general solution
 to the problem of iterative compilation.
 
