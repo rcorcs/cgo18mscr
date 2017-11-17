@@ -23,8 +23,9 @@ across all inputs, as well as a min-max bar representing the variance across inp
 The focus of this paper is on developing a new way for measuring algorithmic efficiency and enabling true online {\itercomp}. The choice of
 mechanism for driving the search of the optimization space is orthogonal. We used a straightforward search approach where we exhaustively
 search a moderate-sized fixed subset of the full optimization space. This subset contains 500 randomly selected optimization sequences. A
-more efficient stochastic search mechanism would produce better results but would also introduce randomness in our results, partially
-obfuscating the effect of driving iterative compilation with our work efficiency metric.
+more efficient stochastic search over the full optimization space would produce better results but would also introduce randomness in our
+results, partially obfuscating the effect of driving iterative compilation with our work efficiency metric. Still, we demonstrate the
+benefit of using such a search mechanism in Section~\ref{subsubsec:search}.
 
 
 %These optimization sequences contain an average of 40 individual optimization passes,
