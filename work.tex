@@ -82,7 +82,7 @@
     any profiling information~\cite{knuth73,ball94}. The underlying idea is that we can still calculate precisely the execution counts of
     all basic blocks if we choose a spanning tree of the function Control Flow Graph (CFG) and only instrument the edges of the CFG
     \textit{not} in the tree~\cite{nahapetian73,forman81}. To make the instrumentation probe placement optimal, we choose the maximum
-    spanning tree, with the edge weights representing edge frequency estimates. This maximises the number of high frequency edges that will
+    spanning tree, with the edge weights representing edge frequency estimates. This maximizes the number of high frequency edges that will
     not be instrumented, minimizing the instrumentation cost~\cite{forman81,ball94}.
 
     \begin{figure}[t]
