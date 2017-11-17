@@ -85,15 +85,15 @@
  different optimizations affect IPC in different ways.
    Similarly, a shorter runtime may be due to inputs with fewer work to process.
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
 \label{tab:motivation_metrics}
 \begin{tabular}{|l|l|l|}
 \hline
-\multicolumn{1}{|c|}{Metric} & \multicolumn{1}{c|}{Speedup/Slowdown} & \multicolumn{1}{c|}{IPC} \\ \hline
-Oracle (Speedup)             & 7\% speedup                                 & 2.31                      \\ \hline
+\textbf{Metric} & \textbf{Speedup/Slowdown} & \textbf{IPC} \\ \hline
+\rowcolor{Gray} Oracle (Speedup)             & 7\% speedup                                 & 2.31                      \\ \hline
 IPC                          & 49\% slowdown                                & 3.25                      \\ \hline
-1/Runtime                    & 3\% slowdown                                  & \multicolumn{1}{c|}{-}   \\ \hline
+\rowcolor{Gray}1/Runtime                    & 3\% slowdown                                  & {-}   \\ \hline
 \end{tabular}
 \caption{Comparison of iterative compilation guided by different metrics.
 The oracle is guided by the average speedup over \texttt{-O3} on all inputs.

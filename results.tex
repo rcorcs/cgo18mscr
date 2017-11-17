@@ -109,7 +109,9 @@ improvement obtained by \OracleRM.
 \begin{figure*}[t]
   \centering
   \subfigure[\OptProf]{\includegraphics[width=0.3\textwidth]{figs/Opt-Profiling-deployment.pdf}}
+  \hfill
   \subfigure[\WCRelax-5\%]{\includegraphics[width=0.3\textwidth]{figs/WC-Relax-5-deployment.pdf}}
+  \hfill
   \subfigure[\WPRelax-5\%]{\includegraphics[width=0.3\textwidth]{figs/WP-Relax-5-deployment.pdf}}
   \caption{Evaluation of the profitability/cost experienced by the user throughout the search process (labeled as [Live]) and of the best optimization sequence selected by the search. These results provide evidence that the proposed approach is profitable in real-world online scenarios.}
   \label{fig:deployment_cost}
@@ -122,7 +124,7 @@ Figure~\ref{fig:deployment_cost} shows, for each benchmark and configuration, th
 selected by the search (as in Figure~\ref{fig:speedups}) but also the average profitability/cost experienced by the user throughout the search process (labeled as [Live]),
 which takes into account the overhead of the work profiling.
 
-With online iterative optimization, although the 
+With online iterative optimization, although the
 user may experience slowdown during the search process by executing sub-optimal versions of the program,
 a Search Driver based on genetic algorithm is able to focus the search on promising optimization sequences, reducing the risk of
 executing sub-optimal versions of the program as the search evolves through generations.
@@ -130,4 +132,3 @@ After the first generation, the optimization sequences produced tend to overcome
 We evaluate the deployment cost for the three configurations that use work profiling, namely \OptProf, \WCRelax-5\%, and \WPRelax-5\%.
 In all three configurations, the online search has been shown profitable on average.
 The wider search space is also able to improve the performance gains over \texttt{-O3}.
-
