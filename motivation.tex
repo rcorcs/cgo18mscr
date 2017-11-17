@@ -81,16 +81,15 @@
     iterative compilation is driven by runtime, the selected optimization slows down the benchmark by 3\% compared to \texttt{-O3}. When
     driven by IPC, it is even worse with an average slowdown of 49\%. Its very high IPC of 3.25 does not indicate high performance. The
     actual best optimization over the whole input set improves performance by 7\% while only having an average IPC of 2.31.
-   Higher IPC does not necessarily mean better performance,
- different optimizations affect IPC in different ways.
-   Similarly, a shorter runtime may be due to inputs with fewer work to process.
+    When the binary changes, higher IPC does not necessarily mean better performance, different optimizations affect IPC in different ways.
+    Similarly, when the input changes, shorter runtimes do not mean faster execution, it may just be that processing the input requires less work. 
 
 \begin{table}[t]
 \centering
 \label{tab:motivation_metrics}
 \begin{tabular}{|l|l|l|}
 \hline
-\textbf{Metric} & \textbf{Speedup/Slowdown} & \textbf{IPC} \\ \hline
+\textbf{Metric} & \textbf{Average Speedup/Slowdown} & \textbf{IPC} \\ \hline
 \rowcolor{Gray} Oracle (Speedup)             & 7\% speedup                                 & 2.31                      \\ \hline
 IPC                          & 49\% slowdown                                & 3.25                      \\ \hline
 \rowcolor{Gray}1/Runtime                    & 3\% slowdown                                  & {-}   \\ \hline

@@ -84,7 +84,6 @@ real-world scenarios.
 
 We evaluate the quality of the selected optimization sequences by comparing their average speedup over \texttt{-O3} across all 1,000 inputs
 of each benchmark.
-% None of the configurations degrades the performance over \texttt{-O3} (with statistical significance). \FIXME{PP: According to the figure there are slowdowns!!!}
 Figure~\ref{fig:speedups} shows these speedups for all test benchmarks. In most cases, \OraclePP is very close to \OracleRM, achieving on
 average 80\% of its speedup. This demonstrates that it is a valid choice to drive iterative compilation decision using work efficiency. The
 few cases where the two strategies produce noticeably different results are for the \texttt{tiff} benchmarks. The weaker correlation between
@@ -113,18 +112,20 @@ improvement obtained by \OracleRM.
   \subfigure[\WCRelax-5\%]{\includegraphics[width=0.3\textwidth]{figs/WC-Relax-5-deployment.pdf}}
   \hfill
   \subfigure[\WPRelax-5\%]{\includegraphics[width=0.3\textwidth]{figs/WP-Relax-5-deployment.pdf}}
-  \caption{Evaluation of the profitability/cost experienced by the user throughout the search process (labeled as [Live]) and of the best optimization sequence selected by the search. These results provide evidence that the proposed approach is profitable in real-world online scenarios.}
+  \caption{Speedup over \texttt{-O3} for the best optimization selected by the search, as well as the average speedup as experienced by the
+    user throughout the search process ([Live]). The results show that the proposed approach is profitable in real-world online scenarios.}
   \label{fig:deployment_cost}
 \end{figure*}
 
-We also evaluate the actual cost perceived by the user when applying online iterative compilation.
-To this end we used the architecture described in Section~\ref{sec:oic-infra} with the search based on genetic algorithm~\cite{knijnenburg02,kulkarni04}. %cooper99
-Our results provide evidence that the proposed approach is profitable in real-world online scenarios.
-Figure~\ref{fig:deployment_cost} shows, for each benchmark and configuration, the profitability of the final optimization sequence
-selected by the search (as in Figure~\ref{fig:speedups}) but also the average profitability/cost experienced by the user throughout the search process (labeled as [Live]),
-which takes into account the overhead of the work profiling.
+A typical argument against online adaptive techniques is that the overhead of management and the slowdown due to testing suboptimal
+configuration might overshadow the benefits of the technique. In this subsection, we establish that online iterative compilation is
+profitable even when factoring in the online costs. We modify the architecture described in Section~\ref{sec:oic-infra} to make it more
+realistic by using genetic search~\cite{knijnenburg02,kulkarni04} over the whole space of possible optimizations. 
 
-With online iterative optimization, although the
+Figure~\ref{fig:deployment_cost} shows, for each benchmark and configuration, the speedup over \texttt{-O3} of the best optimization sequence
+evaluated by the search but also the average profitability/cost experienced by the user throughout the search process (labeled as [Live]),
+which takes into account the overhead of the work profiling.
+With online iterative optimization, although the 
 user may experience slowdown during the search process by executing sub-optimal versions of the program,
 a Search Driver based on genetic algorithm is able to focus the search on promising optimization sequences, reducing the risk of
 executing sub-optimal versions of the program as the search evolves through generations.
