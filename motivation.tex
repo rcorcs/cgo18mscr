@@ -81,6 +81,9 @@
     iterative compilation is driven by runtime, the selected optimization slows down the benchmark by 3\% compared to \texttt{-O3}. When
     driven by IPC, it is even worse with an average slowdown of 49\%. Its very high IPC of 3.25 does not indicate high performance. The
     actual best optimization over the whole input set improves performance by 7\% while only having an average IPC of 2.31.
+   Higher IPC does not necessarily translate to better performance,
+ different optimizations affect IPC in different ways.
+   Similarly, a shorter runtime may be due to inputs with fewer work for the program to process.
 
 \begin{table}[h]
 \centering
@@ -92,7 +95,11 @@ Oracle (Speedup)             & 7\% speedup                                 & 2.3
 IPC                          & 49\% slowdown                                & 3.25                      \\ \hline
 1/Runtime                    & 3\% slowdown                                  & \multicolumn{1}{c|}{-}   \\ \hline
 \end{tabular}
-\caption{}
+\caption{Comparison of iterative compilation guided by different metrics.
+The oracle is guided by the average speedup over \texttt{-O3} on all inputs.
+For IPC and runtime, each optimization was evaluated on a different input.
+}
+\vspace{-2ex}
 \end{table}
 
 %    \begin{figure}[t]
